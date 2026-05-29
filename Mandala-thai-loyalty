@@ -1,0 +1,304 @@
+import { useState, useEffect, useRef } from "react";
+
+// ══════════════════════════════════════════════════════════════════════════
+// TRADUCCIONES ES / EN
+// ══════════════════════════════════════════════════════════════════════════
+const T = {
+  es: {
+    appSub: "Hotel Boutique", loyalty: "Programa de Fidelidad",
+    guest: "🛎 Huésped", staff: "🔑 Personal",
+    accessCard: "Acceder a mi tarjeta", firstVisit: "Primera visita — Registrarme",
+    searchTitle: "Consultar Tarjeta", searchLabel: "ID, Nombre, Teléfono o Correo",
+    searchHint: "Puedes usar cualquiera de tus datos registrados",
+    searchBtn: "Acceder", searchErr: "No encontramos ese dato. Verifica o regístrate.",
+    back: "← Volver", register: "Nuevo Registro", registerBtn: "Registrarme",
+    nameLabel: "Nombre Completo", emailLabel: "Correo Electrónico", phoneLabel: "Teléfono",
+    namePh: "Ej: Ana García", emailPh: "ana@email.com", phonePh: "555-0000",
+    registerOk: "¡Registro Exitoso!", yourId: "Tu ID de cliente es:",
+    saveId: "Guarda este ID — también puedes entrar con tu nombre, teléfono o correo.",
+    viewCard: "Ver mi Tarjeta →",
+    welcome: "Bienvenid@", logout: "Salir",
+    progress: "Progreso", history: "Historial",
+    accPoints: "Puntos Acumulados", available: "✓ Disponible",
+    noHistory: "Sin registros aún.",
+    historyTitle: "Historial de Visitas",
+    expire: "⚠️ Puntos vencen en",
+    expireDays: "días sin visita",
+    expireWarn: "¡Tus puntos vencen pronto! Visítanos para mantenerlos.",
+    redeemRequest: "Solicitar Canje",
+    redeemSent: "✓ Solicitud enviada — el personal la procesará en tu próxima visita.",
+    redeemCancelled: "Solicitud cancelada.",
+    notifications: "🔔 Notificaciones",
+    noNotif: "Sin notificaciones nuevas.",
+    staffAccess: "Acceso de Personal", pinHint: "Ingresa tu PIN de 4 dígitos",
+    pinWrong: "PIN incorrecto.", lock: "🔒 Bloquear",
+    panelTitle: "Panel Admin", clients: "👥 Clientes", reports: "📊 Reportes",
+    settings: "⚙️ Ajustes",
+    searchClient: "Buscar Cliente", searchClientPh: "Nombre, ID, teléfono o correo...",
+    noResults: "Sin resultados.",
+    assignExp: "Asignar Experiencia", validateBtn: "✓ Validar y Sumar Puntos",
+    redeemReward: "Canjear Recompensa", redeemBtn: "Canjear",
+    recentHistory: "Historial Reciente",
+    flashPoints: (n, name) => `✓ +${n} pts añadidos a ${name}`,
+    flashRedeem: (r, name) => `🎁 Canjeado: ${r} — ${name}`,
+    flashRedeemReq: (name) => `📋 Solicitud de canje de ${name} procesada`,
+    redeemRequests: "📋 Solicitudes de Canje",
+    noRequests: "Sin solicitudes pendientes.",
+    approve: "Aprobar", reject: "Rechazar",
+    expiredBadge: "Puntos vencidos",
+    changePinTitle: "Cambiar PIN de Acceso",
+    changePinDesc: "Solo personal autorizado debe conocer este PIN.",
+    currentPin: "PIN Actual", newPin: "Nuevo PIN (4 dígitos)", confirmPin: "Confirmar Nuevo PIN",
+    changeBtn: "Cambiar PIN",
+    pinOk: "✓ PIN cambiado exitosamente.",
+    pinErrCurrent: "El PIN actual es incorrecto.",
+    pinErrFormat: "El nuevo PIN debe ser 4 dígitos numéricos.",
+    pinErrMatch: "Los PINs nuevos no coinciden.",
+    manageExp: "Gestionar Experiencias",
+    addExp: "Agregar Experiencia", expName: "Nombre", expPts: "Puntos", expIcon: "Ícono",
+    addBtn: "Agregar", deleteBtn: "Eliminar",
+    manageRewards: "Gestionar Recompensas",
+    rewardName: "Nombre", rewardCost: "Puntos requeridos",
+    manageStaff: "Gestionar Personal",
+    staffName: "Nombre del empleado", staffPin: "PIN (4 dígitos)",
+    addStaff: "Agregar empleado", staffRole: "Rol",
+    totalClients: "Clientes registrados", totalPoints: "Puntos activos en circulación",
+    totalRedeems: "Canjes realizados", totalVisits: "Visitas totales",
+    topClients: "Top clientes por puntos",
+    staffPanel: "Panel de Personal",
+    reportsTitle: "Reportes",
+    fillAll: "Completa todos los campos.",
+    invalidEmail: "Correo inválido.",
+    limitedStaff: "Solo el admin puede acceder a esta sección.",
+  },
+  en: {
+    appSub: "Boutique Hotel", loyalty: "Loyalty Program",
+    guest: "🛎 Guest", staff: "🔑 Staff",
+    accessCard: "Access my card", firstVisit: "First visit — Sign up",
+    searchTitle: "Access Your Card", searchLabel: "ID, Name, Phone or Email",
+    searchHint: "You can use any of your registered details",
+    searchBtn: "Access", searchErr: "We couldn't find that. Please verify or sign up.",
+    back: "← Back", register: "New Registration", registerBtn: "Sign me up",
+    nameLabel: "Full Name", emailLabel: "Email Address", phoneLabel: "Phone",
+    namePh: "e.g. Ana García", emailPh: "ana@email.com", phonePh: "555-0000",
+    registerOk: "Registration Successful!", yourId: "Your client ID is:",
+    saveId: "Save this ID — you can also sign in with your name, phone or email.",
+    viewCard: "View my Card →",
+    welcome: "Welcome", logout: "Sign out",
+    progress: "Progress", history: "History",
+    accPoints: "Accumulated Points", available: "✓ Available",
+    noHistory: "No records yet.",
+    historyTitle: "Visit History",
+    expire: "⚠️ Points expire in",
+    expireDays: "days without a visit",
+    expireWarn: "Your points expire soon! Visit us to keep them.",
+    redeemRequest: "Request Reward",
+    redeemSent: "✓ Request sent — staff will process it on your next visit.",
+    redeemCancelled: "Request cancelled.",
+    notifications: "🔔 Notifications",
+    noNotif: "No new notifications.",
+    staffAccess: "Staff Access", pinHint: "Enter your 4-digit PIN",
+    pinWrong: "Wrong PIN.", lock: "🔒 Lock",
+    panelTitle: "Admin Panel", clients: "👥 Clients", reports: "📊 Reports",
+    settings: "⚙️ Settings",
+    searchClient: "Search Client", searchClientPh: "Name, ID, phone or email...",
+    noResults: "No results.",
+    assignExp: "Assign Experience", validateBtn: "✓ Validate & Add Points",
+    redeemReward: "Redeem Reward", redeemBtn: "Redeem",
+    recentHistory: "Recent History",
+    flashPoints: (n, name) => `✓ +${n} pts added to ${name}`,
+    flashRedeem: (r, name) => `🎁 Redeemed: ${r} — ${name}`,
+    flashRedeemReq: (name) => `📋 Redeem request from ${name} processed`,
+    redeemRequests: "📋 Redeem Requests",
+    noRequests: "No pending requests.",
+    approve: "Approve", reject: "Reject",
+    expiredBadge: "Points expired",
+    changePinTitle: "Change Access PIN",
+    changePinDesc: "Only authorized staff should know this PIN.",
+    currentPin: "Current PIN", newPin: "New PIN (4 digits)", confirmPin: "Confirm New PIN",
+    changeBtn: "Change PIN",
+    pinOk: "✓ PIN changed successfully.",
+    pinErrCurrent: "Current PIN is incorrect.",
+    pinErrFormat: "New PIN must be exactly 4 numeric digits.",
+    pinErrMatch: "New PINs do not match.",
+    manageExp: "Manage Experiences",
+    addExp: "Add Experience", expName: "Name", expPts: "Points", expIcon: "Icon",
+    addBtn: "Add", deleteBtn: "Delete",
+    manageRewards: "Manage Rewards",
+    rewardName: "Name", rewardCost: "Points required",
+    manageStaff: "Manage Staff",
+    staffName: "Employee name", staffPin: "PIN (4 digits)",
+    addStaff: "Add employee", staffRole: "Role",
+    totalClients: "Registered clients", totalPoints: "Active points in circulation",
+    totalRedeems: "Total redemptions", totalVisits: "Total visits",
+    topClients: "Top clients by points",
+    staffPanel: "Staff Panel",
+    reportsTitle: "Reports",
+    fillAll: "Please fill all fields.",
+    invalidEmail: "Invalid email.",
+    limitedStaff: "Only the admin can access this section.",
+  }
+};
+
+// ══════════════════════════════════════════════════════════════════════════
+// LOGO SVG
+// ══════════════════════════════════════════════════════════════════════════
+function Logo({ size = 90 }) {
+  const tris = Array.from({length:24},(_,i)=>{
+    const a1=(i*15)*Math.PI/180, a2=((i+1)*15)*Math.PI/180, r1=74, r2=82;
+    return { pts:[[r1,a1],[r2,a1],[r2,a2],[r1,a2]].map(([r,a])=>`${(100+r*Math.cos(a)).toFixed(2)},${(100+r*Math.sin(a)).toFixed(2)}`).join(" "), fill:i%2===0?"#d4571e":"#1a7a6e" };
+  });
+  return (
+    <svg width={size} height={size} viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="ls2"><feDropShadow dx="0" dy="3" stdDeviation="5" floodColor="#0d5c52" floodOpacity="0.22"/></filter>
+        <clipPath id="lc2"><circle cx="100" cy="100" r="88"/></clipPath>
+        <radialGradient id="cg2" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#5a7a50"/><stop offset="100%" stopColor="#2e4828"/></radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="88" fill="#e8dcc8" filter="url(#ls2)"/>
+      <circle cx="100" cy="100" r="88" fill="none" stroke="#a09070" strokeWidth="5"/>
+      <circle cx="100" cy="100" r="82" fill="none" stroke="#c8b890" strokeWidth="1.5"/>
+      {tris.map((t,i)=><polygon key={i} points={t.pts} fill={t.fill} opacity="0.88"/>)}
+      <path d="M100,100 C112,72 142,58 158,42 C163,68 150,93 128,106 Z" fill="#0d5c52" opacity="0.93"/>
+      <path d="M100,100 C128,88 150,93 158,42 C146,48 132,63 116,80 Z" fill="#1a7a6e" opacity="0.6"/>
+      <path d="M100,100 C88,128 58,142 42,158 C37,132 50,107 72,94 Z" fill="#1a7a6e" opacity="0.93"/>
+      <path d="M100,100 C72,112 50,107 42,158 C54,152 68,137 84,120 Z" fill="#2a9d8f" opacity="0.6"/>
+      <path d="M100,100 C72,88 50,93 42,42 C68,37 93,50 106,72 Z" fill="#d4571e" opacity="0.93"/>
+      <path d="M100,100 C88,72 68,37 42,42 C58,58 74,70 90,86 Z" fill="#e06828" opacity="0.6"/>
+      <path d="M100,100 C128,112 150,107 158,158 C132,163 107,150 94,128 Z" fill="#c84a10" opacity="0.93"/>
+      <path d="M100,100 C112,128 132,163 158,158 C142,142 126,128 110,114 Z" fill="#d4571e" opacity="0.6"/>
+      <g opacity="0.07" clipPath="url(#lc2)">{Array.from({length:18},(_,i)=>[<line key={`h${i}`} x1="14" y1={14+i*10} x2="186" y2={14+i*10} stroke="#000" strokeWidth="0.6"/>,<line key={`v${i}`} x1={14+i*10} y1="14" x2={14+i*10} y2="186" stroke="#000" strokeWidth="0.6"/>])}</g>
+      <circle cx="100" cy="100" r="17" fill="#2e4828"/>
+      <circle cx="100" cy="100" r="13" fill="url(#cg2)"/>
+      <circle cx="100" cy="100" r="7" fill="#2e4828"/>
+      <circle cx="100" cy="100" r="3.5" fill="#6a9060"/>
+    </svg>
+  );
+}
+
+
+
+// ══════════════════════════════════════════════════════════════════════════
+// DATOS INICIALES
+// ══════════════════════════════════════════════════════════════════════════
+const INIT_CLIENTS = [
+  { id:"MT-2026-01", name:"Sofía Ramírez", email:"sofia@email.com", phone:"555-0101", points:70, lastVisit:"2026-05-27", redeemRequest:null, notifications:[{id:1,msg:"¡Bienvenida al programa Mandala Thai! Tienes 70 puntos.",read:false}],
+    history:[{date:"15/03/2026",type:"Experiencia Romántica",delta:30},{date:"02/04/2026",type:"Noche Romántica",delta:20},{date:"18/05/2026",type:"Hospedaje Sencillo",delta:10},{date:"20/05/2026",type:"Canje: Masaje Gratuito",delta:-50},{date:"27/05/2026",type:"Experiencia Romántica",delta:30},{date:"27/05/2026",type:"Noche Romántica",delta:20}]},
+  { id:"MT-2026-02", name:"Carlos Mendoza", email:"carlos@email.com", phone:"555-0202", points:40, lastVisit:"2026-05-27", redeemRequest:null, notifications:[{id:1,msg:"¡Bienvenido al programa Mandala Thai! Tienes 40 puntos.",read:false}],
+    history:[{date:"10/04/2026",type:"Noche Romántica",delta:20},{date:"25/04/2026",type:"Hospedaje Sencillo",delta:10},{date:"12/05/2026",type:"Noche Romántica",delta:20},{date:"20/05/2026",type:"Canje: Masaje Gratuito",delta:-50},{date:"27/05/2026",type:"Hospedaje Sencillo",delta:10},{date:"27/05/2026",type:"Hospedaje Sencillo",delta:10},{date:"27/05/2026",type:"Hospedaje Sencillo",delta:10}]},
+];
+const INIT_EXPS = [
+  {id:1,label:"Hospedaje Sencillo",    labelEn:"Standard Stay",   pts:10,icon:"🌿"},
+  {id:2,label:"Noche Romántica",       labelEn:"Romantic Night",  pts:20,icon:"🌙"},
+  {id:3,label:"Experiencia Romántica", labelEn:"Full Experience",  pts:30,icon:"✨"},
+];
+const INIT_REWARDS = [
+  {id:1,label:"Masaje Gratuito",   labelEn:"Free Massage",      cost:50, icon:"💆"},
+  {id:2,label:"Noche de Cortesía", labelEn:"Complimentary Night",cost:100,icon:"🏡"},
+];
+const INIT_STAFF = [
+  {id:1, name:"Admin Principal", pin:"1234", role:"admin"},
+  {id:2, name:"Recepción",       pin:"5678", role:"staff"},
+];
+const MONTHS_6 = 180;
+let clientCounter = 3, expCounter = 4, rewardCounter = 3, staffCounter = 3;
+
+const fmtDate = () => { const d=new Date(); return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`; };
+const todayISO = () => new Date().toISOString().split("T")[0];
+const daysDiff = (iso) => { const d=new Date(iso); const now=new Date(); return Math.floor((now-d)/(1000*60*60*24)); };
+const pointsExpired = (lastVisit) => daysDiff(lastVisit) >= MONTHS_6;
+const daysToExpiry = (lastVisit) => Math.max(0, MONTHS_6 - daysDiff(lastVisit));
+
+// Colores
+const C = { tD:"#0d5c52",t:"#1a7a6e",tL:"#2a9d8f",tr:"#d4571e",trD:"#b8430e",sand:"#f5efe6",text:"#1a2416",mut:"#7a6a55",fnt:"#9a8a70" };
+
+// ── UI BASE ───────────────────────────────────────────────────────────────
+function Card({ title, icon, children, accent, warn }) {
+  return (
+    <div style={{background:"rgba(255,255,255,0.74)",backdropFilter:"blur(14px)",borderRadius:"18px",padding:"18px",
+      border:`1px solid ${warn?"rgba(200,74,16,0.3)":accent?"rgba(212,87,30,0.22)":"rgba(13,92,82,0.14)"}`,
+      boxShadow:"0 4px 24px rgba(0,0,0,0.05)"}}>
+      {title&&<div style={{display:"flex",alignItems:"center",gap:"7px",marginBottom:"14px"}}>
+        {icon&&<span style={{fontSize:"15px"}}>{icon}</span>}
+        <h3 style={{fontSize:"11px",letterSpacing:"2.5px",textTransform:"uppercase",color:C.tD,fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",margin:0}}>{title}</h3>
+      </div>}
+      {children}
+    </div>
+  );
+}
+
+function Btn({ children, onClick, disabled, variant="primary", small, full }) {
+  const s={border:"none",cursor:disabled?"not-allowed":"pointer",borderRadius:"99px",fontWeight:"700",letterSpacing:"0.5px",transition:"all 0.2s",outline:"none",fontFamily:"'Nunito Sans',sans-serif",fontSize:small?"11px":"13px",padding:small?"7px 14px":"11px 24px",opacity:disabled?0.38:1,whiteSpace:"nowrap",width:full?"100%":"auto",display:full?"block":"inline-block",textAlign:"center"};
+  const v={
+    primary:{background:`linear-gradient(135deg,${C.tD},${C.t})`,color:C.sand,boxShadow:"0 4px 16px rgba(13,92,82,0.38)"},
+    terra:  {background:`linear-gradient(135deg,${C.tr},${C.trD})`,color:"#fff",boxShadow:"0 4px 16px rgba(212,87,30,0.38)"},
+    danger: {background:"linear-gradient(135deg,#c0391b,#a52d14)",color:"#fff",boxShadow:"0 4px 14px rgba(192,57,27,0.3)"},
+    ghost:  {background:"rgba(13,92,82,0.09)",color:C.tD,border:"1px solid rgba(13,92,82,0.25)"},
+    warn:   {background:"linear-gradient(135deg,#e07020,#c05a10)",color:"#fff",boxShadow:"0 4px 14px rgba(200,90,20,0.3)"},
+    green:  {background:"linear-gradient(135deg,#1a7a6e,#0d5c52)",color:"#fff",boxShadow:"0 4px 14px rgba(13,92,82,0.3)"},
+  };
+  return <button onClick={disabled?undefined:onClick} style={{...s,...v[variant]}} onMouseEnter={e=>{if(!disabled)e.currentTarget.style.transform="translateY(-1px) scale(1.02)";}} onMouseLeave={e=>{e.currentTarget.style.transform="";}}>{children}</button>;
+}
+
+function Inp({ label, value, onChange, type="text", placeholder, hint }) {
+  return (
+    <div>
+      {label&&<label style={{fontSize:"10px",color:C.mut,letterSpacing:"1.5px",textTransform:"uppercase",display:"block",marginBottom:"4px"}}>{label}</label>}
+      <input type={type} value={value} onChange={onChange} placeholder={placeholder}
+        style={{width:"100%",padding:"10px 13px",borderRadius:"10px",border:"1px solid rgba(13,92,82,0.24)",background:"rgba(255,255,255,0.88)",fontSize:"14px",color:C.text,outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}/>
+      {hint&&<div style={{fontSize:"10px",color:C.fnt,marginTop:"4px"}}>{hint}</div>}
+    </div>
+  );
+}
+
+function Flash({ msg }) {
+  if(!msg) return null;
+  return <div style={{background:`linear-gradient(135deg,${C.tD},${C.t})`,color:C.sand,padding:"12px 16px",borderRadius:"12px",fontSize:"13px",fontWeight:"700",textAlign:"center",boxShadow:"0 4px 20px rgba(13,92,82,0.35)",animation:"fadeIn 0.3s"}}>{msg}</div>;
+}
+
+// Tarjeta de fidelidad
+function LoyaltyCard({ client, lang, exps }) {
+  const expired = pointsExpired(client.lastVisit);
+  const days = daysToExpiry(client.lastVisit);
+  return (
+    <div style={{background:"linear-gradient(135deg,#0b4e46 0%,#1a7a6e 45%,#0a4240 75%,#062820 100%)",borderRadius:"22px",padding:"22px 20px",position:"relative",overflow:"hidden",boxShadow:"0 22px 60px rgba(13,92,82,0.45),0 0 0 1px rgba(212,87,30,0.3)",minHeight:"195px"}}>
+      <div style={{position:"absolute",top:"-50px",right:"-50px",width:"180px",height:"180px",borderRadius:"50%",background:"radial-gradient(circle,rgba(212,87,30,0.16) 0%,transparent 65%)"}}/>
+      <div style={{position:"absolute",bottom:"-40px",left:"-40px",width:"150px",height:"150px",borderRadius:"50%",background:"radial-gradient(circle,rgba(42,157,143,0.16) 0%,transparent 65%)"}}/>
+      <div style={{position:"absolute",right:"10px",bottom:"10px",opacity:0.07,pointerEvents:"none"}}><Logo size={80}/></div>
+      <div style={{position:"relative"}}>
+        <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"8px"}}>
+          <Logo size={24}/>
+          <span style={{fontSize:"9px",letterSpacing:"3px",color:C.tr,textTransform:"uppercase",fontFamily:"'Cormorant Garamond',serif",fontWeight:"600"}}>Mandala Thai · Hotel Boutique</span>
+        </div>
+        <div style={{fontSize:"26px",fontWeight:"700",color:C.sand,fontFamily:"'Cormorant Garamond',serif",letterSpacing:"0.3px",lineHeight:"1.1"}}>{client.name}</div>
+        <div style={{fontSize:"12px",color:"rgba(212,87,30,0.85)",marginTop:"5px",letterSpacing:"3px",fontFamily:"monospace"}}>{client.id}</div>
+      </div>
+      <div style={{marginTop:"18px",display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative"}}>
+        <div>
+          <div style={{fontSize:"9px",color:"rgba(212,87,30,0.7)",letterSpacing:"2.5px",textTransform:"uppercase",marginBottom:"2px"}}>{T[lang].accPoints}</div>
+          <div style={{fontSize:"40px",fontWeight:"700",color:expired?"#aaa":C.tr,fontFamily:"'Cormorant Garamond',serif",lineHeight:"1"}}>
+            {expired?0:client.points}<span style={{fontSize:"13px",fontWeight:"400",marginLeft:"3px",color:"rgba(212,87,30,0.6)"}}>pts</span>
+          </div>
+          {!expired && days <= 30 && <div style={{fontSize:"10px",color:"#f5c842",marginTop:"3px"}}>⚠️ {T[lang].expire} {days} {T[lang].expireDays}</div>}
+          {expired && <div style={{fontSize:"10px",color:"#f56242",marginTop:"3px"}}>⚠️ {T[lang].expiredBadge}</div>}
+        </div>
+        <div style={{display:"flex",gap:"5px",paddingBottom:"4px"}}>
+          {[0,1,2,3,4].map(i=><div key={i} style={{width:"9px",height:"9px",borderRadius:"50%",background:(!expired&&i<Math.min(5,Math.floor(client.points/20)))?C.tr:"rgba(212,87,30,0.2)",boxShadow:(!expired&&i<Math.min(5,Math.floor(client.points/20)))?"0 0 8px rgba(212,87,30,0.55)":"none",transition:"all 0.4s"}}/>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProgressBars({ client, rewards, lang }) {
+  const pts = pointsExpired(client.lastVisit) ? 0 : client.points;
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
+      {rewards.map(r=>{
+        const pct=Math.min(100,(pts/r.cost)*100), ok=pts>=r.cost;
+        return (
+          <div key={r.id} style={{background:"rgba(255,255,255,0.72)",borderRadius:"14px",padding:"14px 16px",backdropFilter:"blur(10px)",border:`1px solid ${ok?"rgba(42,157,143,0.35)":"rgba(13,92,82,0.14)"}`,transition:"border 0.3s"}}>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:"10px",alignItems:"center"}}>
+              <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
+                <span style={{fontSize:"20px"}}>{r.icon}</span>
+ 
