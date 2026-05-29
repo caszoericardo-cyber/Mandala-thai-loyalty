@@ -290,15 +290,15 @@ function LoyaltyCard({ client, lang, exps }) {
   );
 }
 
-function ProgressBars({ client, rewards, lang }) {
+function ProgressBars({ client, rewards, lang, onRedeemRequest }) {
   const pts = pointsExpired(client.lastVisit) ? 0 : client.points;
+  const [sent, setSent] = useState(null);
   return (
     <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
       {rewards.map(r=>{
         const pct=Math.min(100,(pts/r.cost)*100), ok=pts>=r.cost;
+        const already=client.redeemRequest===r.id;
+        const justSent=sent===r.id;
         return (
-          <div key={r.id} style={{background:"rgba(255,255,255,0.72)",borderRadius:"14px",padding:"14px 16px",backdropFilter:"blur(10px)",border:`1px solid ${ok?"rgba(42,157,143,0.35)":"rgba(13,92,82,0.14)"}`,transition:"border 0.3s"}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:"10px",alignItems:"center"}}>
-              <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
-                <span style={{fontSize:"20px"}}>{r.icon}</span>
- 
+          <div key={r.id} style={{background:ok?"rgba(255,255,255,0.88)":"rgba(255,255,255,0.72)",borderRadius:"14px",padding:"14px 16px",backdropFilter:"blur(10px)",border:`1px solid ${ok?"rgba(42,157,143,0.45)":"rgba(13,92,82,0.14)"}`,transition:"all 0.3s",boxShadow:ok?"0 4px 20px rgba(13,92,82,0.12)":"none"}}>
+            <div style={{displ
