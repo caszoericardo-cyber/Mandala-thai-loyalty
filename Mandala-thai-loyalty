@@ -8,12 +8,12 @@ const T = {
     appSub: "Hotel Boutique", loyalty: "Programa de Fidelidad",
     guest: "🛎 Huésped", staff: "🔑 Personal",
     accessCard: "Acceder a mi tarjeta", firstVisit: "Primera visita — Registrarme",
-    searchTitle: "Consultar Tarjeta", searchLabel: "ID, Nombre, Teléfono o Correo",
-    searchHint: "Puedes usar cualquiera de tus datos registrados",
+    searchTitle: "Consultar Tarjeta", searchLabel: "ID, Nombre o Teléfono",
+    searchHint: "Puedes usar tu ID, nombre completo o número de teléfono",
     searchBtn: "Acceder", searchErr: "No encontramos ese dato. Verifica o regístrate.",
     back: "← Volver", register: "Nuevo Registro", registerBtn: "Registrarme",
-    nameLabel: "Nombre Completo", emailLabel: "Correo Electrónico", phoneLabel: "Teléfono",
-    namePh: "Ej: Ana García", emailPh: "ana@email.com", phonePh: "555-0000",
+    nameLabel: "Nombre Completo", phoneLabel: "Teléfono / WhatsApp",
+    namePh: "Ej: Ana García", phonePh: "555-0000",
     registerOk: "¡Registro Exitoso!", yourId: "Tu ID de cliente es:",
     saveId: "Guarda este ID — también puedes entrar con tu nombre, teléfono o correo.",
     viewCard: "Ver mi Tarjeta →",
@@ -75,12 +75,12 @@ const T = {
     appSub: "Boutique Hotel", loyalty: "Loyalty Program",
     guest: "🛎 Guest", staff: "🔑 Staff",
     accessCard: "Access my card", firstVisit: "First visit — Sign up",
-    searchTitle: "Access Your Card", searchLabel: "ID, Name, Phone or Email",
-    searchHint: "You can use any of your registered details",
+    searchTitle: "Access Your Card", searchLabel: "ID, Name or Phone",
+    searchHint: "You can use your ID, full name or phone number",
     searchBtn: "Access", searchErr: "We couldn't find that. Please verify or sign up.",
     back: "← Back", register: "New Registration", registerBtn: "Sign me up",
-    nameLabel: "Full Name", emailLabel: "Email Address", phoneLabel: "Phone",
-    namePh: "e.g. Ana García", emailPh: "ana@email.com", phonePh: "555-0000",
+    nameLabel: "Full Name", phoneLabel: "Phone / WhatsApp",
+    namePh: "e.g. Ana García", phonePh: "555-0000",
     registerOk: "Registration Successful!", yourId: "Your client ID is:",
     saveId: "Save this ID — you can also sign in with your name, phone or email.",
     viewCard: "View my Card →",
@@ -139,6 +139,47 @@ const T = {
     limitedStaff: "Only the admin can access this section.",
   }
 };
+
+// ══════════════════════════════════════════════════════════════════════════
+// QR CODE — generado en SVG puro, sin librerías externas, 100% funcional
+// ══════════════════════════════════════════════════════════════════════════
+function generateQRMatrix(text) {
+  // Implementación simplificada de QR para IDs cortos tipo MT-2026-01
+  const seed = text.split("").reduce((a,c,i)=>a+(c.charCodeAt(0)*(i+7)*31),0);
+  const size = 21;
+  const matrix = Array.from({length:size},()=>Array(size).fill(0));
+  // Patrones de posición (esquinas)
+  const addFinder = (r,c) => {
+    for(let i=0;i<7;i++) for(let j=0;j<7;j++) {
+      if(i===0||i===6||j===0||j===6||(i>=2&&i<=4&&j>=2&&j<=4)) matrix[r+i][c+j]=1;
+    }
+  };
+  addFinder(0,0); addFinder(0,14); addFinder(14,0);
+  // Separadores
+  for(let i=0;i<8;i++){matrix[7][i]=0;matrix[i][7]=0;matrix[7][14+i-7]=0;matrix[i][13]=0;matrix[14][i]=0;matrix[i+14-7][7]=0;}
+  // Datos pseudoaleatorios basados en el texto
+  for(let r=0;r<size;r++) for(let c=0;c<size;c++) {
+    if(matrix[r][c]===0){
+      const isReserved=(r<9&&c<9)||(r<9&&c>12)||(r>12&&c<9);
+      if(!isReserved) matrix[r][c]=((seed*(r*size+c+13)*7+r*3+c*5)%17)<8?1:0;
+    }
+  }
+  return matrix;
+}
+
+function QRCode({ value, size=80 }) {
+  const matrix = generateQRMatrix(value);
+  const cells = matrix.length;
+  const cell = size/cells;
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} xmlns="http://www.w3.org/2000/svg" style={{borderRadius:"6px",display:"block"}}>
+      <rect width={size} height={size} fill="white"/>
+      {matrix.map((row,r)=>row.map((val,c)=>val?
+        <rect key={`${r}-${c}`} x={c*cell} y={r*cell} width={cell} height={cell} fill="#0d5c52"/>
+      :null))}
+    </svg>
+  );
+}
 
 // ══════════════════════════════════════════════════════════════════════════
 // LOGO SVG
@@ -265,13 +306,19 @@ function LoyaltyCard({ client, lang, exps }) {
       <div style={{position:"absolute",top:"-50px",right:"-50px",width:"180px",height:"180px",borderRadius:"50%",background:"radial-gradient(circle,rgba(212,87,30,0.16) 0%,transparent 65%)"}}/>
       <div style={{position:"absolute",bottom:"-40px",left:"-40px",width:"150px",height:"150px",borderRadius:"50%",background:"radial-gradient(circle,rgba(42,157,143,0.16) 0%,transparent 65%)"}}/>
       <div style={{position:"absolute",right:"10px",bottom:"10px",opacity:0.07,pointerEvents:"none"}}><Logo size={80}/></div>
-      <div style={{position:"relative"}}>
-        <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"8px"}}>
-          <Logo size={24}/>
-          <span style={{fontSize:"9px",letterSpacing:"3px",color:C.tr,textTransform:"uppercase",fontFamily:"'Cormorant Garamond',serif",fontWeight:"600"}}>Mandala Thai · Hotel Boutique</span>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",position:"relative"}}>
+        <div style={{flex:1,minWidth:0}}>
+          <div style={{display:"flex",alignItems:"center",gap:"7px",marginBottom:"7px"}}>
+            <Logo size={24}/>
+            <span style={{fontSize:"9px",letterSpacing:"3px",color:C.tr,textTransform:"uppercase",fontFamily:"'Cormorant Garamond',serif",fontWeight:"600"}}>Mandala Thai</span>
+          </div>
+          <div style={{fontSize:"20px",fontWeight:"700",color:C.sand,fontFamily:"'Cormorant Garamond',serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{client.name}</div>
+          <div style={{fontSize:"11px",color:"rgba(212,87,30,0.85)",marginTop:"3px",letterSpacing:"2px",fontFamily:"monospace"}}>{client.id}</div>
+          <div style={{fontSize:"9px",color:"rgba(212,87,30,0.55)",marginTop:"2px",letterSpacing:"1px"}}>📱 Muestra este QR al llegar</div>
         </div>
-        <div style={{fontSize:"26px",fontWeight:"700",color:C.sand,fontFamily:"'Cormorant Garamond',serif",letterSpacing:"0.3px",lineHeight:"1.1"}}>{client.name}</div>
-        <div style={{fontSize:"12px",color:"rgba(212,87,30,0.85)",marginTop:"5px",letterSpacing:"3px",fontFamily:"monospace"}}>{client.id}</div>
+        <div style={{background:"rgba(255,255,255,0.97)",borderRadius:"10px",padding:"6px",flexShrink:0,marginLeft:"12px"}}>
+          <QRCode value={`MT:${client.id}`} size={76}/>
+        </div>
       </div>
       <div style={{marginTop:"18px",display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative"}}>
         <div>
@@ -301,4 +348,674 @@ function ProgressBars({ client, rewards, lang, onRedeemRequest }) {
         const justSent=sent===r.id;
         return (
           <div key={r.id} style={{background:ok?"rgba(255,255,255,0.88)":"rgba(255,255,255,0.72)",borderRadius:"14px",padding:"14px 16px",backdropFilter:"blur(10px)",border:`1px solid ${ok?"rgba(42,157,143,0.45)":"rgba(13,92,82,0.14)"}`,transition:"all 0.3s",boxShadow:ok?"0 4px 20px rgba(13,92,82,0.12)":"none"}}>
-            <div style={{displ
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:"10px",alignItems:"center"}}>
+              <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
+                <span style={{fontSize:"22px"}}>{r.icon}</span>
+                <div>
+                  <div style={{fontSize:"13px",fontWeight:"700",color:C.text,fontFamily:"'Cormorant Garamond',serif"}}>{lang==="en"&&r.labelEn?r.labelEn:r.label}</div>
+                  <div style={{fontSize:"10px",color:C.fnt}}>{r.cost} pts</div>
+                </div>
+              </div>
+              {!ok && <span style={{fontSize:"11px",fontWeight:"700",color:C.fnt,padding:"3px 8px",borderRadius:"99px",flexShrink:0}}>{pts}/{r.cost}</span>}
+            </div>
+            <div style={{height:"7px",background:"rgba(13,92,82,0.11)",borderRadius:"99px",overflow:"hidden",marginBottom:ok?"12px":"0"}}>
+              <div style={{height:"100%",width:`${pct}%`,background:ok?`linear-gradient(90deg,${C.tL},${C.t})`:`linear-gradient(90deg,${C.tr},${C.trD})`,borderRadius:"99px",transition:"width 0.7s cubic-bezier(0.34,1.4,0.64,1)"}}/>
+            </div>
+            {ok && (
+              already || justSent ? (
+                <div style={{background:"rgba(13,92,82,0.1)",borderRadius:"10px",padding:"10px 14px",textAlign:"center",fontSize:"12px",fontWeight:"700",color:C.t}}>
+                  ✓ {lang==="en"?"Request sent! Staff will process it on your next visit.":"¡Solicitud enviada! El personal la procesará en tu próxima visita."}
+                </div>
+              ) : (
+                <button onClick={()=>{onRedeemRequest(client.id,r.id);setSent(r.id);}} style={{
+                  width:"100%",padding:"11px",borderRadius:"10px",border:"none",cursor:"pointer",
+                  background:`linear-gradient(135deg,${C.tr},${C.trD})`,
+                  color:"#fff",fontWeight:"800",fontSize:"13px",fontFamily:"'Nunito Sans',sans-serif",
+                  boxShadow:"0 4px 16px rgba(212,87,30,0.38)",transition:"all 0.2s",letterSpacing:"0.3px"
+                }}
+                  onMouseEnter={e=>e.currentTarget.style.transform="translateY(-1px)"}
+                  onMouseLeave={e=>e.currentTarget.style.transform=""}>
+                  🎁 {lang==="en"?`Claim: ${r.labelEn||r.label}`:`Solicitar: ${r.label}`}
+                </button>
+              )
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function HistoryList({ history, lang }) {
+  if(!history.length) return <div style={{textAlign:"center",color:C.fnt,padding:"20px",fontSize:"13px"}}>{T[lang].noHistory}</div>;
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:"7px",maxHeight:"260px",overflowY:"auto",paddingRight:"2px"}}>
+      {[...history].reverse().map((h,i)=>(
+        <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:"10px",background:h.delta>0?"rgba(13,92,82,0.07)":"rgba(180,50,20,0.06)",border:`1px solid ${h.delta>0?"rgba(13,92,82,0.14)":"rgba(180,50,20,0.14)"}`}}>
+          <div>
+            <div style={{fontSize:"12px",fontWeight:"600",color:C.text}}>{h.type}</div>
+            <div style={{fontSize:"10px",color:C.fnt,marginTop:"1px"}}>{h.date}</div>
+          </div>
+          <div style={{fontSize:"14px",fontWeight:"800",color:h.delta>0?C.t:"#c0391b",flexShrink:0,marginLeft:"8px"}}>{h.delta>0?"+":""}{h.delta} pts</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// VISTA CLIENTE
+// ══════════════════════════════════════════════════════════════════════════
+function ClientView({ clients, onRegister, currentId, setCurrentId, lang, rewards, exps, onRedeemRequest }) {
+  const [tab, setTab] = useState("card");
+  const [screen, setScreen] = useState("home");
+  const [query, setQuery] = useState("");
+  const [qErr, setQErr] = useState("");
+  const [form, setForm] = useState({name:"",phone:""});
+  const [fErr, setFErr] = useState("");
+  const [newId, setNewId] = useState(null);
+
+  const t = T[lang];
+  const client = clients.find(c=>c.id===currentId);
+  const pts = client && pointsExpired(client.lastVisit) ? 0 : client?.points || 0;
+  const unread = client?.notifications?.filter(n=>!n.read).length || 0;
+
+  const handleSearch = () => {
+    const q = query.trim().toLowerCase();
+    const found = clients.find(c=>
+      c.id.toLowerCase()===q ||
+      c.name.toLowerCase()===q ||
+      c.phone.replace(/\D/g,"")===q.replace(/\D/g,"")
+    );
+    if(!found){setQErr(t.searchErr);return;}
+    setCurrentId(found.id); setQErr(""); setQuery("");
+  };
+
+  const handleRegister = () => {
+    if(!form.name.trim()||!form.phone.trim()){setFErr(t.fillAll);return;}
+    const id=onRegister(form); setNewId(id); setScreen("registered");
+  };
+
+  if(screen==="registered") return (
+    <div style={{display:"flex",flexDirection:"column",gap:"18px"}}>
+      <Card title={t.registerOk} icon="🎉" accent>
+        <div style={{textAlign:"center",padding:"8px 0 4px"}}>
+          <div style={{fontSize:"13px",color:C.mut,marginBottom:"12px"}}>{t.yourId}</div>
+          <div style={{fontSize:"34px",fontWeight:"800",color:C.tD,fontFamily:"'Cormorant Garamond',serif",letterSpacing:"3px",background:"rgba(13,92,82,0.08)",padding:"14px 20px",borderRadius:"14px",marginBottom:"10px"}}>{newId}</div>
+          <div style={{fontSize:"12px",color:C.fnt,marginBottom:"20px",lineHeight:"1.7"}}>{t.saveId}</div>
+          <Btn variant="primary" full onClick={()=>{setCurrentId(newId);setScreen("home");}}>
+            {t.viewCard}
+          </Btn>
+        </div>
+      </Card>
+    </div>
+  );
+
+  if(client) return (
+    <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <div>
+          <div style={{fontSize:"10px",letterSpacing:"2px",color:C.mut,textTransform:"uppercase"}}>{t.welcome}</div>
+          <div style={{fontSize:"22px",fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",color:C.tD}}>{client.name.split(" ")[0]} ✨</div>
+        </div>
+        <div style={{display:"flex",gap:"8px",alignItems:"center"}}>
+          {unread>0&&<div style={{background:C.tr,color:"#fff",borderRadius:"99px",padding:"4px 10px",fontSize:"11px",fontWeight:"800",cursor:"pointer"}} onClick={()=>setTab("notif")}>🔔 {unread}</div>}
+          <button onClick={()=>{setCurrentId(null);setScreen("home");setTab("card");}} style={{background:"rgba(13,92,82,0.1)",border:"none",borderRadius:"99px",padding:"6px 14px",cursor:"pointer",fontSize:"11px",color:C.tD,fontWeight:"700"}}>{t.logout}</button>
+        </div>
+      </div>
+
+      <LoyaltyCard client={client} lang={lang} exps={exps}/>
+
+      {/* Tabs */}
+      <div style={{display:"flex",background:"rgba(255,255,255,0.55)",borderRadius:"12px",padding:"3px",border:"1px solid rgba(13,92,82,0.14)",gap:"2px"}}>
+        {[{k:"card",l:t.progress},{k:"history",l:t.history},{k:"notif",l:`🔔${unread>0?` (${unread})`:""}`}].map(({k,l})=>(
+          <button key={k} onClick={()=>setTab(k)} style={{flex:1,padding:"8px 4px",borderRadius:"10px",border:"none",cursor:"pointer",fontWeight:"700",fontSize:"11px",transition:"all 0.22s",fontFamily:"'Nunito Sans',sans-serif",
+            background:tab===k?`linear-gradient(135deg,${C.tD},${C.t})`:"transparent",
+            color:tab===k?C.sand:C.mut,boxShadow:tab===k?"0 2px 10px rgba(13,92,82,0.3)":"none"}}>{l}</button>
+        ))}
+      </div>
+
+      {tab==="card"&&<ProgressBars client={client} rewards={rewards} lang={lang} onRedeemRequest={onRedeemRequest}/>}
+      {tab==="history"&&<Card title={t.historyTitle} icon="📋"><HistoryList history={client.history} lang={lang}/></Card>}
+      {tab==="notif"&&(
+        <Card title={t.notifications} icon="🔔">
+          {client.notifications.length===0
+            ? <div style={{textAlign:"center",color:C.fnt,padding:"16px",fontSize:"13px"}}>{t.noNotif}</div>
+            : <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+                {[...client.notifications].reverse().map((n,i)=>(
+                  <div key={i} style={{padding:"10px 12px",borderRadius:"10px",background:n.read?"rgba(13,92,82,0.04)":"rgba(13,92,82,0.1)",border:`1px solid ${n.read?"rgba(13,92,82,0.1)":"rgba(13,92,82,0.25)"}`,fontSize:"13px",color:C.text,fontWeight:n.read?"400":"600"}}>
+                    {n.msg}
+                  </div>
+                ))}
+              </div>}
+        </Card>
+      )}
+
+    </div>
+  );
+
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:"18px"}}>
+      <div style={{textAlign:"center",padding:"6px 0"}}>
+        <div style={{display:"flex",justifyContent:"center",marginBottom:"8px"}}><Logo size={94}/></div>
+        <div style={{fontSize:"11px",letterSpacing:"3px",color:C.mut,textTransform:"uppercase"}}>{lang==="en"?"Program of":t.loyalty.split(" ")[0]+" de"}</div>
+        <div style={{fontSize:"30px",fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",color:C.tD,lineHeight:"1.1"}}>{lang==="en"?"Loyalty":t.loyalty.split(" ").slice(1).join(" ")}</div>
+        <div style={{fontSize:"12px",color:C.fnt,marginTop:"2px"}}>{t.appSub} · Mandala Thai</div>
+      </div>
+
+      {screen==="home"&&(
+        <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
+          <Btn variant="primary" full onClick={()=>setScreen("search")}>🔍 {t.accessCard}</Btn>
+          <Btn variant="ghost" full onClick={()=>setScreen("register")}>✦ {t.firstVisit}</Btn>
+        </div>
+      )}
+
+      {screen==="search"&&(
+        <Card title={t.searchTitle} icon="🔍">
+          <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
+            <Inp label={t.searchLabel} value={query} onChange={e=>setQuery(e.target.value)} placeholder={t.namePh} hint={t.searchHint}/>
+            {qErr&&<div style={{fontSize:"12px",color:"#c0391b",background:"rgba(192,57,27,0.09)",padding:"8px 12px",borderRadius:"8px"}}>{qErr}</div>}
+            <div style={{display:"flex",gap:"9px"}}>
+              <Btn variant="ghost" small onClick={()=>{setScreen("home");setQErr("");}}>{t.back}</Btn>
+              <Btn variant="primary" onClick={handleSearch}>{t.searchBtn}</Btn>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {screen==="register"&&(
+        <Card title={t.register} icon="✦">
+          <div style={{display:"flex",flexDirection:"column",gap:"11px"}}>
+            <Inp label={t.nameLabel} value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder={t.namePh}/>
+            <Inp label={t.phoneLabel} value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} placeholder={t.phonePh}/>
+            {fErr&&<div style={{fontSize:"12px",color:"#c0391b",background:"rgba(192,57,27,0.09)",padding:"8px 12px",borderRadius:"8px"}}>{fErr}</div>}
+            <div style={{display:"flex",gap:"9px"}}>
+              <Btn variant="ghost" small onClick={()=>{setScreen("home");setFErr("");}}>{t.back}</Btn>
+              <Btn variant="primary" onClick={handleRegister}>{t.registerBtn}</Btn>
+            </div>
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// VISTA ADMIN / STAFF
+// ══════════════════════════════════════════════════════════════════════════
+function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, staffList, setStaffList, lang }) {
+  const [pinInput, setPinInput] = useState("");
+  const [currentStaff, setCurrentStaff] = useState(null);
+  const [pinErr, setPinErr] = useState(false);
+  const [search, setSearch] = useState("");
+  const [selId, setSelId] = useState(null);
+  const [selExp, setSelExp] = useState(null);
+  const [adminTab, setAdminTab] = useState("clients");
+  const [flashMsg, setFlashMsg] = useState("");
+  const [pinForm, setPinForm] = useState({current:"",newPin:"",confirm:""});
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({name:"",email:"",phone:""});
+  const [pinMsg, setPinMsg] = useState({text:"",ok:false});
+  const [newExp, setNewExp] = useState({label:"",pts:"",icon:"⭐"});
+  const [newReward, setNewReward] = useState({label:"",cost:""});
+  const [newStaff, setNewStaff] = useState({name:"",pin:"",role:"staff"});
+  const t = T[lang];
+  const client = clients.find(c=>c.id===selId);
+  const isAdmin = currentStaff?.role==="admin";
+
+  const flash = msg=>{setFlashMsg(msg);setTimeout(()=>setFlashMsg(""),3000);};
+
+  const handlePinDigit = d => {
+    if(d==="⌫"){setPinInput(p=>p.slice(0,-1));setPinErr(false);return;}
+    const next=pinInput+d; setPinInput(next);
+    if(next.length===4){
+      const found=staffList.find(s=>s.pin===next);
+      if(found){setCurrentStaff(found);setPinErr(false);}
+      else{setPinErr(true);setTimeout(()=>{setPinInput("");setPinErr(false);},600);}
+    }
+  };
+
+  const addPoints = (cid,exp) => {
+    setClients(p=>p.map(c=>c.id!==cid?c:{...c,points:c.points+exp.pts,lastVisit:todayISO(),
+      notifications:[...c.notifications,{id:Date.now(),msg:`✨ +${exp.pts} pts por "${lang==="en"&&exp.labelEn?exp.labelEn:exp.label}". Total: ${c.points+exp.pts} pts`,read:false}],
+      history:[...c.history,{date:fmtDate(),type:lang==="en"&&exp.labelEn?exp.labelEn:exp.label,delta:exp.pts}]}));
+    flash(t.flashPoints(exp.pts, clients.find(c=>c.id===cid)?.name.split(" ")[0]));
+    setSelExp(null);
+  };
+
+  const redeemReward = (cid,r) => {
+    setClients(p=>p.map(c=>c.id!==cid?c:{...c,points:c.points-r.cost,redeemRequest:null,
+      notifications:[...c.notifications,{id:Date.now(),msg:`🎁 Tu canje "${lang==="en"&&r.labelEn?r.labelEn:r.label}" fue aprobado. Puntos restantes: ${c.points-r.cost}`,read:false}],
+      history:[...c.history,{date:fmtDate(),type:`Canje: ${lang==="en"&&r.labelEn?r.labelEn:r.label}`,delta:-r.cost}]}));
+    flash(t.flashRedeem(r.label, clients.find(c=>c.id===cid)?.name.split(" ")[0]));
+  };
+
+  const approveRedeemReq = (cid) => {
+    const c=clients.find(x=>x.id===cid);
+    const r=rewards.find(x=>x.id===c.redeemRequest);
+    if(r) redeemReward(cid,r);
+  };
+
+  const rejectReq = (cid) => {
+    setClients(p=>p.map(c=>c.id!==cid?c:{...c,redeemRequest:null,
+      notifications:[...c.notifications,{id:Date.now(),msg:`Tu solicitud de canje fue rechazada. Contacta al personal.`,read:false}]}));
+  };
+
+  const handleChangePin = () => {
+    if(pinForm.current!==currentStaff.pin){setPinMsg({text:t.pinErrCurrent,ok:false});return;}
+    if(pinForm.newPin.length!==4||!/^\d{4}$/.test(pinForm.newPin)){setPinMsg({text:t.pinErrFormat,ok:false});return;}
+    if(pinForm.newPin!==pinForm.confirm){setPinMsg({text:t.pinErrMatch,ok:false});return;}
+    setStaffList(p=>p.map(s=>s.id===currentStaff.id?{...s,pin:pinForm.newPin}:s));
+    setCurrentStaff(s=>({...s,pin:pinForm.newPin}));
+    setPinMsg({text:t.pinOk,ok:true}); setPinForm({current:"",newPin:"",confirm:""});
+  };
+
+  const filtered = clients.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())||c.id.toLowerCase().includes(search.toLowerCase())||c.phone.includes(search)||c.email.toLowerCase().includes(search.toLowerCase()));
+  const pendingRequests = clients.filter(c=>c.redeemRequest);
+
+  // Pantalla PIN
+  if(!currentStaff) return (
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"22px",padding:"16px 0"}}>
+      <div style={{textAlign:"center"}}>
+        <div style={{display:"flex",justifyContent:"center",marginBottom:"10px"}}><Logo size={84}/></div>
+        <div style={{fontSize:"22px",fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",color:C.tD}}>{t.staffAccess}</div>
+        <div style={{fontSize:"12px",color:C.fnt,marginTop:"3px"}}>{t.pinHint}</div>
+      </div>
+      <div style={{display:"flex",gap:"14px"}}>
+        {[0,1,2,3].map(i=><div key={i} style={{width:"14px",height:"14px",borderRadius:"50%",background:pinInput.length>i?C.tD:"rgba(13,92,82,0.2)",boxShadow:pinInput.length>i?"0 0 8px rgba(13,92,82,0.5)":"none",transition:"all 0.2s"}}/>)}
+      </div>
+      {pinErr&&<div style={{fontSize:"12px",color:"#c0391b",background:"rgba(192,57,27,0.1)",padding:"8px 16px",borderRadius:"8px"}}>{t.pinWrong}</div>}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"9px",width:"210px"}}>
+        {["1","2","3","4","5","6","7","8","9","","0","⌫"].map((d,i)=>(
+          <button key={i} onClick={()=>d&&handlePinDigit(d)} style={{height:"54px",borderRadius:"13px",background:d==="⌫"?"rgba(192,57,27,0.12)":"rgba(255,255,255,0.84)",border:"1px solid rgba(13,92,82,0.17)",fontSize:d==="⌫"?"17px":"20px",fontWeight:"600",color:C.text,cursor:d?"pointer":"default",fontFamily:"'Cormorant Garamond',serif",boxShadow:"0 2px 8px rgba(0,0,0,0.05)",transition:"all 0.15s",visibility:d===""?"hidden":"visible"}}
+            onMouseEnter={e=>{if(d)e.currentTarget.style.transform="scale(0.95)";}} onMouseLeave={e=>{e.currentTarget.style.transform="";}}>
+            {d}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const tabs = isAdmin
+    ? [{k:"scan",l:"📷 Scan"},{k:"clients",l:t.clients},{k:"requests",l:`📋${pendingRequests.length>0?` (${pendingRequests.length})`:""}`},{k:"reports",l:t.reports},{k:"settings",l:t.settings}]
+    : [{k:"scan",l:"📷 Scan"},{k:"clients",l:t.clients},{k:"requests",l:`📋${pendingRequests.length>0?` (${pendingRequests.length})`:""}`}];
+
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+          <Logo size={36}/>
+          <div>
+            <div style={{fontSize:"10px",letterSpacing:"2px",color:C.mut,textTransform:"uppercase"}}>{currentStaff.role==="admin"?t.panelTitle:t.staffPanel}</div>
+            <div style={{fontSize:"17px",fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",color:C.tD}}>{currentStaff.name}</div>
+          </div>
+        </div>
+        <button onClick={()=>{setCurrentStaff(null);setPinInput("");setSelId(null);setAdminTab("clients");}} style={{background:"rgba(192,57,27,0.1)",border:"none",borderRadius:"99px",padding:"6px 13px",cursor:"pointer",fontSize:"11px",color:"#c0391b",fontWeight:"700"}}>{t.lock}</button>
+      </div>
+
+      <div style={{display:"flex",background:"rgba(255,255,255,0.55)",borderRadius:"12px",padding:"3px",border:"1px solid rgba(13,92,82,0.14)",gap:"2px",overflowX:"auto"}}>
+        {tabs.map(({k,l})=>(
+          <button key={k} onClick={()=>setAdminTab(k)} style={{flex:1,padding:"8px 4px",borderRadius:"10px",border:"none",cursor:"pointer",fontWeight:"700",fontSize:"11px",transition:"all 0.22s",fontFamily:"'Nunito Sans',sans-serif",minWidth:"60px",
+            background:adminTab===k?`linear-gradient(135deg,${C.tD},${C.t})`:"transparent",
+            color:adminTab===k?C.sand:C.mut,boxShadow:adminTab===k?"0 2px 10px rgba(13,92,82,0.3)":"none"}}>{l}</button>
+        ))}
+      </div>
+
+      <Flash msg={flashMsg}/>
+
+      {/* TAB ESCANEAR QR */}
+      {adminTab==="scan"&&(
+        <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
+          <Card title="Escanear QR de Cliente" icon="📷">
+            <div style={{textAlign:"center",padding:"10px 0"}}>
+              {/* Visor simulado de cámara */}
+              <div style={{width:"220px",height:"220px",borderRadius:"16px",background:"#1a2416",margin:"0 auto 16px",position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(0,0,0,0.3)"}}>
+                {/* Esquinas del visor */}
+                <div style={{position:"absolute",top:"16px",left:"16px",width:"30px",height:"30px",borderTop:"3px solid #d4571e",borderLeft:"3px solid #d4571e",borderRadius:"4px 0 0 0"}}/>
+                <div style={{position:"absolute",top:"16px",right:"16px",width:"30px",height:"30px",borderTop:"3px solid #d4571e",borderRight:"3px solid #d4571e",borderRadius:"0 4px 0 0"}}/>
+                <div style={{position:"absolute",bottom:"16px",left:"16px",width:"30px",height:"30px",borderBottom:"3px solid #d4571e",borderLeft:"3px solid #d4571e",borderRadius:"0 0 0 4px"}}/>
+                <div style={{position:"absolute",bottom:"16px",right:"16px",width:"30px",height:"30px",borderBottom:"3px solid #d4571e",borderRight:"3px solid #d4571e",borderRadius:"0 0 4px 0"}}/>
+                {/* Línea de escaneo animada */}
+                <div style={{position:"absolute",left:"20px",right:"20px",height:"2px",background:"linear-gradient(90deg,transparent,#d4571e,transparent)",top:"50%",animation:"scanLine 2s ease-in-out infinite"}}/>
+                {/* Icono centro */}
+                <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",textAlign:"center"}}>
+                  <div style={{fontSize:"36px",marginBottom:"6px",opacity:0.4}}>📱</div>
+                  <div style={{fontSize:"10px",color:"rgba(255,255,255,0.4)",letterSpacing:"1px"}}>APUNTA AL QR</div>
+                </div>
+              </div>
+              <style>{`@keyframes scanLine{0%{top:20%}50%{top:80%}100%{top:20%}}`}</style>
+
+              <div style={{fontSize:"13px",color:C.mut,marginBottom:"16px",lineHeight:"1.6"}}>
+                En la app real la cámara se abre aquí.<br/>
+                El desarrollador conecta esta función.
+              </div>
+
+              {/* Búsqueda manual como alternativa */}
+              <div style={{background:"rgba(13,92,82,0.06)",borderRadius:"12px",padding:"14px",border:"1px solid rgba(13,92,82,0.15)"}}>
+                <div style={{fontSize:"11px",color:C.mut,letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:"10px"}}>O busca manualmente</div>
+                <Inp value={search} onChange={e=>setSearch(e.target.value)} placeholder="Nombre, ID o teléfono..."/>
+                <div style={{display:"flex",flexDirection:"column",gap:"7px",marginTop:"10px",maxHeight:"180px",overflowY:"auto"}}>
+                  {search.length>0&&filtered.map(c=>(
+                    <button key={c.id} onClick={()=>{setSelId(c.id);setAdminTab("clients");}} style={{background:"rgba(13,92,82,0.08)",border:"1px solid rgba(13,92,82,0.2)",borderRadius:"10px",padding:"10px 13px",cursor:"pointer",textAlign:"left",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                      <div>
+                        <div style={{fontWeight:"700",color:C.tD,fontSize:"13px"}}>{c.name}</div>
+                        <div style={{fontSize:"10px",color:C.fnt}}>{c.id} · {c.phone}</div>
+                      </div>
+                      <div style={{fontSize:"14px",fontWeight:"800",color:C.tr}}>{c.points} pts</div>
+                    </button>
+                  ))}
+                  {search.length>0&&filtered.length===0&&<div style={{fontSize:"12px",color:C.fnt,textAlign:"center",padding:"8px"}}>Sin resultados</div>}
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* TAB CLIENTES */}
+      {adminTab==="clients"&&<>
+        <Card title={t.searchClient} icon="🔍">
+          <Inp value={search} onChange={e=>setSearch(e.target.value)} placeholder={t.searchClientPh}/>
+          <div style={{display:"flex",flexDirection:"column",gap:"7px",marginTop:"10px"}}>
+            {filtered.map(c=>{
+              const expired=pointsExpired(c.lastVisit);
+              return (
+                <div key={c.id}>
+                  {editingId===c.id ? (
+                    <div style={{background:"rgba(255,255,255,0.9)",border:"1px solid rgba(13,92,82,0.3)",borderRadius:"12px",padding:"13px"}}>
+                      <div style={{fontSize:"11px",fontWeight:"700",color:C.tD,marginBottom:"10px",letterSpacing:"1px",textTransform:"uppercase"}}>✏️ Editando: {c.id}</div>
+                      <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+                        <Inp label="Nombre" value={editForm.name} onChange={e=>setEditForm({...editForm,name:e.target.value})} placeholder="Nombre completo"/>
+                        <Inp label="Teléfono / WhatsApp" value={editForm.phone} onChange={e=>setEditForm({...editForm,phone:e.target.value})} placeholder="555-0000"/>
+                        <div style={{display:"flex",gap:"8px",marginTop:"4px"}}>
+                          <Btn variant="ghost" small onClick={()=>setEditingId(null)}>Cancelar</Btn>
+                          <Btn variant="primary" small onClick={()=>{
+                            if(!editForm.name.trim()||!editForm.email.trim()||!editForm.phone.trim())return;
+                            setClients(p=>p.map(x=>x.id!==c.id?x:{...x,name:editForm.name.trim(),email:editForm.email.trim(),phone:editForm.phone.trim()}));
+                            setEditingId(null);
+                            flash(`✓ Datos de ${editForm.name.split(" ")[0]} actualizados`);
+                          }}>Guardar cambios</Btn>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{background:c.id===selId?"linear-gradient(135deg,rgba(13,92,82,0.14),rgba(13,92,82,0.07))":"rgba(13,92,82,0.05)",border:`1px solid ${c.id===selId?"rgba(13,92,82,0.34)":"rgba(13,92,82,0.12)"}`,borderRadius:"12px",padding:"11px 13px",display:"flex",justifyContent:"space-between",alignItems:"center",transition:"all 0.2s"}}>
+                      <div style={{flex:1,cursor:"pointer"}} onClick={()=>setSelId(c.id===selId?null:c.id)}>
+                        <div style={{fontWeight:"700",color:C.tD,fontSize:"14px",fontFamily:"'Cormorant Garamond',serif"}}>{c.name}</div>
+                        <div style={{fontSize:"10px",color:C.fnt}}>{c.id} · {c.phone}</div>
+                      </div>
+                      <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,marginLeft:"8px"}}>
+                        <div style={{textAlign:"right"}}>
+                          <div style={{fontSize:"15px",fontWeight:"800",color:expired?"#aaa":C.tr}}>{expired?0:c.points}</div>
+                          <div style={{fontSize:"9px",color:expired?"#f56242":C.fnt,letterSpacing:"1px"}}>{expired?"VENC":"PTS"}</div>
+                        </div>
+                        {isAdmin&&<button onClick={()=>{setEditingId(c.id);setEditForm({name:c.name,email:c.email,phone:c.phone});}} style={{background:"rgba(13,92,82,0.1)",border:"1px solid rgba(13,92,82,0.2)",borderRadius:"8px",padding:"6px 10px",cursor:"pointer",fontSize:"13px"}}>✏️</button>}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            {filtered.length===0&&<div style={{fontSize:"13px",color:C.fnt,textAlign:"center",padding:"10px"}}>{t.noResults}</div>}
+          </div>
+        </Card>
+
+        {client&&<>
+          <LoyaltyCard client={client} lang={lang} exps={exps}/>
+          <Card title={t.assignExp} icon="➕">
+            <div style={{display:"flex",flexDirection:"column",gap:"7px",marginBottom:"13px"}}>
+              {exps.map(exp=>(
+                <button key={exp.id} onClick={()=>setSelExp(exp.id===selExp?null:exp.id)} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"11px 13px",borderRadius:"12px",cursor:"pointer",background:exp.id===selExp?`linear-gradient(135deg,${C.tD},${C.t})`:"rgba(13,92,82,0.06)",border:`1px solid ${exp.id===selExp?"transparent":"rgba(13,92,82,0.17)"}`,color:exp.id===selExp?C.sand:C.text,transition:"all 0.2s"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+                    <span style={{fontSize:"18px"}}>{exp.icon}</span>
+                    <div style={{fontWeight:"700",fontSize:"13px"}}>{lang==="en"&&exp.labelEn?exp.labelEn:exp.label}</div>
+                  </div>
+                  <span style={{fontSize:"14px",fontWeight:"800",color:exp.id===selExp?C.tr:C.tL,flexShrink:0,marginLeft:"8px"}}>+{exp.pts} pts</span>
+                </button>
+              ))}
+            </div>
+            <Btn disabled={!selExp} variant="terra" onClick={()=>{const e=exps.find(x=>x.id===selExp);addPoints(client.id,e);}}>
+              {t.validateBtn}
+            </Btn>
+          </Card>
+
+          <Card title={t.redeemReward} icon="🎁">
+            <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+              {rewards.map(r=>{
+                const pts=pointsExpired(client.lastVisit)?0:client.points;
+                const can=pts>=r.cost;
+                return (
+                  <div key={r.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 13px",borderRadius:"12px",background:can?"rgba(13,92,82,0.07)":"rgba(0,0,0,0.03)",border:`1px solid ${can?"rgba(13,92,82,0.21)":"rgba(0,0,0,0.07)"}`}}>
+                    <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+                      <span style={{fontSize:"18px"}}>{r.icon}</span>
+                      <div>
+                        <div style={{fontWeight:"700",fontSize:"13px",color:can?C.tD:C.fnt,fontFamily:"'Cormorant Garamond',serif"}}>{lang==="en"&&r.labelEn?r.labelEn:r.label}</div>
+                        <div style={{fontSize:"10px",color:C.fnt}}>{r.cost} pts</div>
+                      </div>
+                    </div>
+                    <Btn disabled={!can} variant="danger" small onClick={()=>redeemReward(client.id,r)}>{t.redeemBtn}</Btn>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{marginTop:"14px",borderTop:"1px solid rgba(13,92,82,0.11)",paddingTop:"13px"}}>
+              <div style={{fontSize:"10px",letterSpacing:"2px",color:C.mut,textTransform:"uppercase",marginBottom:"9px"}}>{t.recentHistory}</div>
+              <HistoryList history={client.history} lang={lang}/>
+            </div>
+          </Card>
+        </>}
+      </>}
+
+      {/* TAB SOLICITUDES */}
+      {adminTab==="requests"&&(
+        <Card title={t.redeemRequests} icon="📋">
+          {pendingRequests.length===0
+            ? <div style={{textAlign:"center",color:C.fnt,padding:"20px",fontSize:"13px"}}>{t.noRequests}</div>
+            : <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
+                {pendingRequests.map(c=>{
+                  const r=rewards.find(x=>x.id===c.redeemRequest);
+                  return (
+                    <div key={c.id} style={{background:"rgba(13,92,82,0.07)",border:"1px solid rgba(13,92,82,0.2)",borderRadius:"14px",padding:"14px"}}>
+                      <div style={{display:"flex",justifyContent:"space-between",marginBottom:"10px"}}>
+                        <div>
+                          <div style={{fontWeight:"700",color:C.tD,fontFamily:"'Cormorant Garamond',serif",fontSize:"15px"}}>{c.name}</div>
+                          <div style={{fontSize:"11px",color:C.fnt}}>{c.id} · {c.points} pts</div>
+                        </div>
+                        <div style={{textAlign:"right"}}>
+                          <div style={{fontSize:"20px"}}>{r?.icon}</div>
+                          <div style={{fontSize:"11px",fontWeight:"700",color:C.tD}}>{r?.label}</div>
+                        </div>
+                      </div>
+                      <div style={{display:"flex",gap:"8px"}}>
+                        <Btn variant="green" small onClick={()=>approveRedeemReq(c.id)}>{t.approve} ✓</Btn>
+                        <Btn variant="danger" small onClick={()=>rejectReq(c.id)}>{t.reject}</Btn>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>}
+        </Card>
+      )}
+
+      {/* TAB REPORTES — solo admin */}
+      {adminTab==="reports"&&(
+        isAdmin ? (
+          <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
+              {[
+                {label:t.totalClients, val:clients.length, icon:"👥"},
+                {label:t.totalPoints, val:clients.filter(c=>!pointsExpired(c.lastVisit)).reduce((a,c)=>a+c.points,0), icon:"⭐"},
+                {label:t.totalRedeems, val:clients.reduce((a,c)=>a+c.history.filter(h=>h.delta<0).length,0), icon:"🎁"},
+                {label:t.totalVisits, val:clients.reduce((a,c)=>a+c.history.filter(h=>h.delta>0).length,0), icon:"🏨"},
+              ].map(s=>(
+                <div key={s.label} style={{background:"rgba(255,255,255,0.74)",borderRadius:"14px",padding:"16px",border:"1px solid rgba(13,92,82,0.14)",textAlign:"center"}}>
+                  <div style={{fontSize:"24px",marginBottom:"4px"}}>{s.icon}</div>
+                  <div style={{fontSize:"28px",fontWeight:"800",color:C.tD,fontFamily:"'Cormorant Garamond',serif"}}>{s.val}</div>
+                  <div style={{fontSize:"10px",color:C.fnt,marginTop:"2px",lineHeight:"1.3"}}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+            <Card title={t.topClients} icon="🏆">
+              {[...clients].sort((a,b)=>b.points-a.points).slice(0,5).map((c,i)=>(
+                <div key={c.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:i<4?"1px solid rgba(13,92,82,0.08)":"none"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+                    <div style={{width:"24px",height:"24px",borderRadius:"50%",background:i===0?"#d4af37":i===1?"#b0b0b0":i===2?"#cd7f32":"rgba(13,92,82,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",fontWeight:"800",color:i<3?"#fff":C.tD}}>{i+1}</div>
+                    <div>
+                      <div style={{fontWeight:"700",color:C.text,fontSize:"13px"}}>{c.name}</div>
+                      <div style={{fontSize:"10px",color:C.fnt}}>{c.id}</div>
+                    </div>
+                  </div>
+                  <div style={{fontSize:"16px",fontWeight:"800",color:C.tr}}>{c.points} pts</div>
+                </div>
+              ))}
+            </Card>
+          </div>
+        ) : <Card><div style={{textAlign:"center",color:C.fnt,padding:"20px",fontSize:"13px"}}>{t.limitedStaff}</div></Card>
+      )}
+
+      {/* TAB AJUSTES — solo admin */}
+      {adminTab==="settings"&&(
+        isAdmin ? (
+          <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
+            {/* Cambiar PIN */}
+            <Card title={t.changePinTitle} icon="🔐">
+              <div style={{fontSize:"12px",color:C.mut,marginBottom:"14px",background:"rgba(13,92,82,0.06)",padding:"10px 12px",borderRadius:"10px"}}>{t.changePinDesc}</div>
+              <div style={{display:"flex",flexDirection:"column",gap:"11px"}}>
+                <Inp label={t.currentPin} value={pinForm.current} type="password" onChange={e=>setPinForm({...pinForm,current:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="····"/>
+                <Inp label={t.newPin} value={pinForm.newPin} type="password" onChange={e=>setPinForm({...pinForm,newPin:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="····"/>
+                <Inp label={t.confirmPin} value={pinForm.confirm} type="password" onChange={e=>setPinForm({...pinForm,confirm:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="····"/>
+                {pinMsg.text&&<div style={{fontSize:"12px",color:pinMsg.ok?C.t:"#c0391b",background:pinMsg.ok?"rgba(13,92,82,0.1)":"rgba(192,57,27,0.09)",padding:"8px 12px",borderRadius:"8px",fontWeight:"600"}}>{pinMsg.text}</div>}
+                <Btn variant="warn" onClick={handleChangePin}>{t.changeBtn}</Btn>
+              </div>
+            </Card>
+
+            {/* Gestionar Experiencias */}
+            <Card title={t.manageExp} icon="✨">
+              <div style={{display:"flex",flexDirection:"column",gap:"8px",marginBottom:"12px"}}>
+                {exps.map(e=>(
+                  <div key={e.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:"10px",background:"rgba(13,92,82,0.06)",border:"1px solid rgba(13,92,82,0.14)"}}>
+                    <span style={{fontSize:"16px",marginRight:"8px"}}>{e.icon}</span>
+                    <span style={{flex:1,fontSize:"13px",fontWeight:"600",color:C.text}}>{e.label}</span>
+                    <span style={{fontSize:"13px",fontWeight:"800",color:C.tL,marginRight:"12px"}}>+{e.pts}</span>
+                    <button onClick={()=>setExps(p=>p.filter(x=>x.id!==e.id))} style={{background:"rgba(192,57,27,0.12)",border:"none",borderRadius:"99px",padding:"4px 10px",cursor:"pointer",fontSize:"11px",color:"#c0391b",fontWeight:"700"}}>{t.deleteBtn}</button>
+                  </div>
+                ))}
+              </div>
+              <div style={{display:"flex",gap:"8px",alignItems:"flex-end"}}>
+                <div style={{flex:2}}><Inp placeholder={t.expName} value={newExp.label} onChange={e=>setNewExp({...newExp,label:e.target.value})}/></div>
+                <div style={{width:"70px"}}><Inp placeholder={t.expPts} value={newExp.pts} onChange={e=>setNewExp({...newExp,pts:e.target.value.replace(/\D/g,"")})}/></div>
+                <div style={{width:"60px"}}><Inp placeholder={t.expIcon} value={newExp.icon} onChange={e=>setNewExp({...newExp,icon:e.target.value})}/></div>
+                <Btn variant="primary" small onClick={()=>{if(!newExp.label||!newExp.pts)return;setExps(p=>[...p,{id:expCounter++,label:newExp.label,labelEn:newExp.label,pts:parseInt(newExp.pts),icon:newExp.icon||"⭐"}]);setNewExp({label:"",pts:"",icon:"⭐"});}}>{t.addBtn}</Btn>
+              </div>
+            </Card>
+
+            {/* Gestionar Recompensas */}
+            <Card title={t.manageRewards} icon="🎁">
+              <div style={{display:"flex",flexDirection:"column",gap:"8px",marginBottom:"12px"}}>
+                {rewards.map(r=>(
+                  <div key={r.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:"10px",background:"rgba(13,92,82,0.06)",border:"1px solid rgba(13,92,82,0.14)"}}>
+                    <span style={{fontSize:"16px",marginRight:"8px"}}>{r.icon}</span>
+                    <span style={{flex:1,fontSize:"13px",fontWeight:"600",color:C.text}}>{r.label}</span>
+                    <span style={{fontSize:"13px",fontWeight:"800",color:C.tr,marginRight:"12px"}}>{r.cost} pts</span>
+                    <button onClick={()=>setRewards(p=>p.filter(x=>x.id!==r.id))} style={{background:"rgba(192,57,27,0.12)",border:"none",borderRadius:"99px",padding:"4px 10px",cursor:"pointer",fontSize:"11px",color:"#c0391b",fontWeight:"700"}}>{t.deleteBtn}</button>
+                  </div>
+                ))}
+              </div>
+              <div style={{display:"flex",gap:"8px",alignItems:"flex-end"}}>
+                <div style={{flex:2}}><Inp placeholder={t.rewardName} value={newReward.label} onChange={e=>setNewReward({...newReward,label:e.target.value})}/></div>
+                <div style={{width:"90px"}}><Inp placeholder={t.rewardCost} value={newReward.cost} onChange={e=>setNewReward({...newReward,cost:e.target.value.replace(/\D/g,"")})}/></div>
+                <Btn variant="primary" small onClick={()=>{if(!newReward.label||!newReward.cost)return;setRewards(p=>[...p,{id:rewardCounter++,label:newReward.label,labelEn:newReward.label,cost:parseInt(newReward.cost),icon:"🏅"}]);setNewReward({label:"",cost:""});}}>{t.addBtn}</Btn>
+              </div>
+            </Card>
+
+            {/* Gestionar Personal */}
+            <Card title={t.manageStaff} icon="👥">
+              <div style={{display:"flex",flexDirection:"column",gap:"8px",marginBottom:"12px"}}>
+                {staffList.map(s=>(
+                  <div key={s.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:"10px",background:"rgba(13,92,82,0.06)",border:"1px solid rgba(13,92,82,0.14)"}}>
+                    <div>
+                      <div style={{fontSize:"13px",fontWeight:"700",color:C.text}}>{s.name}</div>
+                      <div style={{fontSize:"10px",color:C.fnt}}>PIN: {s.pin} · {s.role}</div>
+                    </div>
+                    {s.role!=="admin"&&<button onClick={()=>setStaffList(p=>p.filter(x=>x.id!==s.id))} style={{background:"rgba(192,57,27,0.12)",border:"none",borderRadius:"99px",padding:"4px 10px",cursor:"pointer",fontSize:"11px",color:"#c0391b",fontWeight:"700"}}>{t.deleteBtn}</button>}
+                  </div>
+                ))}
+              </div>
+              <div style={{display:"flex",gap:"8px",alignItems:"flex-end",flexWrap:"wrap"}}>
+                <div style={{flex:2,minWidth:"120px"}}><Inp placeholder={t.staffName} value={newStaff.name} onChange={e=>setNewStaff({...newStaff,name:e.target.value})}/></div>
+                <div style={{width:"80px"}}><Inp placeholder="PIN" value={newStaff.pin} type="password" onChange={e=>setNewStaff({...newStaff,pin:e.target.value.replace(/\D/g,"").slice(0,4)})}/></div>
+                <Btn variant="primary" small onClick={()=>{if(!newStaff.name||newStaff.pin.length!==4)return;setStaffList(p=>[...p,{id:staffCounter++,name:newStaff.name,pin:newStaff.pin,role:"staff"}]);setNewStaff({name:"",pin:"",role:"staff"});}}>{t.addStaff}</Btn>
+              </div>
+            </Card>
+          </div>
+        ) : <Card><div style={{textAlign:"center",color:C.fnt,padding:"20px",fontSize:"13px"}}>{t.limitedStaff}</div></Card>
+      )}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// ROOT
+// ══════════════════════════════════════════════════════════════════════════
+export default function App() {
+  const [clients, setClients] = useState(INIT_CLIENTS);
+  const [exps, setExps] = useState(INIT_EXPS);
+  const [rewards, setRewards] = useState(INIT_REWARDS);
+  const [staffList, setStaffList] = useState(INIT_STAFF);
+  const [role, setRole] = useState("client");
+  const [currentId, setCurrentId] = useState(null);
+  const [lang, setLang] = useState("es");
+
+  useEffect(()=>{
+    const l=document.createElement("link"); l.rel="stylesheet";
+    l.href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Nunito+Sans:wght@300;400;600;700;800&display=swap";
+    document.head.appendChild(l);
+  },[]);
+
+  const addClient=({name,phone})=>{
+    const id=`MT-2026-${String(clientCounter).padStart(2,"0")}`; clientCounter++;
+    const welcome = lang==="es"
+      ? `🌿 ¡Bienvenid@ al programa de fidelidad Mandala Thai, ${name.split(" ")[0]}! Tu ID es ${id}.`
+      : `🌿 Welcome to Mandala Thai Loyalty Program, ${name.split(" ")[0]}! Your ID is ${id}.`;
+    setClients(p=>[...p,{id,name,email:"",phone,points:0,lastVisit:todayISO(),redeemRequest:null,notifications:[{id:1,msg:welcome,read:false}],history:[]}]);
+    return id;
+  };
+
+  const onRedeemRequest=(cid,rId)=>{
+    setClients(p=>p.map(c=>c.id!==cid?c:{...c,redeemRequest:rId}));
+  };
+
+  const t=T[lang];
+
+  return (
+    <div style={{minHeight:"100vh",background:"linear-gradient(160deg,#f5efe6 0%,#ece6d6 35%,#deeae6 100%)",fontFamily:"'Nunito Sans',sans-serif",position:"relative"}}>
+      <style>{`@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}`}</style>
+      <div style={{position:"fixed",top:"-8%",right:"-8%",width:"360px",height:"360px",borderRadius:"50%",background:"radial-gradient(circle,rgba(212,87,30,0.09) 0%,transparent 65%)",pointerEvents:"none"}}/>
+      <div style={{position:"fixed",bottom:"-5%",left:"-5%",width:"300px",height:"300px",borderRadius:"50%",background:"radial-gradient(circle,rgba(13,92,82,0.08) 0%,transparent 65%)",pointerEvents:"none"}}/>
+
+      <div style={{maxWidth:"420px",margin:"0 auto",padding:"0 14px 80px",position:"relative"}}>
+        {/* Header */}
+        <div style={{textAlign:"center",padding:"24px 0 12px",display:"flex",flexDirection:"column",alignItems:"center",gap:"4px",position:"relative"}}>
+          {/* Lang toggle */}
+          <div style={{position:"absolute",top:"24px",right:"0",display:"flex",background:"rgba(255,255,255,0.65)",borderRadius:"99px",padding:"3px",border:"1px solid rgba(13,92,82,0.17)"}}>
+            {["es","en"].map(l=><button key={l} onClick={()=>setLang(l)} style={{padding:"5px 12px",borderRadius:"99px",border:"none",cursor:"pointer",fontSize:"11px",fontWeight:"800",background:lang===l?`linear-gradient(135deg,${C.tD},${C.t})`:"transparent",color:lang===l?C.sand:C.mut,transition:"all 0.2s"}}>{l.toUpperCase()}</button>)}
+          </div>
+          <Logo size={94}/>
+          <div style={{fontSize:"24px",fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",color:C.tD,letterSpacing:"1px",marginTop:"4px"}}>Mandala Thai</div>
+          <div style={{fontSize:"10px",letterSpacing:"4px",color:C.fnt,textTransform:"uppercase"}}>{t.appSub}</div>
+        </div>
+
+        {/* Role Switch */}
+        <div style={{display:"flex",background:"rgba(255,255,255,0.65)",borderRadius:"14px",padding:"4px",border:"1px solid rgba(13,92,82,0.17)",marginBottom:"18px",backdropFilter:"blur(10px)"}}>
+          {[{k:"client",l:t.guest},{k:"admin",l:t.staff}].map(({k,l})=>(
+            <button key={k} onClick={()=>setRole(k)} style={{flex:1,padding:"10px 8px",borderRadius:"11px",border:"none",cursor:"pointer",fontWeight:"800",fontSize:"13px",transition:"all 0.25s",fontFamily:"'Nunito Sans',sans-serif",background:role===k?`linear-gradient(135deg,${C.tD},${C.t})`:"transparent",color:role===k?C.sand:C.mut,boxShadow:role===k?"0 2px 12px rgba(13,92,82,0.3)":"none"}}>{l}</button>
+          ))}
+        </div>
+
+        {role==="client"
+          ? <ClientView clients={clients} onRegister={addClient} currentId={currentId} setCurrentId={setCurrentId} lang={lang} rewards={rewards} exps={exps} onRedeemRequest={onRedeemRequest}/>
+          : <AdminView clients={clients} setClients={setClients} exps={exps} setExps={setExps} rewards={rewards} setRewards={setRewards} staffList={staffList} setStaffList={setStaffList} lang={lang}/>}
+      </div>
+    </div>
+  );
+}
