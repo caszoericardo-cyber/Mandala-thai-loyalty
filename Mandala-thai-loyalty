@@ -1,205 +1,233 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
-// ══════════════════════════════════════════════════════════════════════════
-// TRADUCCIONES ES / EN
-// ══════════════════════════════════════════════════════════════════════════
 const T = {
   es: {
-    appSub: "Hotel Boutique", loyalty: "Programa de Fidelidad",
-    guest: "🛎 Huésped", staff: "🔑 Personal",
-    accessCard: "Acceder a mi tarjeta", firstVisit: "Primera visita — Registrarme",
-    searchTitle: "Consultar Tarjeta", searchLabel: "ID, Nombre o Teléfono",
-    searchHint: "Puedes usar tu ID, nombre completo o número de teléfono",
-    searchBtn: "Acceder", searchErr: "No encontramos ese dato. Verifica o regístrate.",
-    back: "← Volver", register: "Nuevo Registro", registerBtn: "Registrarme",
-    nameLabel: "Nombre Completo", phoneLabel: "Teléfono / WhatsApp",
-    namePh: "Ej: Ana García", phonePh: "555-0000",
-    registerOk: "¡Registro Exitoso!", yourId: "Tu ID de cliente es:",
-    saveId: "Guarda este ID — también puedes entrar con tu nombre, teléfono o correo.",
-    viewCard: "Ver mi Tarjeta →",
-    welcome: "Bienvenid@", logout: "Salir",
-    progress: "Progreso", history: "Historial",
-    accPoints: "Puntos Acumulados", available: "✓ Disponible",
-    noHistory: "Sin registros aún.",
-    historyTitle: "Historial de Visitas",
-    expire: "⚠️ Puntos vencen en",
-    expireDays: "días sin visita",
-    expireWarn: "¡Tus puntos vencen pronto! Visítanos para mantenerlos.",
-    redeemRequest: "Solicitar Canje",
-    redeemSent: "✓ Solicitud enviada — el personal la procesará en tu próxima visita.",
-    redeemCancelled: "Solicitud cancelada.",
-    notifications: "🔔 Notificaciones",
-    noNotif: "Sin notificaciones nuevas.",
-    staffAccess: "Acceso de Personal", pinHint: "Ingresa tu PIN de 4 dígitos",
-    pinWrong: "PIN incorrecto.", lock: "🔒 Bloquear",
-    panelTitle: "Panel Admin", clients: "👥 Clientes", reports: "📊 Reportes",
-    settings: "⚙️ Ajustes",
-    searchClient: "Buscar Cliente", searchClientPh: "Nombre, ID, teléfono o correo...",
-    noResults: "Sin resultados.",
-    assignExp: "Asignar Experiencia", validateBtn: "✓ Validar y Sumar Puntos",
-    redeemReward: "Canjear Recompensa", redeemBtn: "Canjear",
-    recentHistory: "Historial Reciente",
-    flashPoints: (n, name) => `✓ +${n} pts añadidos a ${name}`,
-    flashRedeem: (r, name) => `🎁 Canjeado: ${r} — ${name}`,
-    flashRedeemReq: (name) => `📋 Solicitud de canje de ${name} procesada`,
-    redeemRequests: "📋 Solicitudes de Canje",
-    noRequests: "Sin solicitudes pendientes.",
-    approve: "Aprobar", reject: "Rechazar",
-    expiredBadge: "Puntos vencidos",
-    changePinTitle: "Cambiar PIN de Acceso",
-    changePinDesc: "Solo personal autorizado debe conocer este PIN.",
-    currentPin: "PIN Actual", newPin: "Nuevo PIN (4 dígitos)", confirmPin: "Confirmar Nuevo PIN",
-    changeBtn: "Cambiar PIN",
-    pinOk: "✓ PIN cambiado exitosamente.",
-    pinErrCurrent: "El PIN actual es incorrecto.",
-    pinErrFormat: "El nuevo PIN debe ser 4 dígitos numéricos.",
-    pinErrMatch: "Los PINs nuevos no coinciden.",
-    manageExp: "Gestionar Experiencias",
-    addExp: "Agregar Experiencia", expName: "Nombre", expPts: "Puntos", expIcon: "Ícono",
-    addBtn: "Agregar", deleteBtn: "Eliminar",
-    manageRewards: "Gestionar Recompensas",
-    rewardName: "Nombre", rewardCost: "Puntos requeridos",
-    manageStaff: "Gestionar Personal",
-    staffName: "Nombre del empleado", staffPin: "PIN (4 dígitos)",
-    addStaff: "Agregar empleado", staffRole: "Rol",
-    totalClients: "Clientes registrados", totalPoints: "Puntos activos en circulación",
-    totalRedeems: "Canjes realizados", totalVisits: "Visitas totales",
-    topClients: "Top clientes por puntos",
-    staffPanel: "Panel de Personal",
-    reportsTitle: "Reportes",
-    fillAll: "Completa todos los campos.",
-    invalidEmail: "Correo inválido.",
-    limitedStaff: "Solo el admin puede acceder a esta sección.",
+    appSub:"Hotel Boutique", loyalty:"Programa de Fidelidad",
+    guest:"🛎 Huésped", staff:"🔑 Personal",
+    accessCard:"Acceder a mi tarjeta", firstVisit:"Primera visita — Registrarme",
+    searchTitle:"Consultar Tarjeta", searchLabel:"ID, Nombre o Teléfono",
+    searchHint:"Puedes usar tu ID, nombre completo o número de teléfono",
+    searchBtn:"Acceder", searchErr:"No encontramos ese dato. Verifica o regístrate.",
+    back:"← Volver", register:"Nuevo Registro", registerBtn:"Registrarme",
+    nameLabel:"Nombre Completo", phoneLabel:"Teléfono / WhatsApp",
+    namePh:"Ej: Ana García", phonePh:"555-0000",
+    registerOk:"¡Registro Exitoso!", yourId:"Tu ID de cliente es:",
+    saveId:"Guarda este ID — también puedes entrar con tu nombre o teléfono.",
+    viewCard:"Ver mi Tarjeta →",
+    welcome:"Bienvenid@", logout:"Salir",
+    progress:"Progreso", history:"Historial",
+    accPoints:"Puntos Acumulados", available:"✓ Disponible",
+    noHistory:"Sin registros aún.",
+    historyTitle:"Historial de Visitas",
+    expire:"⚠️ Puntos vencen en", expireDays:"días sin visita",
+    expiredBadge:"Puntos vencidos",
+    notifications:"🔔 Notificaciones", noNotif:"Sin notificaciones nuevas.",
+    staffAccess:"Acceso de Personal", pinHint:"Ingresa tu PIN de 4 dígitos",
+    pinWrong:"PIN incorrecto.", lock:"🔒 Bloquear",
+    panelTitle:"Panel Admin", clients:"👥 Clientes", reports:"📊 Reportes",
+    settings:"⚙️ Ajustes",
+    searchClient:"Buscar Cliente", searchClientPh:"Nombre, ID o teléfono...",
+    noResults:"Sin resultados.",
+    assignExp:"Asignar Experiencia", validateBtn:"✓ Validar y Sumar Puntos",
+    redeemReward:"Canjear Recompensa", redeemBtn:"Canjear",
+    recentHistory:"Historial Reciente",
+    flashPoints:(n,name)=>`✓ +${n} pts añadidos a ${name}`,
+    flashRedeem:(r,name)=>`🎁 Canjeado: ${r} — ${name}`,
+    redeemRequests:"📋 Solicitudes de Canje", noRequests:"Sin solicitudes pendientes.",
+    approve:"Aprobar", reject:"Rechazar",
+    changePinTitle:"Cambiar PIN de Acceso",
+    changePinDesc:"Solo personal autorizado debe conocer este PIN.",
+    currentPin:"PIN Actual", newPin:"Nuevo PIN (4 dígitos)", confirmPin:"Confirmar Nuevo PIN",
+    changeBtn:"Cambiar PIN",
+    pinOk:"✓ PIN cambiado exitosamente.",
+    pinErrCurrent:"El PIN actual es incorrecto.",
+    pinErrFormat:"El nuevo PIN debe ser 4 dígitos numéricos.",
+    pinErrMatch:"Los PINs nuevos no coinciden.",
+    manageExp:"Gestionar Experiencias", addExp:"Agregar",
+    expName:"Nombre", expPts:"Puntos", expIcon:"Ícono",
+    addBtn:"Agregar", deleteBtn:"Eliminar",
+    manageRewards:"Gestionar Recompensas",
+    manageStaff:"Gestionar Personal",
+    staffName:"Nombre del empleado",
+    addStaff:"Agregar empleado",
+    totalClients:"Clientes registrados", totalPoints:"Puntos activos",
+    totalRedeems:"Canjes realizados", totalVisits:"Visitas totales",
+    topClients:"Top clientes por puntos",
+    staffPanel:"Panel de Personal",
+    fillAll:"Completa todos los campos.",
+    limitedStaff:"Solo el admin puede acceder a esta sección.",
+    scanTitle:"Escanear QR de Cliente",
+    scanDesc:"En la app real la cámara se abre aquí.",
+    scanOr:"O busca manualmente",
   },
   en: {
-    appSub: "Boutique Hotel", loyalty: "Loyalty Program",
-    guest: "🛎 Guest", staff: "🔑 Staff",
-    accessCard: "Access my card", firstVisit: "First visit — Sign up",
-    searchTitle: "Access Your Card", searchLabel: "ID, Name or Phone",
-    searchHint: "You can use your ID, full name or phone number",
-    searchBtn: "Access", searchErr: "We couldn't find that. Please verify or sign up.",
-    back: "← Back", register: "New Registration", registerBtn: "Sign me up",
-    nameLabel: "Full Name", phoneLabel: "Phone / WhatsApp",
-    namePh: "e.g. Ana García", phonePh: "555-0000",
-    registerOk: "Registration Successful!", yourId: "Your client ID is:",
-    saveId: "Save this ID — you can also sign in with your name, phone or email.",
-    viewCard: "View my Card →",
-    welcome: "Welcome", logout: "Sign out",
-    progress: "Progress", history: "History",
-    accPoints: "Accumulated Points", available: "✓ Available",
-    noHistory: "No records yet.",
-    historyTitle: "Visit History",
-    expire: "⚠️ Points expire in",
-    expireDays: "days without a visit",
-    expireWarn: "Your points expire soon! Visit us to keep them.",
-    redeemRequest: "Request Reward",
-    redeemSent: "✓ Request sent — staff will process it on your next visit.",
-    redeemCancelled: "Request cancelled.",
-    notifications: "🔔 Notifications",
-    noNotif: "No new notifications.",
-    staffAccess: "Staff Access", pinHint: "Enter your 4-digit PIN",
-    pinWrong: "Wrong PIN.", lock: "🔒 Lock",
-    panelTitle: "Admin Panel", clients: "👥 Clients", reports: "📊 Reports",
-    settings: "⚙️ Settings",
-    searchClient: "Search Client", searchClientPh: "Name, ID, phone or email...",
-    noResults: "No results.",
-    assignExp: "Assign Experience", validateBtn: "✓ Validate & Add Points",
-    redeemReward: "Redeem Reward", redeemBtn: "Redeem",
-    recentHistory: "Recent History",
-    flashPoints: (n, name) => `✓ +${n} pts added to ${name}`,
-    flashRedeem: (r, name) => `🎁 Redeemed: ${r} — ${name}`,
-    flashRedeemReq: (name) => `📋 Redeem request from ${name} processed`,
-    redeemRequests: "📋 Redeem Requests",
-    noRequests: "No pending requests.",
-    approve: "Approve", reject: "Reject",
-    expiredBadge: "Points expired",
-    changePinTitle: "Change Access PIN",
-    changePinDesc: "Only authorized staff should know this PIN.",
-    currentPin: "Current PIN", newPin: "New PIN (4 digits)", confirmPin: "Confirm New PIN",
-    changeBtn: "Change PIN",
-    pinOk: "✓ PIN changed successfully.",
-    pinErrCurrent: "Current PIN is incorrect.",
-    pinErrFormat: "New PIN must be exactly 4 numeric digits.",
-    pinErrMatch: "New PINs do not match.",
-    manageExp: "Manage Experiences",
-    addExp: "Add Experience", expName: "Name", expPts: "Points", expIcon: "Icon",
-    addBtn: "Add", deleteBtn: "Delete",
-    manageRewards: "Manage Rewards",
-    rewardName: "Name", rewardCost: "Points required",
-    manageStaff: "Manage Staff",
-    staffName: "Employee name", staffPin: "PIN (4 digits)",
-    addStaff: "Add employee", staffRole: "Role",
-    totalClients: "Registered clients", totalPoints: "Active points in circulation",
-    totalRedeems: "Total redemptions", totalVisits: "Total visits",
-    topClients: "Top clients by points",
-    staffPanel: "Staff Panel",
-    reportsTitle: "Reports",
-    fillAll: "Please fill all fields.",
-    invalidEmail: "Invalid email.",
-    limitedStaff: "Only the admin can access this section.",
+    appSub:"Boutique Hotel", loyalty:"Loyalty Program",
+    guest:"🛎 Guest", staff:"🔑 Staff",
+    accessCard:"Access my card", firstVisit:"First visit — Sign up",
+    searchTitle:"Access Your Card", searchLabel:"ID, Name or Phone",
+    searchHint:"You can use your ID, full name or phone number",
+    searchBtn:"Access", searchErr:"We couldn't find that. Please verify or sign up.",
+    back:"← Back", register:"New Registration", registerBtn:"Sign me up",
+    nameLabel:"Full Name", phoneLabel:"Phone / WhatsApp",
+    namePh:"e.g. Ana García", phonePh:"555-0000",
+    registerOk:"Registration Successful!", yourId:"Your client ID is:",
+    saveId:"Save this ID — you can also sign in with your name or phone.",
+    viewCard:"View my Card →",
+    welcome:"Welcome", logout:"Sign out",
+    progress:"Progress", history:"History",
+    accPoints:"Accumulated Points", available:"✓ Available",
+    noHistory:"No records yet.",
+    historyTitle:"Visit History",
+    expire:"⚠️ Points expire in", expireDays:"days without a visit",
+    expiredBadge:"Points expired",
+    notifications:"🔔 Notifications", noNotif:"No new notifications.",
+    staffAccess:"Staff Access", pinHint:"Enter your 4-digit PIN",
+    pinWrong:"Wrong PIN.", lock:"🔒 Lock",
+    panelTitle:"Admin Panel", clients:"👥 Clients", reports:"📊 Reports",
+    settings:"⚙️ Settings",
+    searchClient:"Search Client", searchClientPh:"Name, ID or phone...",
+    noResults:"No results.",
+    assignExp:"Assign Experience", validateBtn:"✓ Validate & Add Points",
+    redeemReward:"Redeem Reward", redeemBtn:"Redeem",
+    recentHistory:"Recent History",
+    flashPoints:(n,name)=>`✓ +${n} pts added to ${name}`,
+    flashRedeem:(r,name)=>`🎁 Redeemed: ${r} — ${name}`,
+    redeemRequests:"📋 Redeem Requests", noRequests:"No pending requests.",
+    approve:"Approve", reject:"Reject",
+    changePinTitle:"Change Access PIN",
+    changePinDesc:"Only authorized staff should know this PIN.",
+    currentPin:"Current PIN", newPin:"New PIN (4 digits)", confirmPin:"Confirm New PIN",
+    changeBtn:"Change PIN",
+    pinOk:"✓ PIN changed successfully.",
+    pinErrCurrent:"Current PIN is incorrect.",
+    pinErrFormat:"New PIN must be exactly 4 numeric digits.",
+    pinErrMatch:"New PINs do not match.",
+    manageExp:"Manage Experiences", addExp:"Add",
+    expName:"Name", expPts:"Points", expIcon:"Icon",
+    addBtn:"Add", deleteBtn:"Delete",
+    manageRewards:"Manage Rewards",
+    manageStaff:"Manage Staff",
+    staffName:"Employee name",
+    addStaff:"Add employee",
+    totalClients:"Registered clients", totalPoints:"Active points",
+    totalRedeems:"Total redemptions", totalVisits:"Total visits",
+    topClients:"Top clients by points",
+    staffPanel:"Staff Panel",
+    fillAll:"Please fill all fields.",
+    limitedStaff:"Only the admin can access this section.",
+    scanTitle:"Scan Client QR",
+    scanDesc:"In the real app the camera opens here.",
+    scanOr:"Or search manually",
   }
 };
 
-// ══════════════════════════════════════════════════════════════════════════
-// QR CODE — generado en SVG puro, sin librerías externas, 100% funcional
-// ══════════════════════════════════════════════════════════════════════════
-function generateQRMatrix(text) {
-  // Implementación simplificada de QR para IDs cortos tipo MT-2026-01
-  const seed = text.split("").reduce((a,c,i)=>a+(c.charCodeAt(0)*(i+7)*31),0);
-  const size = 21;
-  const matrix = Array.from({length:size},()=>Array(size).fill(0));
-  // Patrones de posición (esquinas)
+const INIT_CLIENTS = [
+  { id:"MT-2026-01", name:"Sofía Ramírez", email:"", phone:"555-0101", points:70, lastVisit:"2026-05-27", redeemRequest:null,
+    notifications:[{id:1,msg:"¡Bienvenida al programa Mandala Thai! Tienes 70 puntos.",read:false}],
+    history:[
+      {date:"15/03/2026",type:"Experiencia Romántica",delta:30},
+      {date:"02/04/2026",type:"Noche Romántica",delta:20},
+      {date:"18/05/2026",type:"Hospedaje Sencillo",delta:10},
+      {date:"20/05/2026",type:"Canje: Masaje Gratuito",delta:-50},
+      {date:"27/05/2026",type:"Experiencia Romántica",delta:30},
+      {date:"27/05/2026",type:"Noche Romántica",delta:20},
+    ]},
+  { id:"MT-2026-02", name:"Carlos Mendoza", email:"", phone:"555-0202", points:40, lastVisit:"2026-05-27", redeemRequest:null,
+    notifications:[{id:1,msg:"¡Bienvenido al programa Mandala Thai! Tienes 40 puntos.",read:false}],
+    history:[
+      {date:"10/04/2026",type:"Noche Romántica",delta:20},
+      {date:"25/04/2026",type:"Hospedaje Sencillo",delta:10},
+      {date:"12/05/2026",type:"Noche Romántica",delta:20},
+      {date:"20/05/2026",type:"Canje: Masaje Gratuito",delta:-50},
+      {date:"27/05/2026",type:"Hospedaje Sencillo",delta:10},
+      {date:"27/05/2026",type:"Hospedaje Sencillo",delta:10},
+      {date:"27/05/2026",type:"Hospedaje Sencillo",delta:10},
+    ]},
+];
+
+const INIT_EXPS = [
+  {id:1, label:"Hospedaje Sencillo",    labelEn:"Standard Stay",    pts:10, icon:"🌿"},
+  {id:2, label:"Noche Romántica",       labelEn:"Romantic Night",   pts:20, icon:"🌙"},
+  {id:3, label:"Experiencia Romántica", labelEn:"Full Experience",  pts:30, icon:"✨"},
+];
+
+const INIT_REWARDS = [
+  {id:1, label:"Masaje Gratuito",    labelEn:"Free Massage",          cost:50,  icon:"💆"},
+  {id:2, label:"Noche de Cortesía",  labelEn:"Complimentary Night",   cost:100, icon:"🏡"},
+];
+
+const INIT_STAFF = [
+  {id:1, name:"Admin Principal", pin:"1234", role:"admin"},
+  {id:2, name:"Recepción",       pin:"5678", role:"staff"},
+];
+
+const MONTHS_6 = 180;
+let clientCounter = 3, expCounter = 4, rewardCounter = 3, staffCounter = 3;
+
+const fmtDate = () => {
+  const d = new Date();
+  return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`;
+};
+const todayISO = () => new Date().toISOString().split("T")[0];
+const daysDiff = (iso) => Math.floor((new Date() - new Date(iso)) / (1000*60*60*24));
+const pointsExpired = (lastVisit) => daysDiff(lastVisit) >= MONTHS_6;
+const daysToExpiry = (lastVisit) => Math.max(0, MONTHS_6 - daysDiff(lastVisit));
+
+const C = {
+  tD:"#0d5c52", t:"#1a7a6e", tL:"#2a9d8f",
+  tr:"#d4571e", trD:"#b8430e",
+  sand:"#f5efe6", text:"#1a2416", mut:"#7a6a55", fnt:"#9a8a70"
+};
+
+function QRCode({ value, size=80 }) {
+  const seed = value.split("").reduce((a,c,i) => a + c.charCodeAt(0) * (i+7) * 31, 0);
+  const sz = 21;
+  const matrix = Array.from({length:sz}, () => Array(sz).fill(0));
   const addFinder = (r,c) => {
-    for(let i=0;i<7;i++) for(let j=0;j<7;j++) {
-      if(i===0||i===6||j===0||j===6||(i>=2&&i<=4&&j>=2&&j<=4)) matrix[r+i][c+j]=1;
+    for (let i=0; i<7; i++) for (let j=0; j<7; j++) {
+      if (i===0||i===6||j===0||j===6||(i>=2&&i<=4&&j>=2&&j<=4)) matrix[r+i][c+j]=1;
     }
   };
   addFinder(0,0); addFinder(0,14); addFinder(14,0);
-  // Separadores
-  for(let i=0;i<8;i++){matrix[7][i]=0;matrix[i][7]=0;matrix[7][14+i-7]=0;matrix[i][13]=0;matrix[14][i]=0;matrix[i+14-7][7]=0;}
-  // Datos pseudoaleatorios basados en el texto
-  for(let r=0;r<size;r++) for(let c=0;c<size;c++) {
-    if(matrix[r][c]===0){
-      const isReserved=(r<9&&c<9)||(r<9&&c>12)||(r>12&&c<9);
-      if(!isReserved) matrix[r][c]=((seed*(r*size+c+13)*7+r*3+c*5)%17)<8?1:0;
+  for (let r=0; r<sz; r++) for (let c=0; c<sz; c++) {
+    if (matrix[r][c]===0) {
+      const reserved = (r<9&&c<9)||(r<9&&c>12)||(r>12&&c<9);
+      if (!reserved) matrix[r][c] = ((seed*(r*sz+c+13)*7+r*3+c*5)%17)<8 ? 1 : 0;
     }
   }
-  return matrix;
-}
-
-function QRCode({ value, size=80 }) {
-  const matrix = generateQRMatrix(value);
-  const cells = matrix.length;
-  const cell = size/cells;
+  const cell = size/sz;
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} xmlns="http://www.w3.org/2000/svg" style={{borderRadius:"6px",display:"block"}}>
       <rect width={size} height={size} fill="white"/>
-      {matrix.map((row,r)=>row.map((val,c)=>val?
+      {matrix.map((row,r) => row.map((val,c) => val ?
         <rect key={`${r}-${c}`} x={c*cell} y={r*cell} width={cell} height={cell} fill="#0d5c52"/>
-      :null))}
+      : null))}
     </svg>
   );
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-// LOGO SVG
-// ══════════════════════════════════════════════════════════════════════════
-function Logo({ size = 90 }) {
-  const tris = Array.from({length:24},(_,i)=>{
+function Logo({ size=90 }) {
+  const tris = Array.from({length:24}, (_,i) => {
     const a1=(i*15)*Math.PI/180, a2=((i+1)*15)*Math.PI/180, r1=74, r2=82;
-    return { pts:[[r1,a1],[r2,a1],[r2,a2],[r1,a2]].map(([r,a])=>`${(100+r*Math.cos(a)).toFixed(2)},${(100+r*Math.sin(a)).toFixed(2)}`).join(" "), fill:i%2===0?"#d4571e":"#1a7a6e" };
+    return {
+      pts: [[r1,a1],[r2,a1],[r2,a2],[r1,a2]].map(([r,a]) => `${(100+r*Math.cos(a)).toFixed(1)},${(100+r*Math.sin(a)).toFixed(1)}`).join(" "),
+      fill: i%2===0 ? "#d4571e" : "#1a7a6e"
+    };
   });
   return (
     <svg width={size} height={size} viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <filter id="ls2"><feDropShadow dx="0" dy="3" stdDeviation="5" floodColor="#0d5c52" floodOpacity="0.22"/></filter>
-        <clipPath id="lc2"><circle cx="100" cy="100" r="88"/></clipPath>
-        <radialGradient id="cg2" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#5a7a50"/><stop offset="100%" stopColor="#2e4828"/></radialGradient>
+        <filter id="ls"><feDropShadow dx="0" dy="3" stdDeviation="5" floodColor="#0d5c52" floodOpacity="0.22"/></filter>
+        <clipPath id="lc"><circle cx="100" cy="100" r="88"/></clipPath>
+        <radialGradient id="cg" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#5a7a50"/>
+          <stop offset="100%" stopColor="#2e4828"/>
+        </radialGradient>
       </defs>
-      <circle cx="100" cy="100" r="88" fill="#e8dcc8" filter="url(#ls2)"/>
+      <circle cx="100" cy="100" r="88" fill="#e8dcc8" filter="url(#ls)"/>
       <circle cx="100" cy="100" r="88" fill="none" stroke="#a09070" strokeWidth="5"/>
       <circle cx="100" cy="100" r="82" fill="none" stroke="#c8b890" strokeWidth="1.5"/>
-      {tris.map((t,i)=><polygon key={i} points={t.pts} fill={t.fill} opacity="0.88"/>)}
+      {tris.map((t,i) => <polygon key={i} points={t.pts} fill={t.fill} opacity="0.88"/>)}
       <path d="M100,100 C112,72 142,58 158,42 C163,68 150,93 128,106 Z" fill="#0d5c52" opacity="0.93"/>
       <path d="M100,100 C128,88 150,93 158,42 C146,48 132,63 116,80 Z" fill="#1a7a6e" opacity="0.6"/>
       <path d="M100,100 C88,128 58,142 42,158 C37,132 50,107 72,94 Z" fill="#1a7a6e" opacity="0.93"/>
@@ -208,99 +236,77 @@ function Logo({ size = 90 }) {
       <path d="M100,100 C88,72 68,37 42,42 C58,58 74,70 90,86 Z" fill="#e06828" opacity="0.6"/>
       <path d="M100,100 C128,112 150,107 158,158 C132,163 107,150 94,128 Z" fill="#c84a10" opacity="0.93"/>
       <path d="M100,100 C112,128 132,163 158,158 C142,142 126,128 110,114 Z" fill="#d4571e" opacity="0.6"/>
-      <g opacity="0.07" clipPath="url(#lc2)">{Array.from({length:18},(_,i)=>[<line key={`h${i}`} x1="14" y1={14+i*10} x2="186" y2={14+i*10} stroke="#000" strokeWidth="0.6"/>,<line key={`v${i}`} x1={14+i*10} y1="14" x2={14+i*10} y2="186" stroke="#000" strokeWidth="0.6"/>])}</g>
+      <g opacity="0.07" clipPath="url(#lc)">
+        {Array.from({length:18},(_,i) => [
+          <line key={`h${i}`} x1="14" y1={14+i*10} x2="186" y2={14+i*10} stroke="#000" strokeWidth="0.6"/>,
+          <line key={`v${i}`} x1={14+i*10} y1="14" x2={14+i*10} y2="186" stroke="#000" strokeWidth="0.6"/>
+        ])}
+      </g>
       <circle cx="100" cy="100" r="17" fill="#2e4828"/>
-      <circle cx="100" cy="100" r="13" fill="url(#cg2)"/>
+      <circle cx="100" cy="100" r="13" fill="url(#cg)"/>
       <circle cx="100" cy="100" r="7" fill="#2e4828"/>
       <circle cx="100" cy="100" r="3.5" fill="#6a9060"/>
     </svg>
   );
 }
 
-
-
-// ══════════════════════════════════════════════════════════════════════════
-// DATOS INICIALES
-// ══════════════════════════════════════════════════════════════════════════
-const INIT_CLIENTS = [
-  { id:"MT-2026-01", name:"Sofía Ramírez", email:"sofia@email.com", phone:"555-0101", points:70, lastVisit:"2026-05-27", redeemRequest:null, notifications:[{id:1,msg:"¡Bienvenida al programa Mandala Thai! Tienes 70 puntos.",read:false}],
-    history:[{date:"15/03/2026",type:"Experiencia Romántica",delta:30},{date:"02/04/2026",type:"Noche Romántica",delta:20},{date:"18/05/2026",type:"Hospedaje Sencillo",delta:10},{date:"20/05/2026",type:"Canje: Masaje Gratuito",delta:-50},{date:"27/05/2026",type:"Experiencia Romántica",delta:30},{date:"27/05/2026",type:"Noche Romántica",delta:20}]},
-  { id:"MT-2026-02", name:"Carlos Mendoza", email:"carlos@email.com", phone:"555-0202", points:40, lastVisit:"2026-05-27", redeemRequest:null, notifications:[{id:1,msg:"¡Bienvenido al programa Mandala Thai! Tienes 40 puntos.",read:false}],
-    history:[{date:"10/04/2026",type:"Noche Romántica",delta:20},{date:"25/04/2026",type:"Hospedaje Sencillo",delta:10},{date:"12/05/2026",type:"Noche Romántica",delta:20},{date:"20/05/2026",type:"Canje: Masaje Gratuito",delta:-50},{date:"27/05/2026",type:"Hospedaje Sencillo",delta:10},{date:"27/05/2026",type:"Hospedaje Sencillo",delta:10},{date:"27/05/2026",type:"Hospedaje Sencillo",delta:10}]},
-];
-const INIT_EXPS = [
-  {id:1,label:"Hospedaje Sencillo",    labelEn:"Standard Stay",   pts:10,icon:"🌿"},
-  {id:2,label:"Noche Romántica",       labelEn:"Romantic Night",  pts:20,icon:"🌙"},
-  {id:3,label:"Experiencia Romántica", labelEn:"Full Experience",  pts:30,icon:"✨"},
-];
-const INIT_REWARDS = [
-  {id:1,label:"Masaje Gratuito",   labelEn:"Free Massage",      cost:50, icon:"💆"},
-  {id:2,label:"Noche de Cortesía", labelEn:"Complimentary Night",cost:100,icon:"🏡"},
-];
-const INIT_STAFF = [
-  {id:1, name:"Admin Principal", pin:"1234", role:"admin"},
-  {id:2, name:"Recepción",       pin:"5678", role:"staff"},
-];
-const MONTHS_6 = 180;
-let clientCounter = 3, expCounter = 4, rewardCounter = 3, staffCounter = 3;
-
-const fmtDate = () => { const d=new Date(); return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`; };
-const todayISO = () => new Date().toISOString().split("T")[0];
-const daysDiff = (iso) => { const d=new Date(iso); const now=new Date(); return Math.floor((now-d)/(1000*60*60*24)); };
-const pointsExpired = (lastVisit) => daysDiff(lastVisit) >= MONTHS_6;
-const daysToExpiry = (lastVisit) => Math.max(0, MONTHS_6 - daysDiff(lastVisit));
-
-// Colores
-const C = { tD:"#0d5c52",t:"#1a7a6e",tL:"#2a9d8f",tr:"#d4571e",trD:"#b8430e",sand:"#f5efe6",text:"#1a2416",mut:"#7a6a55",fnt:"#9a8a70" };
-
-// ── UI BASE ───────────────────────────────────────────────────────────────
-function Card({ title, icon, children, accent, warn }) {
+function Card({ title, icon, children, accent }) {
   return (
-    <div style={{background:"rgba(255,255,255,0.74)",backdropFilter:"blur(14px)",borderRadius:"18px",padding:"18px",
-      border:`1px solid ${warn?"rgba(200,74,16,0.3)":accent?"rgba(212,87,30,0.22)":"rgba(13,92,82,0.14)"}`,
-      boxShadow:"0 4px 24px rgba(0,0,0,0.05)"}}>
-      {title&&<div style={{display:"flex",alignItems:"center",gap:"7px",marginBottom:"14px"}}>
-        {icon&&<span style={{fontSize:"15px"}}>{icon}</span>}
-        <h3 style={{fontSize:"11px",letterSpacing:"2.5px",textTransform:"uppercase",color:C.tD,fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",margin:0}}>{title}</h3>
-      </div>}
+    <div style={{background:"rgba(255,255,255,0.74)",backdropFilter:"blur(14px)",borderRadius:"18px",padding:"18px",border:`1px solid ${accent?"rgba(212,87,30,0.22)":"rgba(13,92,82,0.14)"}`,boxShadow:"0 4px 24px rgba(0,0,0,0.05)"}}>
+      {title && (
+        <div style={{display:"flex",alignItems:"center",gap:"7px",marginBottom:"14px"}}>
+          {icon && <span style={{fontSize:"15px"}}>{icon}</span>}
+          <h3 style={{fontSize:"11px",letterSpacing:"2.5px",textTransform:"uppercase",color:C.tD,fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",margin:0}}>{title}</h3>
+        </div>
+      )}
       {children}
     </div>
   );
 }
 
 function Btn({ children, onClick, disabled, variant="primary", small, full }) {
-  const s={border:"none",cursor:disabled?"not-allowed":"pointer",borderRadius:"99px",fontWeight:"700",letterSpacing:"0.5px",transition:"all 0.2s",outline:"none",fontFamily:"'Nunito Sans',sans-serif",fontSize:small?"11px":"13px",padding:small?"7px 14px":"11px 24px",opacity:disabled?0.38:1,whiteSpace:"nowrap",width:full?"100%":"auto",display:full?"block":"inline-block",textAlign:"center"};
-  const v={
+  const s = {border:"none",cursor:disabled?"not-allowed":"pointer",borderRadius:"99px",fontWeight:"700",letterSpacing:"0.5px",transition:"all 0.2s",outline:"none",fontFamily:"'Nunito Sans',sans-serif",fontSize:small?"11px":"13px",padding:small?"7px 14px":"11px 24px",opacity:disabled?0.38:1,whiteSpace:"nowrap",width:full?"100%":"auto",display:full?"block":"inline-block",textAlign:"center"};
+  const v = {
     primary:{background:`linear-gradient(135deg,${C.tD},${C.t})`,color:C.sand,boxShadow:"0 4px 16px rgba(13,92,82,0.38)"},
-    terra:  {background:`linear-gradient(135deg,${C.tr},${C.trD})`,color:"#fff",boxShadow:"0 4px 16px rgba(212,87,30,0.38)"},
-    danger: {background:"linear-gradient(135deg,#c0391b,#a52d14)",color:"#fff",boxShadow:"0 4px 14px rgba(192,57,27,0.3)"},
-    ghost:  {background:"rgba(13,92,82,0.09)",color:C.tD,border:"1px solid rgba(13,92,82,0.25)"},
-    warn:   {background:"linear-gradient(135deg,#e07020,#c05a10)",color:"#fff",boxShadow:"0 4px 14px rgba(200,90,20,0.3)"},
-    green:  {background:"linear-gradient(135deg,#1a7a6e,#0d5c52)",color:"#fff",boxShadow:"0 4px 14px rgba(13,92,82,0.3)"},
+    terra:{background:`linear-gradient(135deg,${C.tr},${C.trD})`,color:"#fff",boxShadow:"0 4px 16px rgba(212,87,30,0.38)"},
+    danger:{background:"linear-gradient(135deg,#c0391b,#a52d14)",color:"#fff",boxShadow:"0 4px 14px rgba(192,57,27,0.3)"},
+    ghost:{background:"rgba(13,92,82,0.09)",color:C.tD,border:"1px solid rgba(13,92,82,0.25)"},
+    warn:{background:"linear-gradient(135deg,#e07020,#c05a10)",color:"#fff",boxShadow:"0 4px 14px rgba(200,90,20,0.3)"},
+    green:{background:"linear-gradient(135deg,#1a7a6e,#0d5c52)",color:"#fff",boxShadow:"0 4px 14px rgba(13,92,82,0.3)"},
   };
-  return <button onClick={disabled?undefined:onClick} style={{...s,...v[variant]}} onMouseEnter={e=>{if(!disabled)e.currentTarget.style.transform="translateY(-1px) scale(1.02)";}} onMouseLeave={e=>{e.currentTarget.style.transform="";}}>{children}</button>;
+  return (
+    <button onClick={disabled?undefined:onClick} style={{...s,...v[variant]}}
+      onMouseEnter={e=>{if(!disabled)e.currentTarget.style.transform="translateY(-1px) scale(1.02)";}}
+      onMouseLeave={e=>{e.currentTarget.style.transform="";}}>
+      {children}
+    </button>
+  );
 }
 
 function Inp({ label, value, onChange, type="text", placeholder, hint }) {
   return (
     <div>
-      {label&&<label style={{fontSize:"10px",color:C.mut,letterSpacing:"1.5px",textTransform:"uppercase",display:"block",marginBottom:"4px"}}>{label}</label>}
+      {label && <label style={{fontSize:"10px",color:C.mut,letterSpacing:"1.5px",textTransform:"uppercase",display:"block",marginBottom:"4px"}}>{label}</label>}
       <input type={type} value={value} onChange={onChange} placeholder={placeholder}
         style={{width:"100%",padding:"10px 13px",borderRadius:"10px",border:"1px solid rgba(13,92,82,0.24)",background:"rgba(255,255,255,0.88)",fontSize:"14px",color:C.text,outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}/>
-      {hint&&<div style={{fontSize:"10px",color:C.fnt,marginTop:"4px"}}>{hint}</div>}
+      {hint && <div style={{fontSize:"10px",color:C.fnt,marginTop:"4px"}}>{hint}</div>}
     </div>
   );
 }
 
 function Flash({ msg }) {
-  if(!msg) return null;
-  return <div style={{background:`linear-gradient(135deg,${C.tD},${C.t})`,color:C.sand,padding:"12px 16px",borderRadius:"12px",fontSize:"13px",fontWeight:"700",textAlign:"center",boxShadow:"0 4px 20px rgba(13,92,82,0.35)",animation:"fadeIn 0.3s"}}>{msg}</div>;
+  if (!msg) return null;
+  return (
+    <div style={{background:`linear-gradient(135deg,${C.tD},${C.t})`,color:C.sand,padding:"12px 16px",borderRadius:"12px",fontSize:"13px",fontWeight:"700",textAlign:"center",boxShadow:"0 4px 20px rgba(13,92,82,0.35)"}}>
+      {msg}
+    </div>
+  );
 }
 
-// Tarjeta de fidelidad
-function LoyaltyCard({ client, lang, exps }) {
+function LoyaltyCard({ client, lang }) {
   const expired = pointsExpired(client.lastVisit);
   const days = daysToExpiry(client.lastVisit);
+  const pts = expired ? 0 : client.points;
   return (
     <div style={{background:"linear-gradient(135deg,#0b4e46 0%,#1a7a6e 45%,#0a4240 75%,#062820 100%)",borderRadius:"22px",padding:"22px 20px",position:"relative",overflow:"hidden",boxShadow:"0 22px 60px rgba(13,92,82,0.45),0 0 0 1px rgba(212,87,30,0.3)",minHeight:"195px"}}>
       <div style={{position:"absolute",top:"-50px",right:"-50px",width:"180px",height:"180px",borderRadius:"50%",background:"radial-gradient(circle,rgba(212,87,30,0.16) 0%,transparent 65%)"}}/>
@@ -314,7 +320,7 @@ function LoyaltyCard({ client, lang, exps }) {
           </div>
           <div style={{fontSize:"20px",fontWeight:"700",color:C.sand,fontFamily:"'Cormorant Garamond',serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{client.name}</div>
           <div style={{fontSize:"11px",color:"rgba(212,87,30,0.85)",marginTop:"3px",letterSpacing:"2px",fontFamily:"monospace"}}>{client.id}</div>
-          <div style={{fontSize:"9px",color:"rgba(212,87,30,0.55)",marginTop:"2px",letterSpacing:"1px"}}>📱 Muestra este QR al llegar</div>
+          <div style={{fontSize:"9px",color:"rgba(212,87,30,0.55)",marginTop:"2px"}}>📱 Muestra este QR al llegar</div>
         </div>
         <div style={{background:"rgba(255,255,255,0.97)",borderRadius:"10px",padding:"6px",flexShrink:0,marginLeft:"12px"}}>
           <QRCode value={`MT:${client.id}`} size={76}/>
@@ -324,13 +330,15 @@ function LoyaltyCard({ client, lang, exps }) {
         <div>
           <div style={{fontSize:"9px",color:"rgba(212,87,30,0.7)",letterSpacing:"2.5px",textTransform:"uppercase",marginBottom:"2px"}}>{T[lang].accPoints}</div>
           <div style={{fontSize:"40px",fontWeight:"700",color:expired?"#aaa":C.tr,fontFamily:"'Cormorant Garamond',serif",lineHeight:"1"}}>
-            {expired?0:client.points}<span style={{fontSize:"13px",fontWeight:"400",marginLeft:"3px",color:"rgba(212,87,30,0.6)"}}>pts</span>
+            {pts}<span style={{fontSize:"13px",fontWeight:"400",marginLeft:"3px",color:"rgba(212,87,30,0.6)"}}>pts</span>
           </div>
-          {!expired && days <= 30 && <div style={{fontSize:"10px",color:"#f5c842",marginTop:"3px"}}>⚠️ {T[lang].expire} {days} {T[lang].expireDays}</div>}
+          {!expired && days<=30 && <div style={{fontSize:"10px",color:"#f5c842",marginTop:"3px"}}>⚠️ {T[lang].expire} {days} {T[lang].expireDays}</div>}
           {expired && <div style={{fontSize:"10px",color:"#f56242",marginTop:"3px"}}>⚠️ {T[lang].expiredBadge}</div>}
         </div>
         <div style={{display:"flex",gap:"5px",paddingBottom:"4px"}}>
-          {[0,1,2,3,4].map(i=><div key={i} style={{width:"9px",height:"9px",borderRadius:"50%",background:(!expired&&i<Math.min(5,Math.floor(client.points/20)))?C.tr:"rgba(212,87,30,0.2)",boxShadow:(!expired&&i<Math.min(5,Math.floor(client.points/20)))?"0 0 8px rgba(212,87,30,0.55)":"none",transition:"all 0.4s"}}/>)}
+          {[0,1,2,3,4].map(i => (
+            <div key={i} style={{width:"9px",height:"9px",borderRadius:"50%",background:(!expired&&i<Math.min(5,Math.floor(pts/20)))?C.tr:"rgba(212,87,30,0.2)",boxShadow:(!expired&&i<Math.min(5,Math.floor(pts/20)))?"0 0 8px rgba(212,87,30,0.55)":"none",transition:"all 0.4s"}}/>
+          ))}
         </div>
       </div>
     </div>
@@ -342,12 +350,13 @@ function ProgressBars({ client, rewards, lang, onRedeemRequest }) {
   const [sent, setSent] = useState(null);
   return (
     <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
-      {rewards.map(r=>{
-        const pct=Math.min(100,(pts/r.cost)*100), ok=pts>=r.cost;
-        const already=client.redeemRequest===r.id;
-        const justSent=sent===r.id;
+      {rewards.map(r => {
+        const pct = Math.min(100,(pts/r.cost)*100);
+        const ok = pts >= r.cost;
+        const already = client.redeemRequest === r.id;
+        const justSent = sent === r.id;
         return (
-          <div key={r.id} style={{background:ok?"rgba(255,255,255,0.88)":"rgba(255,255,255,0.72)",borderRadius:"14px",padding:"14px 16px",backdropFilter:"blur(10px)",border:`1px solid ${ok?"rgba(42,157,143,0.45)":"rgba(13,92,82,0.14)"}`,transition:"all 0.3s",boxShadow:ok?"0 4px 20px rgba(13,92,82,0.12)":"none"}}>
+          <div key={r.id} style={{background:ok?"rgba(255,255,255,0.88)":"rgba(255,255,255,0.72)",borderRadius:"14px",padding:"14px 16px",backdropFilter:"blur(10px)",border:`1px solid ${ok?"rgba(42,157,143,0.45)":"rgba(13,92,82,0.14)"}`,boxShadow:ok?"0 4px 20px rgba(13,92,82,0.12)":"none"}}>
             <div style={{display:"flex",justifyContent:"space-between",marginBottom:"10px",alignItems:"center"}}>
               <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
                 <span style={{fontSize:"22px"}}>{r.icon}</span>
@@ -356,29 +365,20 @@ function ProgressBars({ client, rewards, lang, onRedeemRequest }) {
                   <div style={{fontSize:"10px",color:C.fnt}}>{r.cost} pts</div>
                 </div>
               </div>
-              {!ok && <span style={{fontSize:"11px",fontWeight:"700",color:C.fnt,padding:"3px 8px",borderRadius:"99px",flexShrink:0}}>{pts}/{r.cost}</span>}
+              {!ok && <span style={{fontSize:"11px",fontWeight:"700",color:C.fnt,flexShrink:0}}>{pts}/{r.cost}</span>}
             </div>
             <div style={{height:"7px",background:"rgba(13,92,82,0.11)",borderRadius:"99px",overflow:"hidden",marginBottom:ok?"12px":"0"}}>
-              <div style={{height:"100%",width:`${pct}%`,background:ok?`linear-gradient(90deg,${C.tL},${C.t})`:`linear-gradient(90deg,${C.tr},${C.trD})`,borderRadius:"99px",transition:"width 0.7s cubic-bezier(0.34,1.4,0.64,1)"}}/>
+              <div style={{height:"100%",width:`${pct}%`,background:ok?`linear-gradient(90deg,${C.tL},${C.t})`:`linear-gradient(90deg,${C.tr},${C.trD})`,borderRadius:"99px",transition:"width 0.7s ease"}}/>
             </div>
-            {ok && (
-              already || justSent ? (
-                <div style={{background:"rgba(13,92,82,0.1)",borderRadius:"10px",padding:"10px 14px",textAlign:"center",fontSize:"12px",fontWeight:"700",color:C.t}}>
-                  ✓ {lang==="en"?"Request sent! Staff will process it on your next visit.":"¡Solicitud enviada! El personal la procesará en tu próxima visita."}
-                </div>
-              ) : (
-                <button onClick={()=>{onRedeemRequest(client.id,r.id);setSent(r.id);}} style={{
-                  width:"100%",padding:"11px",borderRadius:"10px",border:"none",cursor:"pointer",
-                  background:`linear-gradient(135deg,${C.tr},${C.trD})`,
-                  color:"#fff",fontWeight:"800",fontSize:"13px",fontFamily:"'Nunito Sans',sans-serif",
-                  boxShadow:"0 4px 16px rgba(212,87,30,0.38)",transition:"all 0.2s",letterSpacing:"0.3px"
-                }}
-                  onMouseEnter={e=>e.currentTarget.style.transform="translateY(-1px)"}
-                  onMouseLeave={e=>e.currentTarget.style.transform=""}>
-                  🎁 {lang==="en"?`Claim: ${r.labelEn||r.label}`:`Solicitar: ${r.label}`}
-                </button>
-              )
-            )}
+            {ok && (already||justSent ? (
+              <div style={{background:"rgba(13,92,82,0.1)",borderRadius:"10px",padding:"10px 14px",textAlign:"center",fontSize:"12px",fontWeight:"700",color:C.t}}>
+                ✓ {lang==="en"?"Request sent! Staff will process it on your next visit.":"¡Solicitud enviada! El personal la procesará en tu próxima visita."}
+              </div>
+            ) : (
+              <button onClick={()=>{onRedeemRequest(client.id,r.id);setSent(r.id);}} style={{width:"100%",padding:"11px",borderRadius:"10px",border:"none",cursor:"pointer",background:`linear-gradient(135deg,${C.tr},${C.trD})`,color:"#fff",fontWeight:"800",fontSize:"13px",fontFamily:"'Nunito Sans',sans-serif",boxShadow:"0 4px 16px rgba(212,87,30,0.38)",transition:"all 0.2s"}}>
+                🎁 {lang==="en"?`Claim: ${r.labelEn||r.label}`:`Solicitar: ${r.label}`}
+              </button>
+            ))}
           </div>
         );
       })}
@@ -387,10 +387,10 @@ function ProgressBars({ client, rewards, lang, onRedeemRequest }) {
 }
 
 function HistoryList({ history, lang }) {
-  if(!history.length) return <div style={{textAlign:"center",color:C.fnt,padding:"20px",fontSize:"13px"}}>{T[lang].noHistory}</div>;
+  if (!history.length) return <div style={{textAlign:"center",color:C.fnt,padding:"20px",fontSize:"13px"}}>{T[lang].noHistory}</div>;
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:"7px",maxHeight:"260px",overflowY:"auto",paddingRight:"2px"}}>
-      {[...history].reverse().map((h,i)=>(
+    <div style={{display:"flex",flexDirection:"column",gap:"7px",maxHeight:"260px",overflowY:"auto"}}>
+      {[...history].reverse().map((h,i) => (
         <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:"10px",background:h.delta>0?"rgba(13,92,82,0.07)":"rgba(180,50,20,0.06)",border:`1px solid ${h.delta>0?"rgba(13,92,82,0.14)":"rgba(180,50,20,0.14)"}`}}>
           <div>
             <div style={{fontSize:"12px",fontWeight:"600",color:C.text}}>{h.type}</div>
@@ -403,10 +403,7 @@ function HistoryList({ history, lang }) {
   );
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-// VISTA CLIENTE
-// ══════════════════════════════════════════════════════════════════════════
-function ClientView({ clients, onRegister, currentId, setCurrentId, lang, rewards, exps, onRedeemRequest }) {
+function ClientView({ clients, onRegister, currentId, setCurrentId, lang, rewards, onRedeemRequest }) {
   const [tab, setTab] = useState("card");
   const [screen, setScreen] = useState("home");
   const [query, setQuery] = useState("");
@@ -414,44 +411,43 @@ function ClientView({ clients, onRegister, currentId, setCurrentId, lang, reward
   const [form, setForm] = useState({name:"",phone:""});
   const [fErr, setFErr] = useState("");
   const [newId, setNewId] = useState(null);
-
   const t = T[lang];
-  const client = clients.find(c=>c.id===currentId);
-  const pts = client && pointsExpired(client.lastVisit) ? 0 : client?.points || 0;
-  const unread = client?.notifications?.filter(n=>!n.read).length || 0;
+  const client = clients.find(c => c.id===currentId);
+  const unread = client?.notifications?.filter(n => !n.read).length || 0;
 
   const handleSearch = () => {
     const q = query.trim().toLowerCase();
-    const found = clients.find(c=>
+    const found = clients.find(c =>
       c.id.toLowerCase()===q ||
+      c.name.toLowerCase().includes(q) ||
       c.name.toLowerCase()===q ||
       c.phone.replace(/\D/g,"")===q.replace(/\D/g,"")
     );
-    if(!found){setQErr(t.searchErr);return;}
+    if (!found) { setQErr(t.searchErr); return; }
     setCurrentId(found.id); setQErr(""); setQuery("");
   };
 
   const handleRegister = () => {
-    if(!form.name.trim()||!form.phone.trim()){setFErr(t.fillAll);return;}
-    const id=onRegister(form); setNewId(id); setScreen("registered");
+    if (!form.name.trim()||!form.phone.trim()) { setFErr(t.fillAll); return; }
+    const id = onRegister(form);
+    setNewId(id);
+    setScreen("registered");
   };
 
-  if(screen==="registered") return (
+  if (screen==="registered") return (
     <div style={{display:"flex",flexDirection:"column",gap:"18px"}}>
       <Card title={t.registerOk} icon="🎉" accent>
         <div style={{textAlign:"center",padding:"8px 0 4px"}}>
           <div style={{fontSize:"13px",color:C.mut,marginBottom:"12px"}}>{t.yourId}</div>
           <div style={{fontSize:"34px",fontWeight:"800",color:C.tD,fontFamily:"'Cormorant Garamond',serif",letterSpacing:"3px",background:"rgba(13,92,82,0.08)",padding:"14px 20px",borderRadius:"14px",marginBottom:"10px"}}>{newId}</div>
           <div style={{fontSize:"12px",color:C.fnt,marginBottom:"20px",lineHeight:"1.7"}}>{t.saveId}</div>
-          <Btn variant="primary" full onClick={()=>{setCurrentId(newId);setScreen("home");}}>
-            {t.viewCard}
-          </Btn>
+          <Btn variant="primary" full onClick={()=>{setCurrentId(newId);setScreen("home");}}>{t.viewCard}</Btn>
         </div>
       </Card>
     </div>
   );
 
-  if(client) return (
+  if (client) return (
     <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <div>
@@ -459,38 +455,29 @@ function ClientView({ clients, onRegister, currentId, setCurrentId, lang, reward
           <div style={{fontSize:"22px",fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",color:C.tD}}>{client.name.split(" ")[0]} ✨</div>
         </div>
         <div style={{display:"flex",gap:"8px",alignItems:"center"}}>
-          {unread>0&&<div style={{background:C.tr,color:"#fff",borderRadius:"99px",padding:"4px 10px",fontSize:"11px",fontWeight:"800",cursor:"pointer"}} onClick={()=>setTab("notif")}>🔔 {unread}</div>}
+          {unread>0 && <div style={{background:C.tr,color:"#fff",borderRadius:"99px",padding:"4px 10px",fontSize:"11px",fontWeight:"800",cursor:"pointer"}} onClick={()=>setTab("notif")}>🔔 {unread}</div>}
           <button onClick={()=>{setCurrentId(null);setScreen("home");setTab("card");}} style={{background:"rgba(13,92,82,0.1)",border:"none",borderRadius:"99px",padding:"6px 14px",cursor:"pointer",fontSize:"11px",color:C.tD,fontWeight:"700"}}>{t.logout}</button>
         </div>
       </div>
-
-      <LoyaltyCard client={client} lang={lang} exps={exps}/>
-
-      {/* Tabs */}
+      <LoyaltyCard client={client} lang={lang}/>
       <div style={{display:"flex",background:"rgba(255,255,255,0.55)",borderRadius:"12px",padding:"3px",border:"1px solid rgba(13,92,82,0.14)",gap:"2px"}}>
-        {[{k:"card",l:t.progress},{k:"history",l:t.history},{k:"notif",l:`🔔${unread>0?` (${unread})`:""}`}].map(({k,l})=>(
-          <button key={k} onClick={()=>setTab(k)} style={{flex:1,padding:"8px 4px",borderRadius:"10px",border:"none",cursor:"pointer",fontWeight:"700",fontSize:"11px",transition:"all 0.22s",fontFamily:"'Nunito Sans',sans-serif",
-            background:tab===k?`linear-gradient(135deg,${C.tD},${C.t})`:"transparent",
-            color:tab===k?C.sand:C.mut,boxShadow:tab===k?"0 2px 10px rgba(13,92,82,0.3)":"none"}}>{l}</button>
+        {[{k:"card",l:t.progress},{k:"history",l:t.history},{k:"notif",l:`🔔${unread>0?` (${unread})`:""}`}].map(({k,l}) => (
+          <button key={k} onClick={()=>setTab(k)} style={{flex:1,padding:"8px 4px",borderRadius:"10px",border:"none",cursor:"pointer",fontWeight:"700",fontSize:"11px",transition:"all 0.22s",fontFamily:"'Nunito Sans',sans-serif",background:tab===k?`linear-gradient(135deg,${C.tD},${C.t})`:"transparent",color:tab===k?C.sand:C.mut,boxShadow:tab===k?"0 2px 10px rgba(13,92,82,0.3)":"none"}}>{l}</button>
         ))}
       </div>
-
-      {tab==="card"&&<ProgressBars client={client} rewards={rewards} lang={lang} onRedeemRequest={onRedeemRequest}/>}
-      {tab==="history"&&<Card title={t.historyTitle} icon="📋"><HistoryList history={client.history} lang={lang}/></Card>}
-      {tab==="notif"&&(
+      {tab==="card" && <ProgressBars client={client} rewards={rewards} lang={lang} onRedeemRequest={onRedeemRequest}/>}
+      {tab==="history" && <Card title={t.historyTitle} icon="📋"><HistoryList history={client.history} lang={lang}/></Card>}
+      {tab==="notif" && (
         <Card title={t.notifications} icon="🔔">
           {client.notifications.length===0
             ? <div style={{textAlign:"center",color:C.fnt,padding:"16px",fontSize:"13px"}}>{t.noNotif}</div>
             : <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
-                {[...client.notifications].reverse().map((n,i)=>(
-                  <div key={i} style={{padding:"10px 12px",borderRadius:"10px",background:n.read?"rgba(13,92,82,0.04)":"rgba(13,92,82,0.1)",border:`1px solid ${n.read?"rgba(13,92,82,0.1)":"rgba(13,92,82,0.25)"}`,fontSize:"13px",color:C.text,fontWeight:n.read?"400":"600"}}>
-                    {n.msg}
-                  </div>
+                {[...client.notifications].reverse().map((n,i) => (
+                  <div key={i} style={{padding:"10px 12px",borderRadius:"10px",background:n.read?"rgba(13,92,82,0.04)":"rgba(13,92,82,0.1)",border:`1px solid ${n.read?"rgba(13,92,82,0.1)":"rgba(13,92,82,0.25)"}`,fontSize:"13px",color:C.text,fontWeight:n.read?"400":"600"}}>{n.msg}</div>
                 ))}
               </div>}
         </Card>
       )}
-
     </div>
   );
 
@@ -498,23 +485,21 @@ function ClientView({ clients, onRegister, currentId, setCurrentId, lang, reward
     <div style={{display:"flex",flexDirection:"column",gap:"18px"}}>
       <div style={{textAlign:"center",padding:"6px 0"}}>
         <div style={{display:"flex",justifyContent:"center",marginBottom:"8px"}}><Logo size={94}/></div>
-        <div style={{fontSize:"11px",letterSpacing:"3px",color:C.mut,textTransform:"uppercase"}}>{lang==="en"?"Program of":t.loyalty.split(" ")[0]+" de"}</div>
-        <div style={{fontSize:"30px",fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",color:C.tD,lineHeight:"1.1"}}>{lang==="en"?"Loyalty":t.loyalty.split(" ").slice(1).join(" ")}</div>
+        <div style={{fontSize:"11px",letterSpacing:"3px",color:C.mut,textTransform:"uppercase"}}>{lang==="en"?"Program of":"Programa de"}</div>
+        <div style={{fontSize:"30px",fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",color:C.tD,lineHeight:"1.1"}}>{lang==="en"?"Loyalty":"Fidelidad"}</div>
         <div style={{fontSize:"12px",color:C.fnt,marginTop:"2px"}}>{t.appSub} · Mandala Thai</div>
       </div>
-
-      {screen==="home"&&(
+      {screen==="home" && (
         <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
           <Btn variant="primary" full onClick={()=>setScreen("search")}>🔍 {t.accessCard}</Btn>
           <Btn variant="ghost" full onClick={()=>setScreen("register")}>✦ {t.firstVisit}</Btn>
         </div>
       )}
-
-      {screen==="search"&&(
+      {screen==="search" && (
         <Card title={t.searchTitle} icon="🔍">
           <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
             <Inp label={t.searchLabel} value={query} onChange={e=>setQuery(e.target.value)} placeholder={t.namePh} hint={t.searchHint}/>
-            {qErr&&<div style={{fontSize:"12px",color:"#c0391b",background:"rgba(192,57,27,0.09)",padding:"8px 12px",borderRadius:"8px"}}>{qErr}</div>}
+            {qErr && <div style={{fontSize:"12px",color:"#c0391b",background:"rgba(192,57,27,0.09)",padding:"8px 12px",borderRadius:"8px"}}>{qErr}</div>}
             <div style={{display:"flex",gap:"9px"}}>
               <Btn variant="ghost" small onClick={()=>{setScreen("home");setQErr("");}}>{t.back}</Btn>
               <Btn variant="primary" onClick={handleSearch}>{t.searchBtn}</Btn>
@@ -522,13 +507,12 @@ function ClientView({ clients, onRegister, currentId, setCurrentId, lang, reward
           </div>
         </Card>
       )}
-
-      {screen==="register"&&(
+      {screen==="register" && (
         <Card title={t.register} icon="✦">
           <div style={{display:"flex",flexDirection:"column",gap:"11px"}}>
             <Inp label={t.nameLabel} value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder={t.namePh}/>
             <Inp label={t.phoneLabel} value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} placeholder={t.phonePh}/>
-            {fErr&&<div style={{fontSize:"12px",color:"#c0391b",background:"rgba(192,57,27,0.09)",padding:"8px 12px",borderRadius:"8px"}}>{fErr}</div>}
+            {fErr && <div style={{fontSize:"12px",color:"#c0391b",background:"rgba(192,57,27,0.09)",padding:"8px 12px",borderRadius:"8px"}}>{fErr}</div>}
             <div style={{display:"flex",gap:"9px"}}>
               <Btn variant="ghost" small onClick={()=>{setScreen("home");setFErr("");}}>{t.back}</Btn>
               <Btn variant="primary" onClick={handleRegister}>{t.registerBtn}</Btn>
@@ -540,9 +524,6 @@ function ClientView({ clients, onRegister, currentId, setCurrentId, lang, reward
   );
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-// VISTA ADMIN / STAFF
-// ══════════════════════════════════════════════════════════════════════════
 function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, staffList, setStaffList, lang }) {
   const [pinInput, setPinInput] = useState("");
   const [currentStaff, setCurrentStaff] = useState(null);
@@ -550,71 +531,75 @@ function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, st
   const [search, setSearch] = useState("");
   const [selId, setSelId] = useState(null);
   const [selExp, setSelExp] = useState(null);
-  const [adminTab, setAdminTab] = useState("clients");
+  const [adminTab, setAdminTab] = useState("scan");
   const [flashMsg, setFlashMsg] = useState("");
   const [pinForm, setPinForm] = useState({current:"",newPin:"",confirm:""});
-  const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({name:"",email:"",phone:""});
   const [pinMsg, setPinMsg] = useState({text:"",ok:false});
   const [newExp, setNewExp] = useState({label:"",pts:"",icon:"⭐"});
   const [newReward, setNewReward] = useState({label:"",cost:""});
-  const [newStaff, setNewStaff] = useState({name:"",pin:"",role:"staff"});
+  const [newStaff, setNewStaff] = useState({name:"",pin:""});
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({name:"",phone:""});
   const t = T[lang];
-  const client = clients.find(c=>c.id===selId);
+  const client = clients.find(c => c.id===selId);
   const isAdmin = currentStaff?.role==="admin";
-
-  const flash = msg=>{setFlashMsg(msg);setTimeout(()=>setFlashMsg(""),3000);};
+  const flash = msg => { setFlashMsg(msg); setTimeout(()=>setFlashMsg(""),3000); };
+  const filtered = clients.filter(c => c.name.toLowerCase().includes(search.toLowerCase())||c.id.toLowerCase().includes(search.toLowerCase())||c.phone.includes(search));
+  const pendingRequests = clients.filter(c => c.redeemRequest);
 
   const handlePinDigit = d => {
-    if(d==="⌫"){setPinInput(p=>p.slice(0,-1));setPinErr(false);return;}
-    const next=pinInput+d; setPinInput(next);
-    if(next.length===4){
-      const found=staffList.find(s=>s.pin===next);
-      if(found){setCurrentStaff(found);setPinErr(false);}
-      else{setPinErr(true);setTimeout(()=>{setPinInput("");setPinErr(false);},600);}
+    if (d==="⌫") { setPinInput(p=>p.slice(0,-1)); setPinErr(false); return; }
+    const next = pinInput+d; setPinInput(next);
+    if (next.length===4) {
+      const found = staffList.find(s => s.pin===next);
+      if (found) { setCurrentStaff(found); setPinErr(false); }
+      else { setPinErr(true); setTimeout(()=>{setPinInput("");setPinErr(false);},600); }
     }
   };
 
-  const addPoints = (cid,exp) => {
-    setClients(p=>p.map(c=>c.id!==cid?c:{...c,points:c.points+exp.pts,lastVisit:todayISO(),
+  const addPoints = (cid, exp) => {
+    setClients(p => p.map(c => c.id!==cid ? c : {
+      ...c, points:c.points+exp.pts, lastVisit:todayISO(),
       notifications:[...c.notifications,{id:Date.now(),msg:`✨ +${exp.pts} pts por "${lang==="en"&&exp.labelEn?exp.labelEn:exp.label}". Total: ${c.points+exp.pts} pts`,read:false}],
-      history:[...c.history,{date:fmtDate(),type:lang==="en"&&exp.labelEn?exp.labelEn:exp.label,delta:exp.pts}]}));
+      history:[...c.history,{date:fmtDate(),type:lang==="en"&&exp.labelEn?exp.labelEn:exp.label,delta:exp.pts}]
+    }));
     flash(t.flashPoints(exp.pts, clients.find(c=>c.id===cid)?.name.split(" ")[0]));
     setSelExp(null);
   };
 
-  const redeemReward = (cid,r) => {
-    setClients(p=>p.map(c=>c.id!==cid?c:{...c,points:c.points-r.cost,redeemRequest:null,
+  const redeemReward = (cid, r) => {
+    setClients(p => p.map(c => c.id!==cid ? c : {
+      ...c, points:c.points-r.cost, redeemRequest:null,
       notifications:[...c.notifications,{id:Date.now(),msg:`🎁 Tu canje "${lang==="en"&&r.labelEn?r.labelEn:r.label}" fue aprobado. Puntos restantes: ${c.points-r.cost}`,read:false}],
-      history:[...c.history,{date:fmtDate(),type:`Canje: ${lang==="en"&&r.labelEn?r.labelEn:r.label}`,delta:-r.cost}]}));
+      history:[...c.history,{date:fmtDate(),type:`Canje: ${lang==="en"&&r.labelEn?r.labelEn:r.label}`,delta:-r.cost}]
+    }));
     flash(t.flashRedeem(r.label, clients.find(c=>c.id===cid)?.name.split(" ")[0]));
   };
 
-  const approveRedeemReq = (cid) => {
-    const c=clients.find(x=>x.id===cid);
-    const r=rewards.find(x=>x.id===c.redeemRequest);
-    if(r) redeemReward(cid,r);
+  const approveReq = cid => {
+    const c = clients.find(x => x.id===cid);
+    const r = rewards.find(x => x.id===c.redeemRequest);
+    if (r) redeemReward(cid,r);
   };
 
-  const rejectReq = (cid) => {
-    setClients(p=>p.map(c=>c.id!==cid?c:{...c,redeemRequest:null,
-      notifications:[...c.notifications,{id:Date.now(),msg:`Tu solicitud de canje fue rechazada. Contacta al personal.`,read:false}]}));
+  const rejectReq = cid => {
+    setClients(p => p.map(c => c.id!==cid ? c : {
+      ...c, redeemRequest:null,
+      notifications:[...c.notifications,{id:Date.now(),msg:"Tu solicitud de canje fue rechazada. Contacta al personal.",read:false}]
+    }));
   };
 
   const handleChangePin = () => {
-    if(pinForm.current!==currentStaff.pin){setPinMsg({text:t.pinErrCurrent,ok:false});return;}
-    if(pinForm.newPin.length!==4||!/^\d{4}$/.test(pinForm.newPin)){setPinMsg({text:t.pinErrFormat,ok:false});return;}
-    if(pinForm.newPin!==pinForm.confirm){setPinMsg({text:t.pinErrMatch,ok:false});return;}
-    setStaffList(p=>p.map(s=>s.id===currentStaff.id?{...s,pin:pinForm.newPin}:s));
-    setCurrentStaff(s=>({...s,pin:pinForm.newPin}));
-    setPinMsg({text:t.pinOk,ok:true}); setPinForm({current:"",newPin:"",confirm:""});
+    if (pinForm.current!==currentStaff.pin) { setPinMsg({text:t.pinErrCurrent,ok:false}); return; }
+    if (pinForm.newPin.length!==4||!/^\d{4}$/.test(pinForm.newPin)) { setPinMsg({text:t.pinErrFormat,ok:false}); return; }
+    if (pinForm.newPin!==pinForm.confirm) { setPinMsg({text:t.pinErrMatch,ok:false}); return; }
+    setStaffList(p => p.map(s => s.id===currentStaff.id ? {...s,pin:pinForm.newPin} : s));
+    setCurrentStaff(s => ({...s,pin:pinForm.newPin}));
+    setPinMsg({text:t.pinOk,ok:true});
+    setPinForm({current:"",newPin:"",confirm:""});
   };
 
-  const filtered = clients.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())||c.id.toLowerCase().includes(search.toLowerCase())||c.phone.includes(search)||c.email.toLowerCase().includes(search.toLowerCase()));
-  const pendingRequests = clients.filter(c=>c.redeemRequest);
-
-  // Pantalla PIN
-  if(!currentStaff) return (
+  if (!currentStaff) return (
     <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"22px",padding:"16px 0"}}>
       <div style={{textAlign:"center"}}>
         <div style={{display:"flex",justifyContent:"center",marginBottom:"10px"}}><Logo size={84}/></div>
@@ -622,11 +607,13 @@ function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, st
         <div style={{fontSize:"12px",color:C.fnt,marginTop:"3px"}}>{t.pinHint}</div>
       </div>
       <div style={{display:"flex",gap:"14px"}}>
-        {[0,1,2,3].map(i=><div key={i} style={{width:"14px",height:"14px",borderRadius:"50%",background:pinInput.length>i?C.tD:"rgba(13,92,82,0.2)",boxShadow:pinInput.length>i?"0 0 8px rgba(13,92,82,0.5)":"none",transition:"all 0.2s"}}/>)}
+        {[0,1,2,3].map(i => (
+          <div key={i} style={{width:"14px",height:"14px",borderRadius:"50%",background:pinInput.length>i?C.tD:"rgba(13,92,82,0.2)",boxShadow:pinInput.length>i?"0 0 8px rgba(13,92,82,0.5)":"none",transition:"all 0.2s"}}/>
+        ))}
       </div>
-      {pinErr&&<div style={{fontSize:"12px",color:"#c0391b",background:"rgba(192,57,27,0.1)",padding:"8px 16px",borderRadius:"8px"}}>{t.pinWrong}</div>}
+      {pinErr && <div style={{fontSize:"12px",color:"#c0391b",background:"rgba(192,57,27,0.1)",padding:"8px 16px",borderRadius:"8px"}}>{t.pinWrong}</div>}
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"9px",width:"210px"}}>
-        {["1","2","3","4","5","6","7","8","9","","0","⌫"].map((d,i)=>(
+        {["1","2","3","4","5","6","7","8","9","","0","⌫"].map((d,i) => (
           <button key={i} onClick={()=>d&&handlePinDigit(d)} style={{height:"54px",borderRadius:"13px",background:d==="⌫"?"rgba(192,57,27,0.12)":"rgba(255,255,255,0.84)",border:"1px solid rgba(13,92,82,0.17)",fontSize:d==="⌫"?"17px":"20px",fontWeight:"600",color:C.text,cursor:d?"pointer":"default",fontFamily:"'Cormorant Garamond',serif",boxShadow:"0 2px 8px rgba(0,0,0,0.05)",transition:"all 0.15s",visibility:d===""?"hidden":"visible"}}
             onMouseEnter={e=>{if(d)e.currentTarget.style.transform="scale(0.95)";}} onMouseLeave={e=>{e.currentTarget.style.transform="";}}>
             {d}
@@ -646,174 +633,159 @@ function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, st
         <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
           <Logo size={36}/>
           <div>
-            <div style={{fontSize:"10px",letterSpacing:"2px",color:C.mut,textTransform:"uppercase"}}>{currentStaff.role==="admin"?t.panelTitle:t.staffPanel}</div>
+            <div style={{fontSize:"10px",letterSpacing:"2px",color:C.mut,textTransform:"uppercase"}}>{isAdmin?t.panelTitle:t.staffPanel}</div>
             <div style={{fontSize:"17px",fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",color:C.tD}}>{currentStaff.name}</div>
           </div>
         </div>
-        <button onClick={()=>{setCurrentStaff(null);setPinInput("");setSelId(null);setAdminTab("clients");}} style={{background:"rgba(192,57,27,0.1)",border:"none",borderRadius:"99px",padding:"6px 13px",cursor:"pointer",fontSize:"11px",color:"#c0391b",fontWeight:"700"}}>{t.lock}</button>
+        <button onClick={()=>{setCurrentStaff(null);setPinInput("");setSelId(null);setAdminTab("scan");}} style={{background:"rgba(192,57,27,0.1)",border:"none",borderRadius:"99px",padding:"6px 13px",cursor:"pointer",fontSize:"11px",color:"#c0391b",fontWeight:"700"}}>{t.lock}</button>
       </div>
 
       <div style={{display:"flex",background:"rgba(255,255,255,0.55)",borderRadius:"12px",padding:"3px",border:"1px solid rgba(13,92,82,0.14)",gap:"2px",overflowX:"auto"}}>
-        {tabs.map(({k,l})=>(
-          <button key={k} onClick={()=>setAdminTab(k)} style={{flex:1,padding:"8px 4px",borderRadius:"10px",border:"none",cursor:"pointer",fontWeight:"700",fontSize:"11px",transition:"all 0.22s",fontFamily:"'Nunito Sans',sans-serif",minWidth:"60px",
-            background:adminTab===k?`linear-gradient(135deg,${C.tD},${C.t})`:"transparent",
-            color:adminTab===k?C.sand:C.mut,boxShadow:adminTab===k?"0 2px 10px rgba(13,92,82,0.3)":"none"}}>{l}</button>
+        {tabs.map(({k,l}) => (
+          <button key={k} onClick={()=>setAdminTab(k)} style={{flex:1,padding:"8px 4px",borderRadius:"10px",border:"none",cursor:"pointer",fontWeight:"700",fontSize:"11px",transition:"all 0.22s",fontFamily:"'Nunito Sans',sans-serif",minWidth:"55px",background:adminTab===k?`linear-gradient(135deg,${C.tD},${C.t})`:"transparent",color:adminTab===k?C.sand:C.mut,boxShadow:adminTab===k?"0 2px 10px rgba(13,92,82,0.3)":"none"}}>{l}</button>
         ))}
       </div>
 
       <Flash msg={flashMsg}/>
 
-      {/* TAB ESCANEAR QR */}
-      {adminTab==="scan"&&(
-        <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
-          <Card title="Escanear QR de Cliente" icon="📷">
-            <div style={{textAlign:"center",padding:"10px 0"}}>
-              {/* Visor simulado de cámara */}
-              <div style={{width:"220px",height:"220px",borderRadius:"16px",background:"#1a2416",margin:"0 auto 16px",position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(0,0,0,0.3)"}}>
-                {/* Esquinas del visor */}
-                <div style={{position:"absolute",top:"16px",left:"16px",width:"30px",height:"30px",borderTop:"3px solid #d4571e",borderLeft:"3px solid #d4571e",borderRadius:"4px 0 0 0"}}/>
-                <div style={{position:"absolute",top:"16px",right:"16px",width:"30px",height:"30px",borderTop:"3px solid #d4571e",borderRight:"3px solid #d4571e",borderRadius:"0 4px 0 0"}}/>
-                <div style={{position:"absolute",bottom:"16px",left:"16px",width:"30px",height:"30px",borderBottom:"3px solid #d4571e",borderLeft:"3px solid #d4571e",borderRadius:"0 0 0 4px"}}/>
-                <div style={{position:"absolute",bottom:"16px",right:"16px",width:"30px",height:"30px",borderBottom:"3px solid #d4571e",borderRight:"3px solid #d4571e",borderRadius:"0 0 4px 0"}}/>
-                {/* Línea de escaneo animada */}
-                <div style={{position:"absolute",left:"20px",right:"20px",height:"2px",background:"linear-gradient(90deg,transparent,#d4571e,transparent)",top:"50%",animation:"scanLine 2s ease-in-out infinite"}}/>
-                {/* Icono centro */}
-                <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",textAlign:"center"}}>
-                  <div style={{fontSize:"36px",marginBottom:"6px",opacity:0.4}}>📱</div>
-                  <div style={{fontSize:"10px",color:"rgba(255,255,255,0.4)",letterSpacing:"1px"}}>APUNTA AL QR</div>
-                </div>
-              </div>
-              <style>{`@keyframes scanLine{0%{top:20%}50%{top:80%}100%{top:20%}}`}</style>
-
-              <div style={{fontSize:"13px",color:C.mut,marginBottom:"16px",lineHeight:"1.6"}}>
-                En la app real la cámara se abre aquí.<br/>
-                El desarrollador conecta esta función.
-              </div>
-
-              {/* Búsqueda manual como alternativa */}
-              <div style={{background:"rgba(13,92,82,0.06)",borderRadius:"12px",padding:"14px",border:"1px solid rgba(13,92,82,0.15)"}}>
-                <div style={{fontSize:"11px",color:C.mut,letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:"10px"}}>O busca manualmente</div>
-                <Inp value={search} onChange={e=>setSearch(e.target.value)} placeholder="Nombre, ID o teléfono..."/>
-                <div style={{display:"flex",flexDirection:"column",gap:"7px",marginTop:"10px",maxHeight:"180px",overflowY:"auto"}}>
-                  {search.length>0&&filtered.map(c=>(
-                    <button key={c.id} onClick={()=>{setSelId(c.id);setAdminTab("clients");}} style={{background:"rgba(13,92,82,0.08)",border:"1px solid rgba(13,92,82,0.2)",borderRadius:"10px",padding:"10px 13px",cursor:"pointer",textAlign:"left",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                      <div>
-                        <div style={{fontWeight:"700",color:C.tD,fontSize:"13px"}}>{c.name}</div>
-                        <div style={{fontSize:"10px",color:C.fnt}}>{c.id} · {c.phone}</div>
-                      </div>
-                      <div style={{fontSize:"14px",fontWeight:"800",color:C.tr}}>{c.points} pts</div>
-                    </button>
-                  ))}
-                  {search.length>0&&filtered.length===0&&<div style={{fontSize:"12px",color:C.fnt,textAlign:"center",padding:"8px"}}>Sin resultados</div>}
-                </div>
+      {adminTab==="scan" && (
+        <Card title={t.scanTitle} icon="📷">
+          <div style={{textAlign:"center",padding:"8px 0"}}>
+            <div style={{width:"200px",height:"200px",borderRadius:"16px",background:"#1a2416",margin:"0 auto 14px",position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(0,0,0,0.3)"}}>
+              <div style={{position:"absolute",top:"16px",left:"16px",width:"28px",height:"28px",borderTop:"3px solid #d4571e",borderLeft:"3px solid #d4571e",borderRadius:"3px 0 0 0"}}/>
+              <div style={{position:"absolute",top:"16px",right:"16px",width:"28px",height:"28px",borderTop:"3px solid #d4571e",borderRight:"3px solid #d4571e",borderRadius:"0 3px 0 0"}}/>
+              <div style={{position:"absolute",bottom:"16px",left:"16px",width:"28px",height:"28px",borderBottom:"3px solid #d4571e",borderLeft:"3px solid #d4571e",borderRadius:"0 0 0 3px"}}/>
+              <div style={{position:"absolute",bottom:"16px",right:"16px",width:"28px",height:"28px",borderBottom:"3px solid #d4571e",borderRight:"3px solid #d4571e",borderRadius:"0 0 3px 0"}}/>
+              <div style={{position:"absolute",left:"20px",right:"20px",height:"2px",background:`linear-gradient(90deg,transparent,${C.tr},transparent)`,top:"50%"}}/>
+              <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",textAlign:"center"}}>
+                <div style={{fontSize:"32px",marginBottom:"6px",opacity:0.4}}>📱</div>
+                <div style={{fontSize:"10px",color:"rgba(255,255,255,0.4)",letterSpacing:"1px"}}>APUNTA AL QR</div>
               </div>
             </div>
-          </Card>
-        </div>
-      )}
-
-      {/* TAB CLIENTES */}
-      {adminTab==="clients"&&<>
-        <Card title={t.searchClient} icon="🔍">
-          <Inp value={search} onChange={e=>setSearch(e.target.value)} placeholder={t.searchClientPh}/>
-          <div style={{display:"flex",flexDirection:"column",gap:"7px",marginTop:"10px"}}>
-            {filtered.map(c=>{
-              const expired=pointsExpired(c.lastVisit);
-              return (
-                <div key={c.id}>
-                  {editingId===c.id ? (
-                    <div style={{background:"rgba(255,255,255,0.9)",border:"1px solid rgba(13,92,82,0.3)",borderRadius:"12px",padding:"13px"}}>
-                      <div style={{fontSize:"11px",fontWeight:"700",color:C.tD,marginBottom:"10px",letterSpacing:"1px",textTransform:"uppercase"}}>✏️ Editando: {c.id}</div>
-                      <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
-                        <Inp label="Nombre" value={editForm.name} onChange={e=>setEditForm({...editForm,name:e.target.value})} placeholder="Nombre completo"/>
-                        <Inp label="Teléfono / WhatsApp" value={editForm.phone} onChange={e=>setEditForm({...editForm,phone:e.target.value})} placeholder="555-0000"/>
-                        <div style={{display:"flex",gap:"8px",marginTop:"4px"}}>
-                          <Btn variant="ghost" small onClick={()=>setEditingId(null)}>Cancelar</Btn>
-                          <Btn variant="primary" small onClick={()=>{
-                            if(!editForm.name.trim()||!editForm.email.trim()||!editForm.phone.trim())return;
-                            setClients(p=>p.map(x=>x.id!==c.id?x:{...x,name:editForm.name.trim(),email:editForm.email.trim(),phone:editForm.phone.trim()}));
-                            setEditingId(null);
-                            flash(`✓ Datos de ${editForm.name.split(" ")[0]} actualizados`);
-                          }}>Guardar cambios</Btn>
-                        </div>
-                      </div>
+            <div style={{fontSize:"12px",color:C.mut,marginBottom:"14px",lineHeight:"1.6"}}>{t.scanDesc}</div>
+            <div style={{background:"rgba(13,92,82,0.06)",borderRadius:"12px",padding:"14px",border:"1px solid rgba(13,92,82,0.15)"}}>
+              <div style={{fontSize:"11px",color:C.mut,letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:"10px"}}>{t.scanOr}</div>
+              <Inp value={search} onChange={e=>setSearch(e.target.value)} placeholder={t.searchClientPh}/>
+              <div style={{display:"flex",flexDirection:"column",gap:"7px",marginTop:"10px",maxHeight:"180px",overflowY:"auto"}}>
+                {search.length>0 && filtered.map(c => (
+                  <button key={c.id} onClick={()=>{setSelId(c.id);setAdminTab("clients");}} style={{background:"rgba(13,92,82,0.08)",border:"1px solid rgba(13,92,82,0.2)",borderRadius:"10px",padding:"10px 13px",cursor:"pointer",textAlign:"left",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <div>
+                      <div style={{fontWeight:"700",color:C.tD,fontSize:"13px"}}>{c.name}</div>
+                      <div style={{fontSize:"10px",color:C.fnt}}>{c.id} · {c.phone}</div>
                     </div>
-                  ) : (
-                    <div style={{background:c.id===selId?"linear-gradient(135deg,rgba(13,92,82,0.14),rgba(13,92,82,0.07))":"rgba(13,92,82,0.05)",border:`1px solid ${c.id===selId?"rgba(13,92,82,0.34)":"rgba(13,92,82,0.12)"}`,borderRadius:"12px",padding:"11px 13px",display:"flex",justifyContent:"space-between",alignItems:"center",transition:"all 0.2s"}}>
-                      <div style={{flex:1,cursor:"pointer"}} onClick={()=>setSelId(c.id===selId?null:c.id)}>
-                        <div style={{fontWeight:"700",color:C.tD,fontSize:"14px",fontFamily:"'Cormorant Garamond',serif"}}>{c.name}</div>
-                        <div style={{fontSize:"10px",color:C.fnt}}>{c.id} · {c.phone}</div>
-                      </div>
-                      <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,marginLeft:"8px"}}>
-                        <div style={{textAlign:"right"}}>
-                          <div style={{fontSize:"15px",fontWeight:"800",color:expired?"#aaa":C.tr}}>{expired?0:c.points}</div>
-                          <div style={{fontSize:"9px",color:expired?"#f56242":C.fnt,letterSpacing:"1px"}}>{expired?"VENC":"PTS"}</div>
-                        </div>
-                        {isAdmin&&<button onClick={()=>{setEditingId(c.id);setEditForm({name:c.name,email:c.email,phone:c.phone});}} style={{background:"rgba(13,92,82,0.1)",border:"1px solid rgba(13,92,82,0.2)",borderRadius:"8px",padding:"6px 10px",cursor:"pointer",fontSize:"13px"}}>✏️</button>}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-            {filtered.length===0&&<div style={{fontSize:"13px",color:C.fnt,textAlign:"center",padding:"10px"}}>{t.noResults}</div>}
+                    <div style={{fontSize:"14px",fontWeight:"800",color:C.tr}}>{c.points} pts</div>
+                  </button>
+                ))}
+                {search.length>0 && filtered.length===0 && <div style={{fontSize:"12px",color:C.fnt,textAlign:"center",padding:"8px"}}>{t.noResults}</div>}
+              </div>
+            </div>
           </div>
         </Card>
+      )}
 
-        {client&&<>
-          <LoyaltyCard client={client} lang={lang} exps={exps}/>
-          <Card title={t.assignExp} icon="➕">
-            <div style={{display:"flex",flexDirection:"column",gap:"7px",marginBottom:"13px"}}>
-              {exps.map(exp=>(
-                <button key={exp.id} onClick={()=>setSelExp(exp.id===selExp?null:exp.id)} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"11px 13px",borderRadius:"12px",cursor:"pointer",background:exp.id===selExp?`linear-gradient(135deg,${C.tD},${C.t})`:"rgba(13,92,82,0.06)",border:`1px solid ${exp.id===selExp?"transparent":"rgba(13,92,82,0.17)"}`,color:exp.id===selExp?C.sand:C.text,transition:"all 0.2s"}}>
-                  <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
-                    <span style={{fontSize:"18px"}}>{exp.icon}</span>
-                    <div style={{fontWeight:"700",fontSize:"13px"}}>{lang==="en"&&exp.labelEn?exp.labelEn:exp.label}</div>
-                  </div>
-                  <span style={{fontSize:"14px",fontWeight:"800",color:exp.id===selExp?C.tr:C.tL,flexShrink:0,marginLeft:"8px"}}>+{exp.pts} pts</span>
-                </button>
-              ))}
-            </div>
-            <Btn disabled={!selExp} variant="terra" onClick={()=>{const e=exps.find(x=>x.id===selExp);addPoints(client.id,e);}}>
-              {t.validateBtn}
-            </Btn>
-          </Card>
-
-          <Card title={t.redeemReward} icon="🎁">
-            <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
-              {rewards.map(r=>{
-                const pts=pointsExpired(client.lastVisit)?0:client.points;
-                const can=pts>=r.cost;
+      {adminTab==="clients" && (
+        <>
+          <Card title={t.searchClient} icon="🔍">
+            <Inp value={search} onChange={e=>setSearch(e.target.value)} placeholder={t.searchClientPh}/>
+            <div style={{display:"flex",flexDirection:"column",gap:"7px",marginTop:"10px"}}>
+              {filtered.map(c => {
+                const expired = pointsExpired(c.lastVisit);
                 return (
-                  <div key={r.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 13px",borderRadius:"12px",background:can?"rgba(13,92,82,0.07)":"rgba(0,0,0,0.03)",border:`1px solid ${can?"rgba(13,92,82,0.21)":"rgba(0,0,0,0.07)"}`}}>
-                    <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
-                      <span style={{fontSize:"18px"}}>{r.icon}</span>
-                      <div>
-                        <div style={{fontWeight:"700",fontSize:"13px",color:can?C.tD:C.fnt,fontFamily:"'Cormorant Garamond',serif"}}>{lang==="en"&&r.labelEn?r.labelEn:r.label}</div>
-                        <div style={{fontSize:"10px",color:C.fnt}}>{r.cost} pts</div>
+                  <div key={c.id}>
+                    {editingId===c.id ? (
+                      <div style={{background:"rgba(255,255,255,0.9)",border:"1px solid rgba(13,92,82,0.3)",borderRadius:"12px",padding:"13px"}}>
+                        <div style={{fontSize:"11px",fontWeight:"700",color:C.tD,marginBottom:"10px",letterSpacing:"1px",textTransform:"uppercase"}}>✏️ Editando: {c.id}</div>
+                        <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+                          <Inp label="Nombre" value={editForm.name} onChange={e=>setEditForm({...editForm,name:e.target.value})} placeholder="Nombre completo"/>
+                          <Inp label="Teléfono" value={editForm.phone} onChange={e=>setEditForm({...editForm,phone:e.target.value})} placeholder="555-0000"/>
+                          <div style={{display:"flex",gap:"8px",marginTop:"4px"}}>
+                            <Btn variant="ghost" small onClick={()=>setEditingId(null)}>Cancelar</Btn>
+                            <Btn variant="primary" small onClick={()=>{
+                              if (!editForm.name.trim()||!editForm.phone.trim()) return;
+                              setClients(p=>p.map(x=>x.id!==c.id?x:{...x,name:editForm.name.trim(),phone:editForm.phone.trim()}));
+                              setEditingId(null);
+                              flash(`✓ Datos de ${editForm.name.split(" ")[0]} actualizados`);
+                            }}>Guardar</Btn>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <Btn disabled={!can} variant="danger" small onClick={()=>redeemReward(client.id,r)}>{t.redeemBtn}</Btn>
+                    ) : (
+                      <div style={{background:c.id===selId?"linear-gradient(135deg,rgba(13,92,82,0.14),rgba(13,92,82,0.07))":"rgba(13,92,82,0.05)",border:`1px solid ${c.id===selId?"rgba(13,92,82,0.34)":"rgba(13,92,82,0.12)"}`,borderRadius:"12px",padding:"11px 13px",display:"flex",justifyContent:"space-between",alignItems:"center",transition:"all 0.2s"}}>
+                        <div style={{flex:1,cursor:"pointer"}} onClick={()=>setSelId(c.id===selId?null:c.id)}>
+                          <div style={{fontWeight:"700",color:C.tD,fontSize:"14px",fontFamily:"'Cormorant Garamond',serif"}}>{c.name}</div>
+                          <div style={{fontSize:"10px",color:C.fnt}}>{c.id} · {c.phone}</div>
+                        </div>
+                        <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,marginLeft:"8px"}}>
+                          <div style={{textAlign:"right"}}>
+                            <div style={{fontSize:"15px",fontWeight:"800",color:expired?"#aaa":C.tr}}>{expired?0:c.points}</div>
+                            <div style={{fontSize:"9px",color:expired?"#f56242":C.fnt,letterSpacing:"1px"}}>{expired?"VENC":"PTS"}</div>
+                          </div>
+                          {isAdmin && <button onClick={()=>{setEditingId(c.id);setEditForm({name:c.name,phone:c.phone});}} style={{background:"rgba(13,92,82,0.1)",border:"1px solid rgba(13,92,82,0.2)",borderRadius:"8px",padding:"6px 10px",cursor:"pointer",fontSize:"13px"}}>✏️</button>}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
-            </div>
-            <div style={{marginTop:"14px",borderTop:"1px solid rgba(13,92,82,0.11)",paddingTop:"13px"}}>
-              <div style={{fontSize:"10px",letterSpacing:"2px",color:C.mut,textTransform:"uppercase",marginBottom:"9px"}}>{t.recentHistory}</div>
-              <HistoryList history={client.history} lang={lang}/>
+              {filtered.length===0 && <div style={{fontSize:"13px",color:C.fnt,textAlign:"center",padding:"10px"}}>{t.noResults}</div>}
             </div>
           </Card>
-        </>}
-      </>}
 
-      {/* TAB SOLICITUDES */}
-      {adminTab==="requests"&&(
+          {client && (
+            <>
+              <LoyaltyCard client={client} lang={lang}/>
+              <Card title={t.assignExp} icon="➕">
+                <div style={{display:"flex",flexDirection:"column",gap:"7px",marginBottom:"13px"}}>
+                  {exps.map(exp => (
+                    <button key={exp.id} onClick={()=>setSelExp(exp.id===selExp?null:exp.id)} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"11px 13px",borderRadius:"12px",cursor:"pointer",background:exp.id===selExp?`linear-gradient(135deg,${C.tD},${C.t})`:"rgba(13,92,82,0.06)",border:`1px solid ${exp.id===selExp?"transparent":"rgba(13,92,82,0.17)"}`,color:exp.id===selExp?C.sand:C.text,transition:"all 0.2s"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+                        <span style={{fontSize:"18px"}}>{exp.icon}</span>
+                        <div style={{fontWeight:"700",fontSize:"13px"}}>{lang==="en"&&exp.labelEn?exp.labelEn:exp.label}</div>
+                      </div>
+                      <span style={{fontSize:"14px",fontWeight:"800",color:exp.id===selExp?C.tr:C.tL,flexShrink:0,marginLeft:"8px"}}>+{exp.pts} pts</span>
+                    </button>
+                  ))}
+                </div>
+                <Btn disabled={!selExp} variant="terra" onClick={()=>{const e=exps.find(x=>x.id===selExp);addPoints(client.id,e);}}>
+                  {t.validateBtn}
+                </Btn>
+              </Card>
+              <Card title={t.redeemReward} icon="🎁">
+                <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+                  {rewards.map(r => {
+                    const pts = pointsExpired(client.lastVisit)?0:client.points;
+                    const can = pts>=r.cost;
+                    return (
+                      <div key={r.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 13px",borderRadius:"12px",background:can?"rgba(13,92,82,0.07)":"rgba(0,0,0,0.03)",border:`1px solid ${can?"rgba(13,92,82,0.21)":"rgba(0,0,0,0.07)"}`}}>
+                        <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+                          <span style={{fontSize:"18px"}}>{r.icon}</span>
+                          <div>
+                            <div style={{fontWeight:"700",fontSize:"13px",color:can?C.tD:C.fnt,fontFamily:"'Cormorant Garamond',serif"}}>{lang==="en"&&r.labelEn?r.labelEn:r.label}</div>
+                            <div style={{fontSize:"10px",color:C.fnt}}>{r.cost} pts</div>
+                          </div>
+                        </div>
+                        <Btn disabled={!can} variant="danger" small onClick={()=>redeemReward(client.id,r)}>{t.redeemBtn}</Btn>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div style={{marginTop:"14px",borderTop:"1px solid rgba(13,92,82,0.11)",paddingTop:"13px"}}>
+                  <div style={{fontSize:"10px",letterSpacing:"2px",color:C.mut,textTransform:"uppercase",marginBottom:"9px"}}>{t.recentHistory}</div>
+                  <HistoryList history={client.history} lang={lang}/>
+                </div>
+              </Card>
+            </>
+          )}
+        </>
+      )}
+
+      {adminTab==="requests" && (
         <Card title={t.redeemRequests} icon="📋">
           {pendingRequests.length===0
             ? <div style={{textAlign:"center",color:C.fnt,padding:"20px",fontSize:"13px"}}>{t.noRequests}</div>
             : <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
-                {pendingRequests.map(c=>{
-                  const r=rewards.find(x=>x.id===c.redeemRequest);
+                {pendingRequests.map(c => {
+                  const r = rewards.find(x => x.id===c.redeemRequest);
                   return (
                     <div key={c.id} style={{background:"rgba(13,92,82,0.07)",border:"1px solid rgba(13,92,82,0.2)",borderRadius:"14px",padding:"14px"}}>
                       <div style={{display:"flex",justifyContent:"space-between",marginBottom:"10px"}}>
@@ -827,7 +799,7 @@ function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, st
                         </div>
                       </div>
                       <div style={{display:"flex",gap:"8px"}}>
-                        <Btn variant="green" small onClick={()=>approveRedeemReq(c.id)}>{t.approve} ✓</Btn>
+                        <Btn variant="green" small onClick={()=>approveReq(c.id)}>{t.approve} ✓</Btn>
                         <Btn variant="danger" small onClick={()=>rejectReq(c.id)}>{t.reject}</Btn>
                       </div>
                     </div>
@@ -837,8 +809,7 @@ function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, st
         </Card>
       )}
 
-      {/* TAB REPORTES — solo admin */}
-      {adminTab==="reports"&&(
+      {adminTab==="reports" && (
         isAdmin ? (
           <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
@@ -847,7 +818,7 @@ function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, st
                 {label:t.totalPoints, val:clients.filter(c=>!pointsExpired(c.lastVisit)).reduce((a,c)=>a+c.points,0), icon:"⭐"},
                 {label:t.totalRedeems, val:clients.reduce((a,c)=>a+c.history.filter(h=>h.delta<0).length,0), icon:"🎁"},
                 {label:t.totalVisits, val:clients.reduce((a,c)=>a+c.history.filter(h=>h.delta>0).length,0), icon:"🏨"},
-              ].map(s=>(
+              ].map(s => (
                 <div key={s.label} style={{background:"rgba(255,255,255,0.74)",borderRadius:"14px",padding:"16px",border:"1px solid rgba(13,92,82,0.14)",textAlign:"center"}}>
                   <div style={{fontSize:"24px",marginBottom:"4px"}}>{s.icon}</div>
                   <div style={{fontSize:"28px",fontWeight:"800",color:C.tD,fontFamily:"'Cormorant Garamond',serif"}}>{s.val}</div>
@@ -856,7 +827,7 @@ function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, st
               ))}
             </div>
             <Card title={t.topClients} icon="🏆">
-              {[...clients].sort((a,b)=>b.points-a.points).slice(0,5).map((c,i)=>(
+              {[...clients].sort((a,b)=>b.points-a.points).slice(0,5).map((c,i) => (
                 <div key={c.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:i<4?"1px solid rgba(13,92,82,0.08)":"none"}}>
                   <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
                     <div style={{width:"24px",height:"24px",borderRadius:"50%",background:i===0?"#d4af37":i===1?"#b0b0b0":i===2?"#cd7f32":"rgba(13,92,82,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",fontWeight:"800",color:i<3?"#fff":C.tD}}>{i+1}</div>
@@ -873,26 +844,22 @@ function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, st
         ) : <Card><div style={{textAlign:"center",color:C.fnt,padding:"20px",fontSize:"13px"}}>{t.limitedStaff}</div></Card>
       )}
 
-      {/* TAB AJUSTES — solo admin */}
-      {adminTab==="settings"&&(
+      {adminTab==="settings" && (
         isAdmin ? (
           <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
-            {/* Cambiar PIN */}
             <Card title={t.changePinTitle} icon="🔐">
               <div style={{fontSize:"12px",color:C.mut,marginBottom:"14px",background:"rgba(13,92,82,0.06)",padding:"10px 12px",borderRadius:"10px"}}>{t.changePinDesc}</div>
               <div style={{display:"flex",flexDirection:"column",gap:"11px"}}>
                 <Inp label={t.currentPin} value={pinForm.current} type="password" onChange={e=>setPinForm({...pinForm,current:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="····"/>
                 <Inp label={t.newPin} value={pinForm.newPin} type="password" onChange={e=>setPinForm({...pinForm,newPin:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="····"/>
                 <Inp label={t.confirmPin} value={pinForm.confirm} type="password" onChange={e=>setPinForm({...pinForm,confirm:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="····"/>
-                {pinMsg.text&&<div style={{fontSize:"12px",color:pinMsg.ok?C.t:"#c0391b",background:pinMsg.ok?"rgba(13,92,82,0.1)":"rgba(192,57,27,0.09)",padding:"8px 12px",borderRadius:"8px",fontWeight:"600"}}>{pinMsg.text}</div>}
+                {pinMsg.text && <div style={{fontSize:"12px",color:pinMsg.ok?C.t:"#c0391b",background:pinMsg.ok?"rgba(13,92,82,0.1)":"rgba(192,57,27,0.09)",padding:"8px 12px",borderRadius:"8px",fontWeight:"600"}}>{pinMsg.text}</div>}
                 <Btn variant="warn" onClick={handleChangePin}>{t.changeBtn}</Btn>
               </div>
             </Card>
-
-            {/* Gestionar Experiencias */}
             <Card title={t.manageExp} icon="✨">
               <div style={{display:"flex",flexDirection:"column",gap:"8px",marginBottom:"12px"}}>
-                {exps.map(e=>(
+                {exps.map(e => (
                   <div key={e.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:"10px",background:"rgba(13,92,82,0.06)",border:"1px solid rgba(13,92,82,0.14)"}}>
                     <span style={{fontSize:"16px",marginRight:"8px"}}>{e.icon}</span>
                     <span style={{flex:1,fontSize:"13px",fontWeight:"600",color:C.text}}>{e.label}</span>
@@ -904,15 +871,13 @@ function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, st
               <div style={{display:"flex",gap:"8px",alignItems:"flex-end"}}>
                 <div style={{flex:2}}><Inp placeholder={t.expName} value={newExp.label} onChange={e=>setNewExp({...newExp,label:e.target.value})}/></div>
                 <div style={{width:"70px"}}><Inp placeholder={t.expPts} value={newExp.pts} onChange={e=>setNewExp({...newExp,pts:e.target.value.replace(/\D/g,"")})}/></div>
-                <div style={{width:"60px"}}><Inp placeholder={t.expIcon} value={newExp.icon} onChange={e=>setNewExp({...newExp,icon:e.target.value})}/></div>
+                <div style={{width:"55px"}}><Inp placeholder="🌟" value={newExp.icon} onChange={e=>setNewExp({...newExp,icon:e.target.value})}/></div>
                 <Btn variant="primary" small onClick={()=>{if(!newExp.label||!newExp.pts)return;setExps(p=>[...p,{id:expCounter++,label:newExp.label,labelEn:newExp.label,pts:parseInt(newExp.pts),icon:newExp.icon||"⭐"}]);setNewExp({label:"",pts:"",icon:"⭐"});}}>{t.addBtn}</Btn>
               </div>
             </Card>
-
-            {/* Gestionar Recompensas */}
             <Card title={t.manageRewards} icon="🎁">
               <div style={{display:"flex",flexDirection:"column",gap:"8px",marginBottom:"12px"}}>
-                {rewards.map(r=>(
+                {rewards.map(r => (
                   <div key={r.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:"10px",background:"rgba(13,92,82,0.06)",border:"1px solid rgba(13,92,82,0.14)"}}>
                     <span style={{fontSize:"16px",marginRight:"8px"}}>{r.icon}</span>
                     <span style={{flex:1,fontSize:"13px",fontWeight:"600",color:C.text}}>{r.label}</span>
@@ -923,28 +888,26 @@ function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, st
               </div>
               <div style={{display:"flex",gap:"8px",alignItems:"flex-end"}}>
                 <div style={{flex:2}}><Inp placeholder={t.rewardName} value={newReward.label} onChange={e=>setNewReward({...newReward,label:e.target.value})}/></div>
-                <div style={{width:"90px"}}><Inp placeholder={t.rewardCost} value={newReward.cost} onChange={e=>setNewReward({...newReward,cost:e.target.value.replace(/\D/g,"")})}/></div>
+                <div style={{width:"90px"}}><Inp placeholder="Pts" value={newReward.cost} onChange={e=>setNewReward({...newReward,cost:e.target.value.replace(/\D/g,"")})}/></div>
                 <Btn variant="primary" small onClick={()=>{if(!newReward.label||!newReward.cost)return;setRewards(p=>[...p,{id:rewardCounter++,label:newReward.label,labelEn:newReward.label,cost:parseInt(newReward.cost),icon:"🏅"}]);setNewReward({label:"",cost:""});}}>{t.addBtn}</Btn>
               </div>
             </Card>
-
-            {/* Gestionar Personal */}
             <Card title={t.manageStaff} icon="👥">
               <div style={{display:"flex",flexDirection:"column",gap:"8px",marginBottom:"12px"}}>
-                {staffList.map(s=>(
+                {staffList.map(s => (
                   <div key={s.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:"10px",background:"rgba(13,92,82,0.06)",border:"1px solid rgba(13,92,82,0.14)"}}>
                     <div>
                       <div style={{fontSize:"13px",fontWeight:"700",color:C.text}}>{s.name}</div>
                       <div style={{fontSize:"10px",color:C.fnt}}>PIN: {s.pin} · {s.role}</div>
                     </div>
-                    {s.role!=="admin"&&<button onClick={()=>setStaffList(p=>p.filter(x=>x.id!==s.id))} style={{background:"rgba(192,57,27,0.12)",border:"none",borderRadius:"99px",padding:"4px 10px",cursor:"pointer",fontSize:"11px",color:"#c0391b",fontWeight:"700"}}>{t.deleteBtn}</button>}
+                    {s.role!=="admin" && <button onClick={()=>setStaffList(p=>p.filter(x=>x.id!==s.id))} style={{background:"rgba(192,57,27,0.12)",border:"none",borderRadius:"99px",padding:"4px 10px",cursor:"pointer",fontSize:"11px",color:"#c0391b",fontWeight:"700"}}>{t.deleteBtn}</button>}
                   </div>
                 ))}
               </div>
               <div style={{display:"flex",gap:"8px",alignItems:"flex-end",flexWrap:"wrap"}}>
                 <div style={{flex:2,minWidth:"120px"}}><Inp placeholder={t.staffName} value={newStaff.name} onChange={e=>setNewStaff({...newStaff,name:e.target.value})}/></div>
                 <div style={{width:"80px"}}><Inp placeholder="PIN" value={newStaff.pin} type="password" onChange={e=>setNewStaff({...newStaff,pin:e.target.value.replace(/\D/g,"").slice(0,4)})}/></div>
-                <Btn variant="primary" small onClick={()=>{if(!newStaff.name||newStaff.pin.length!==4)return;setStaffList(p=>[...p,{id:staffCounter++,name:newStaff.name,pin:newStaff.pin,role:"staff"}]);setNewStaff({name:"",pin:"",role:"staff"});}}>{t.addStaff}</Btn>
+                <Btn variant="primary" small onClick={()=>{if(!newStaff.name||newStaff.pin.length!==4)return;setStaffList(p=>[...p,{id:staffCounter++,name:newStaff.name,pin:newStaff.pin,role:"staff"}]);setNewStaff({name:"",pin:""});}}>{t.addStaff}</Btn>
               </div>
             </Card>
           </div>
@@ -954,9 +917,6 @@ function AdminView({ clients, setClients, exps, setExps, rewards, setRewards, st
   );
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-// ROOT
-// ══════════════════════════════════════════════════════════════════════════
 export default function App() {
   const [clients, setClients] = useState(INIT_CLIENTS);
   const [exps, setExps] = useState(INIT_EXPS);
@@ -966,54 +926,52 @@ export default function App() {
   const [currentId, setCurrentId] = useState(null);
   const [lang, setLang] = useState("es");
 
-  useEffect(()=>{
-    const l=document.createElement("link"); l.rel="stylesheet";
-    l.href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Nunito+Sans:wght@300;400;600;700;800&display=swap";
+  useEffect(() => {
+    const l = document.createElement("link");
+    l.rel = "stylesheet";
+    l.href = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap";
     document.head.appendChild(l);
-  },[]);
+  }, []);
 
-  const addClient=({name,phone})=>{
-    const id=`MT-2026-${String(clientCounter).padStart(2,"0")}`; clientCounter++;
+  const addClient = ({name, phone}) => {
+    const id = `MT-2026-${String(clientCounter).padStart(2,"0")}`;
+    clientCounter++;
     const welcome = lang==="es"
-      ? `🌿 ¡Bienvenid@ al programa de fidelidad Mandala Thai, ${name.split(" ")[0]}! Tu ID es ${id}.`
-      : `🌿 Welcome to Mandala Thai Loyalty Program, ${name.split(" ")[0]}! Your ID is ${id}.`;
-    setClients(p=>[...p,{id,name,email:"",phone,points:0,lastVisit:todayISO(),redeemRequest:null,notifications:[{id:1,msg:welcome,read:false}],history:[]}]);
+      ? `🌿 ¡Bienvenid@ al programa Mandala Thai, ${name.split(" ")[0]}! Tu ID es ${id}.`
+      : `🌿 Welcome to Mandala Thai Loyalty, ${name.split(" ")[0]}! Your ID is ${id}.`;
+    setClients(p => [...p, {id,name,email:"",phone,points:0,lastVisit:todayISO(),redeemRequest:null,notifications:[{id:1,msg:welcome,read:false}],history:[]}]);
     return id;
   };
 
-  const onRedeemRequest=(cid,rId)=>{
-    setClients(p=>p.map(c=>c.id!==cid?c:{...c,redeemRequest:rId}));
+  const onRedeemRequest = (cid, rId) => {
+    setClients(p => p.map(c => c.id!==cid ? c : {...c,redeemRequest:rId}));
   };
 
-  const t=T[lang];
+  const t = T[lang];
 
   return (
     <div style={{minHeight:"100vh",background:"linear-gradient(160deg,#f5efe6 0%,#ece6d6 35%,#deeae6 100%)",fontFamily:"'Nunito Sans',sans-serif",position:"relative"}}>
       <style>{`@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}`}</style>
       <div style={{position:"fixed",top:"-8%",right:"-8%",width:"360px",height:"360px",borderRadius:"50%",background:"radial-gradient(circle,rgba(212,87,30,0.09) 0%,transparent 65%)",pointerEvents:"none"}}/>
       <div style={{position:"fixed",bottom:"-5%",left:"-5%",width:"300px",height:"300px",borderRadius:"50%",background:"radial-gradient(circle,rgba(13,92,82,0.08) 0%,transparent 65%)",pointerEvents:"none"}}/>
-
       <div style={{maxWidth:"420px",margin:"0 auto",padding:"0 14px 80px",position:"relative"}}>
-        {/* Header */}
-        <div style={{textAlign:"center",padding:"24px 0 12px",display:"flex",flexDirection:"column",alignItems:"center",gap:"4px",position:"relative"}}>
-          {/* Lang toggle */}
+        <div style={{textAlign:"center",padding:"24px 0 14px",display:"flex",flexDirection:"column",alignItems:"center",gap:"4px",position:"relative"}}>
           <div style={{position:"absolute",top:"24px",right:"0",display:"flex",background:"rgba(255,255,255,0.65)",borderRadius:"99px",padding:"3px",border:"1px solid rgba(13,92,82,0.17)"}}>
-            {["es","en"].map(l=><button key={l} onClick={()=>setLang(l)} style={{padding:"5px 12px",borderRadius:"99px",border:"none",cursor:"pointer",fontSize:"11px",fontWeight:"800",background:lang===l?`linear-gradient(135deg,${C.tD},${C.t})`:"transparent",color:lang===l?C.sand:C.mut,transition:"all 0.2s"}}>{l.toUpperCase()}</button>)}
+            {["es","en"].map(l => (
+              <button key={l} onClick={()=>setLang(l)} style={{padding:"5px 12px",borderRadius:"99px",border:"none",cursor:"pointer",fontSize:"11px",fontWeight:"800",background:lang===l?`linear-gradient(135deg,${C.tD},${C.t})`:"transparent",color:lang===l?C.sand:C.mut,transition:"all 0.2s"}}>{l.toUpperCase()}</button>
+            ))}
           </div>
           <Logo size={94}/>
           <div style={{fontSize:"24px",fontFamily:"'Cormorant Garamond',serif",fontWeight:"700",color:C.tD,letterSpacing:"1px",marginTop:"4px"}}>Mandala Thai</div>
           <div style={{fontSize:"10px",letterSpacing:"4px",color:C.fnt,textTransform:"uppercase"}}>{t.appSub}</div>
         </div>
-
-        {/* Role Switch */}
         <div style={{display:"flex",background:"rgba(255,255,255,0.65)",borderRadius:"14px",padding:"4px",border:"1px solid rgba(13,92,82,0.17)",marginBottom:"18px",backdropFilter:"blur(10px)"}}>
-          {[{k:"client",l:t.guest},{k:"admin",l:t.staff}].map(({k,l})=>(
+          {[{k:"client",l:t.guest},{k:"admin",l:t.staff}].map(({k,l}) => (
             <button key={k} onClick={()=>setRole(k)} style={{flex:1,padding:"10px 8px",borderRadius:"11px",border:"none",cursor:"pointer",fontWeight:"800",fontSize:"13px",transition:"all 0.25s",fontFamily:"'Nunito Sans',sans-serif",background:role===k?`linear-gradient(135deg,${C.tD},${C.t})`:"transparent",color:role===k?C.sand:C.mut,boxShadow:role===k?"0 2px 12px rgba(13,92,82,0.3)":"none"}}>{l}</button>
           ))}
         </div>
-
         {role==="client"
-          ? <ClientView clients={clients} onRegister={addClient} currentId={currentId} setCurrentId={setCurrentId} lang={lang} rewards={rewards} exps={exps} onRedeemRequest={onRedeemRequest}/>
+          ? <ClientView clients={clients} onRegister={addClient} currentId={currentId} setCurrentId={setCurrentId} lang={lang} rewards={rewards} onRedeemRequest={onRedeemRequest}/>
           : <AdminView clients={clients} setClients={setClients} exps={exps} setExps={setExps} rewards={rewards} setRewards={setRewards} staffList={staffList} setStaffList={setStaffList} lang={lang}/>}
       </div>
     </div>
