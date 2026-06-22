@@ -44,9 +44,7 @@ body{background:linear-gradient(160deg,#f5efe6,#ece6d6,#deeae6);min-height:100vh
 .role-switch{display:flex;background:rgba(255,255,255,0.65);border-radius:14px;padding:4px;border:1px solid rgba(13,92,82,0.17);margin-bottom:18px}
 .role-btn{flex:1;padding:10px 8px;border-radius:11px;border:none;cursor:pointer;font-weight:800;font-size:13px;font-family:'Nunito Sans',sans-serif;background:transparent;color:#7a6a55;transition:all 0.25s}
 .role-btn.active{background:linear-gradient(135deg,#0d5c52,#1a7a6e);color:#f5efe6;box-shadow:0 2px 12px rgba(13,92,82,0.3)}
-.lang-switch{position:absolute;top:24px;right:0;display:flex;background:rgba(255,255,255,0.65);border-radius:99px;padding:3px;border:1px solid rgba(13,92,82,0.17)}
-.lang-btn{padding:5px 12px;border-radius:99px;border:none;cursor:pointer;font-size:11px;font-weight:800;background:transparent;color:#7a6a55;transition:all 0.2s}
-.lang-btn.active{background:linear-gradient(135deg,#0d5c52,#1a7a6e);color:#f5efe6}
+
 .err{font-size:12px;color:#c0391b;background:rgba(192,57,27,0.09);padding:8px 12px;border-radius:8px;margin-top:8px}
 .ok{font-size:12px;color:#1a7a6e;background:rgba(13,92,82,0.1);padding:8px 12px;border-radius:8px;margin-top:8px;font-weight:600}
 .hidden{display:none}
@@ -64,10 +62,7 @@ body{background:linear-gradient(160deg,#f5efe6,#ece6d6,#deeae6);min-height:100vh
 <body>
 <div class="app" id="app">
   <div class="header">
-    <div class="lang-switch">
-      <button class="lang-btn active" onclick="setLang('es')">ES</button>
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
-    </div>
+
     <div style="font-size:48px;margin-bottom:8px">🪷</div>
     <div style="font-size:24px;font-family:'Cormorant Garamond',serif;font-weight:700;color:#0d5c52;letter-spacing:1px">Mandala Thai</div>
     <div style="font-size:10px;letter-spacing:4px;color:#9a8a70;text-transform:uppercase" id="appSub">Hotel Boutique</div>
@@ -329,7 +324,7 @@ var staffList = [
 var clientCounter=3, expCounter=4, rewardCounter=3, staffCounter=3;
 var currentClientId=null, currentRole="client", currentStaff=null;
 var pinInput="", selectedClientId=null, selectedExpId=null, adminTab="scan", clientTab="card";
-var lang="es";
+
 
 function fmtDate(){var d=new Date();return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear();}
 function todayISO(){return new Date().toISOString().split("T")[0];}
@@ -874,42 +869,7 @@ function showFlash(msg){
   setTimeout(function(){el.style.display="none";},2800);
 }
 
-// ── LANG ──────────────────────────────────────────────────────────────────
-function setLang(l){
-  lang=l;
-  document.querySelectorAll(".lang-btn").forEach(function(b){b.classList.toggle("active",b.textContent===l.toUpperCase());});
-  // Update all translatable text
-  var tx = l==="es" ? {
-    appSub:"Hotel Boutique", accessCard:"Acceder a mi tarjeta", firstVisit:"Primera visita — Registrarme",
-    searchTitle:"Consultar Tarjeta", searchLabel:"ID, Nombre o Teléfono", searchHint:"Puedes usar tu ID, nombre o teléfono",
-    searchBtn:"Acceder", back:"← Volver", register:"Nuevo Registro", registerBtn:"Registrarme",
-    nameLabel:"Nombre Completo", phoneLabel:"Teléfono / WhatsApp", namePh:"Ej: Ana García", phonePh:"555-0000",
-    registerOk:"¡Registro Exitoso!", yourId:"Tu ID de cliente es:", saveId:"Guarda este ID — también puedes entrar con tu nombre o teléfono.",
-    viewCard:"Ver mi Tarjeta →", welcome:"Bienvenid@", logout:"Salir", progress:"Progreso", history:"Historial",
-    staffAccess:"Acceso de Personal", pinHint:"Ingresa tu PIN de 4 dígitos", lock:"🔒 Bloquear",
-    guest:"🛎 Huésped", staff:"🔑 Personal"
-  } : {
-    appSub:"Boutique Hotel", accessCard:"Access my card", firstVisit:"First visit — Sign up",
-    searchTitle:"Access Your Card", searchLabel:"ID, Name or Phone", searchHint:"You can use your ID, name or phone number",
-    searchBtn:"Access", back:"← Back", register:"New Registration", registerBtn:"Sign me up",
-    nameLabel:"Full Name", phoneLabel:"Phone / WhatsApp", namePh:"e.g. Ana García", phonePh:"555-0000",
-    registerOk:"Registration Successful!", yourId:"Your client ID is:", saveId:"Save this ID — you can also sign in with your name or phone.",
-    viewCard:"View my Card →", welcome:"Welcome", logout:"Sign out", progress:"Progress", history:"History",
-    staffAccess:"Staff Access", pinHint:"Enter your 4-digit PIN", lock:"🔒 Lock",
-    guest:"🛎 Guest", staff:"🔑 Staff"
-  };
-  // Update role buttons
-  document.getElementById("btnGuest").textContent=tx.guest;
-  document.getElementById("btnStaff").textContent=tx.staff;
-  // Update app subtitle
-  var sub=document.getElementById("appSub"); if(sub)sub.textContent=tx.appSub;
-  // Update search button
-  var sb=document.getElementById("t_searchBtn"); if(sb)sb.textContent=tx.searchBtn;
-  // Update access card button
-  var ac=document.querySelectorAll(".btn-primary.btn-full")[0]; 
-  // Re-render current screen with new language
-  if(currentClientId){renderClientCard();}
-}
+
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 setRole("client");
