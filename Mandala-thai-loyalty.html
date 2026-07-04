@@ -1,878 +1,1388 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Mandala Thai — Fidelidad</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:linear-gradient(160deg,#f5efe6,#ece6d6,#deeae6);min-height:100vh;font-family:'Nunito Sans',sans-serif;color:#1a2416}
-.app{max-width:420px;margin:0 auto;padding:0 14px 80px}
-.card{background:rgba(255,255,255,0.74);border-radius:18px;padding:18px;border:1px solid rgba(13,92,82,0.14);margin-bottom:14px;box-shadow:0 4px 24px rgba(0,0,0,0.05)}
-.btn{border:none;border-radius:99px;font-weight:700;font-family:'Nunito Sans',sans-serif;font-size:13px;padding:11px 24px;cursor:pointer;transition:all 0.2s;display:inline-block;text-align:center}
-.btn-primary{background:linear-gradient(135deg,#0d5c52,#1a7a6e);color:#f5efe6;box-shadow:0 4px 16px rgba(13,92,82,0.38)}
-.btn-terra{background:linear-gradient(135deg,#d4571e,#b8430e);color:#fff;box-shadow:0 4px 16px rgba(212,87,30,0.38)}
-.btn-ghost{background:rgba(13,92,82,0.09);color:#0d5c52;border:1px solid rgba(13,92,82,0.25)}
-.btn-danger{background:linear-gradient(135deg,#c0391b,#a52d14);color:#fff}
-.btn-green{background:linear-gradient(135deg,#1a7a6e,#0d5c52);color:#fff}
-.btn-full{width:100%;display:block;margin-bottom:8px}
-.btn:disabled{opacity:0.38;cursor:not-allowed}
-.inp{width:100%;padding:10px 13px;border-radius:10px;border:1px solid rgba(13,92,82,0.24);background:rgba(255,255,255,0.88);font-size:14px;font-family:'Nunito Sans',sans-serif;outline:none}
-.label{font-size:10px;color:#7a6a55;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:4px}
-.section-title{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#0d5c52;font-family:'Cormorant Garamond',serif;font-weight:700;margin-bottom:14px}
-.loyalty-card{background:linear-gradient(135deg,#0b4e46,#1a7a6e,#0a4240,#062820);border-radius:22px;padding:22px 20px;position:relative;overflow:hidden;box-shadow:0 22px 60px rgba(13,92,82,0.45);margin-bottom:14px;color:#f5efe6}
-.tabs{display:flex;background:rgba(255,255,255,0.55);border-radius:12px;padding:3px;border:1px solid rgba(13,92,82,0.14);margin-bottom:14px;gap:2px}
-.tab{flex:1;padding:8px 4px;border-radius:10px;border:none;cursor:pointer;font-weight:700;font-size:11px;font-family:'Nunito Sans',sans-serif;background:transparent;color:#7a6a55;transition:all 0.22s}
-.tab.active{background:linear-gradient(135deg,#0d5c52,#1a7a6e);color:#f5efe6;box-shadow:0 2px 10px rgba(13,92,82,0.3)}
-.progress-bar{height:7px;background:rgba(13,92,82,0.11);border-radius:99px;overflow:hidden;margin-top:10px}
-.progress-fill{height:100%;border-radius:99px;transition:width 0.7s ease}
-.history-item{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;margin-bottom:7px}
-.notif{padding:10px 12px;border-radius:10px;font-size:13px;margin-bottom:8px}
-.flash{background:linear-gradient(135deg,#0d5c52,#1a7a6e);color:#f5efe6;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;text-align:center;margin-bottom:14px;display:none}
-.pin-dot{width:14px;height:14px;border-radius:50%;background:rgba(13,92,82,0.2);transition:all 0.2s;display:inline-block;margin:0 7px}
-.pin-dot.filled{background:#0d5c52;box-shadow:0 0 8px rgba(13,92,82,0.5)}
-.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:210px;margin:0 auto}
-.pin-btn{height:54px;border-radius:13px;background:rgba(255,255,255,0.84);border:1px solid rgba(13,92,82,0.17);font-size:20px;font-weight:600;color:#1a2416;cursor:pointer;font-family:'Cormorant Garamond',serif;transition:all 0.15s}
-.pin-btn:active{transform:scale(0.95)}
-.exp-btn{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;border-radius:12px;cursor:pointer;background:rgba(13,92,82,0.06);border:1px solid rgba(13,92,82,0.17);color:#1a2416;transition:all 0.2s;width:100%;margin-bottom:7px;font-family:'Nunito Sans',sans-serif}
-.exp-btn.selected{background:linear-gradient(135deg,#0d5c52,#1a7a6e);border-color:transparent;color:#f5efe6}
-.client-row{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;border-radius:12px;cursor:pointer;background:rgba(13,92,82,0.05);border:1px solid rgba(13,92,82,0.12);margin-bottom:7px;transition:all 0.2s}
-.client-row.selected{background:linear-gradient(135deg,rgba(13,92,82,0.14),rgba(13,92,82,0.07));border-color:rgba(13,92,82,0.34)}
-.reward-row{display:flex;justify-content:space-between;align-items:center;padding:12px 13px;border-radius:12px;margin-bottom:8px}
-.stat-box{background:rgba(255,255,255,0.74);border-radius:14px;padding:16px;border:1px solid rgba(13,92,82,0.14);text-align:center}
-.role-switch{display:flex;background:rgba(255,255,255,0.65);border-radius:14px;padding:4px;border:1px solid rgba(13,92,82,0.17);margin-bottom:18px}
-.role-btn{flex:1;padding:10px 8px;border-radius:11px;border:none;cursor:pointer;font-weight:800;font-size:13px;font-family:'Nunito Sans',sans-serif;background:transparent;color:#7a6a55;transition:all 0.25s}
-.role-btn.active{background:linear-gradient(135deg,#0d5c52,#1a7a6e);color:#f5efe6;box-shadow:0 2px 12px rgba(13,92,82,0.3)}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Mandala Thai — Fidelidad</title>
+  <link rel="stylesheet" href="./css/extra.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="./js/supabase-connection.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
 
-.err{font-size:12px;color:#c0391b;background:rgba(192,57,27,0.09);padding:8px 12px;border-radius:8px;margin-top:8px}
-.ok{font-size:12px;color:#1a7a6e;background:rgba(13,92,82,0.1);padding:8px 12px;border-radius:8px;margin-top:8px;font-weight:600}
-.hidden{display:none}
-.header{text-align:center;padding:24px 0 14px;position:relative}
-.scan-box{width:200px;height:200px;border-radius:16px;background:#1a2416;margin:0 auto 14px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
-.corner{position:absolute;width:28px;height:28px}
-.corner.tl{top:16px;left:16px;border-top:3px solid #d4571e;border-left:3px solid #d4571e;border-radius:3px 0 0 0}
-.corner.tr{top:16px;right:16px;border-top:3px solid #d4571e;border-right:3px solid #d4571e;border-radius:0 3px 0 0}
-.corner.bl{bottom:16px;left:16px;border-bottom:3px solid #d4571e;border-left:3px solid #d4571e;border-radius:0 0 0 3px}
-.corner.br{bottom:16px;right:16px;border-bottom:3px solid #d4571e;border-right:3px solid #d4571e;border-radius:0 0 3px 0}
-.scan-line{position:absolute;left:20px;right:20px;height:2px;background:linear-gradient(90deg,transparent,#d4571e,transparent);animation:scan 2s ease-in-out infinite}
-@keyframes scan{0%{top:20%}50%{top:80%}100%{top:20%}}
-</style>
-</head>
-<body>
-<div class="app" id="app">
-  <div class="header">
+    body {
+      background: linear-gradient(160deg, #f5efe6, #ece6d6, #deeae6);
+      min-height: 100vh;
+      font-family: 'Nunito Sans', sans-serif;
+      color: #1a2416
+    }
 
-    <div style="font-size:48px;margin-bottom:8px">🪷</div>
-    <div style="font-size:24px;font-family:'Cormorant Garamond',serif;font-weight:700;color:#0d5c52;letter-spacing:1px">Mandala Thai</div>
-    <div style="font-size:10px;letter-spacing:4px;color:#9a8a70;text-transform:uppercase" id="appSub">Hotel Boutique</div>
-  </div>
+    .app {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 0 14px 80px
+    }
 
-  <div class="role-switch">
-    <button class="role-btn active" id="btnGuest" onclick="setRole('client')">🛎 Huésped</button>
-    <button class="role-btn" id="btnStaff" onclick="setRole('admin')">🔑 Personal</button>
-  </div>
+    .card {
+      background: rgba(255, 255, 255, 0.74);
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid rgba(13, 92, 82, 0.14);
+      margin-bottom: 14px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05)
+    }
 
-  <div id="flash" class="flash"></div>
+    .btn {
+      border: none;
+      border-radius: 99px;
+      font-weight: 700;
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 13px;
+      padding: 11px 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-block;
+      text-align: center
+    }
 
-  <!-- VISTA CLIENTE -->
-  <div id="viewClient">
-    <div id="clientHome">
-      <div style="text-align:center;padding:20px 0 10px">
-        <div style="font-size:11px;letter-spacing:3px;color:#7a6a55;text-transform:uppercase">Programa de</div>
-        <div style="font-size:32px;font-family:'Cormorant Garamond',serif;font-weight:700;color:#0d5c52">Fidelidad</div>
-        <div style="font-size:12px;color:#9a8a70;margin-top:4px">Hotel Boutique · Mandala Thai</div>
-      </div>
-      <button class="btn btn-primary btn-full" onclick="showScreen('clientSearch')">🔍 <span id="t_accessCard">Acceder a mi tarjeta</span></button>
-      <button class="btn btn-ghost btn-full" onclick="showScreen('clientRegister')">✦ <span id="t_firstVisit">Primera visita — Registrarme</span></button>
-    </div>
+    .btn-primary {
+      background: linear-gradient(135deg, #0d5c52, #1a7a6e);
+      color: #f5efe6;
+      box-shadow: 0 4px 16px rgba(13, 92, 82, 0.38)
+    }
 
-    <div id="clientSearch" class="hidden">
-      <div class="card">
-        <div class="section-title" id="t_searchTitle">Consultar Tarjeta</div>
-        <label class="label" id="t_searchLabel">ID, Nombre o Teléfono</label>
-        <input class="inp" id="searchInput" placeholder="Ej: Ana García o 555-0000" oninput="searchHint()">
-        <div style="font-size:10px;color:#9a8a70;margin-top:4px" id="t_searchHint">Puedes usar tu ID, nombre o teléfono</div>
-        <div id="searchErr" class="err hidden"></div>
-        <div style="display:flex;gap:9px;margin-top:12px">
-          <button class="btn btn-ghost" onclick="showScreen('clientHome')" id="t_back">← Volver</button>
-          <button class="btn btn-primary" onclick="doSearch()" id="t_searchBtn">Acceder</button>
-        </div>
-      </div>
-    </div>
+    .btn-terra {
+      background: linear-gradient(135deg, #d4571e, #b8430e);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(212, 87, 30, 0.38)
+    }
 
-    <div id="clientRegister" class="hidden">
-      <div class="card">
-        <div class="section-title" id="t_register">Nuevo Registro</div>
-        <label class="label" id="t_nameLabel">Nombre Completo</label>
-        <input class="inp" id="regName" placeholder="Ej: Ana García" style="margin-bottom:12px">
-        <label class="label" id="t_phoneLabel">Teléfono / WhatsApp</label>
-        <input class="inp" id="regPhone" placeholder="555-0000">
-        <div id="regErr" class="err hidden"></div>
-        <div style="display:flex;gap:9px;margin-top:12px">
-          <button class="btn btn-ghost" onclick="showScreen('clientHome')">← Volver</button>
-          <button class="btn btn-primary" onclick="doRegister()" id="t_registerBtn">Registrarme</button>
-        </div>
-      </div>
-    </div>
+    .btn-ghost {
+      background: rgba(13, 92, 82, 0.09);
+      color: #0d5c52;
+      border: 1px solid rgba(13, 92, 82, 0.25)
+    }
 
-    <div id="clientRegistered" class="hidden">
-      <div class="card" style="border-color:rgba(212,87,30,0.22)">
-        <div class="section-title" id="t_registerOk">¡Registro Exitoso!</div>
-        <div style="text-align:center;padding:8px 0">
-          <div style="font-size:13px;color:#7a6a55;margin-bottom:12px" id="t_yourId">Tu ID de cliente es:</div>
-          <div id="newClientId" style="font-size:34px;font-weight:800;color:#0d5c52;font-family:'Cormorant Garamond',serif;letter-spacing:3px;background:rgba(13,92,82,0.08);padding:14px 20px;border-radius:14px;margin-bottom:10px"></div>
-          <div style="font-size:12px;color:#9a8a70;margin-bottom:20px;line-height:1.7" id="t_saveId">Guarda este ID — también puedes entrar con tu nombre o teléfono.</div>
-          <button class="btn btn-primary btn-full" onclick="goToCard()" id="t_viewCard">Ver mi Tarjeta →</button>
-        </div>
-      </div>
-    </div>
+    .btn-danger {
+      background: linear-gradient(135deg, #c0391b, #a52d14);
+      color: #fff
+    }
 
-    <div id="clientCard" class="hidden">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <div>
-          <div style="font-size:10px;letter-spacing:2px;color:#7a6a55;text-transform:uppercase" id="t_welcome">Bienvenid@</div>
-          <div id="clientWelcomeName" style="font-size:22px;font-family:'Cormorant Garamond',serif;font-weight:700;color:#0d5c52"></div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <div id="notifBadge" class="hidden" style="background:#d4571e;color:#fff;border-radius:99px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer" onclick="setClientTab('notif')"></div>
-          <button class="btn btn-ghost" style="font-size:11px;padding:6px 14px" onclick="logout()" id="t_logout">Salir</button>
-        </div>
-      </div>
+    .btn-green {
+      background: linear-gradient(135deg, #1a7a6e, #0d5c52);
+      color: #fff
+    }
 
-      <div id="loyaltyCardClient" class="loyalty-card"></div>
+    .btn-full {
+      width: 100%;
+      display: block;
+      margin-bottom: 8px
+    }
 
-      <div class="tabs">
-        <button class="tab active" id="tabCard" onclick="setClientTab('card')" id="t_progress">Progreso</button>
-        <button class="tab" id="tabHistory" onclick="setClientTab('history')" id="t_history">Historial</button>
-        <button class="tab" id="tabNotif" onclick="setClientTab('notif')">🔔</button>
-      </div>
+    .btn:disabled {
+      opacity: 0.38;
+      cursor: not-allowed
+    }
 
-      <div id="clientTabCard">
-        <div id="progressBars"></div>
-      </div>
-      <div id="clientTabHistory" class="hidden">
-        <div class="card">
-          <div class="section-title">Historial de Visitas</div>
-          <div id="historyList"></div>
-        </div>
-      </div>
-      <div id="clientTabNotif" class="hidden">
-        <div class="card">
-          <div class="section-title">🔔 Notificaciones</div>
-          <div id="notifList"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+    .inp {
+      width: 100%;
+      padding: 10px 13px;
+      border-radius: 10px;
+      border: 1px solid rgba(13, 92, 82, 0.24);
+      background: rgba(255, 255, 255, 0.88);
+      font-size: 14px;
+      font-family: 'Nunito Sans', sans-serif;
+      outline: none
+    }
 
-  <!-- VISTA ADMIN -->
-  <div id="viewAdmin" class="hidden">
-    <div id="adminPin">
-      <div style="text-align:center;margin-bottom:22px">
-        <div style="font-size:48px;margin-bottom:10px">🔐</div>
-        <div style="font-size:22px;font-family:'Cormorant Garamond',serif;font-weight:700;color:#0d5c52" id="t_staffAccess">Acceso de Personal</div>
-        <div style="font-size:12px;color:#9a8a70;margin-top:3px" id="t_pinHint">Ingresa tu PIN de 4 dígitos</div>
-      </div>
-      <div style="display:flex;justify-content:center;gap:14px;margin-bottom:16px" id="pinDots">
-        <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
-      </div>
-      <div id="pinErr" class="err hidden" style="text-align:center;margin-bottom:12px"></div>
-      <div class="pin-grid">
-        <button class="pin-btn" onclick="pinDigit('1')">1</button>
-        <button class="pin-btn" onclick="pinDigit('2')">2</button>
-        <button class="pin-btn" onclick="pinDigit('3')">3</button>
-        <button class="pin-btn" onclick="pinDigit('4')">4</button>
-        <button class="pin-btn" onclick="pinDigit('5')">5</button>
-        <button class="pin-btn" onclick="pinDigit('6')">6</button>
-        <button class="pin-btn" onclick="pinDigit('7')">7</button>
-        <button class="pin-btn" onclick="pinDigit('8')">8</button>
-        <button class="pin-btn" onclick="pinDigit('9')">9</button>
-        <button class="pin-btn" style="visibility:hidden"></button>
-        <button class="pin-btn" onclick="pinDigit('0')">0</button>
-        <button class="pin-btn" style="background:rgba(192,57,27,0.12)" onclick="pinDigit('⌫')">⌫</button>
-      </div>
-    </div>
+    .label {
+      font-size: 10px;
+      color: #7a6a55;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 4px
+    }
 
-    <div id="adminPanel" class="hidden">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <div style="font-size:32px">🌿</div>
-          <div>
-            <div style="font-size:10px;letter-spacing:2px;color:#7a6a55;text-transform:uppercase" id="adminPanelTitle">Panel Admin</div>
-            <div id="adminStaffName" style="font-size:17px;font-family:'Cormorant Garamond',serif;font-weight:700;color:#0d5c52"></div>
-          </div>
-        </div>
-        <button class="btn btn-danger" style="font-size:11px;padding:6px 13px" onclick="lockAdmin()">🔒 <span id="t_lock">Bloquear</span></button>
-      </div>
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #0d5c52;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      margin-bottom: 14px
+    }
 
-      <div class="tabs" id="adminTabs"></div>
+    .loyalty-card {
+      background: linear-gradient(135deg, #0b4e46, #1a7a6e, #0a4240, #062820);
+      border-radius: 22px;
+      padding: 22px 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 22px 60px rgba(13, 92, 82, 0.45);
+      margin-bottom: 14px;
+      color: #f5efe6
+    }
 
-      <div id="adminTabScan">
-        <div class="card">
-          <div class="section-title">📷 Escanear QR</div>
-          <div class="scan-box">
-            <div class="corner tl"></div><div class="corner tr"></div>
-            <div class="corner bl"></div><div class="corner br"></div>
-            <div class="scan-line"></div>
-            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
-              <div style="font-size:32px;opacity:0.4">📱</div>
-              <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px">APUNTA AL QR</div>
-            </div>
-          </div>
-          <div style="font-size:12px;color:#7a6a55;text-align:center;margin-bottom:14px">En la app real la cámara se abre aquí.</div>
-          <div style="background:rgba(13,92,82,0.06);border-radius:12px;padding:14px;border:1px solid rgba(13,92,82,0.15)">
-            <div class="label" style="margin-bottom:8px">O busca manualmente</div>
-            <input class="inp" id="adminSearchScan" placeholder="Nombre, ID o teléfono..." oninput="renderScanSearch()">
-            <div id="scanSearchResults" style="margin-top:10px;max-height:180px;overflow-y:auto"></div>
-          </div>
-        </div>
-      </div>
+    .tabs {
+      display: flex;
+      background: rgba(255, 255, 255, 0.55);
+      border-radius: 12px;
+      padding: 3px;
+      border: 1px solid rgba(13, 92, 82, 0.14);
+      margin-bottom: 14px;
+      gap: 2px
+    }
 
-      <div id="adminTabClients" class="hidden">
-        <div class="card" style="margin-bottom:14px">
-          <div class="section-title">🔍 Buscar Cliente</div>
-          <input class="inp" id="adminSearch" placeholder="Nombre, ID o teléfono..." oninput="renderClientList()">
-          <div id="clientList" style="margin-top:10px"></div>
-        </div>
-        <div id="selectedClientPanel" class="hidden"></div>
-      </div>
+    .tab {
+      flex: 1;
+      padding: 8px 4px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 11px;
+      font-family: 'Nunito Sans', sans-serif;
+      background: transparent;
+      color: #7a6a55;
+      transition: all 0.22s
+    }
 
-      <div id="adminTabRequests" class="hidden">
-        <div class="card">
-          <div class="section-title">📋 Solicitudes de Canje</div>
-          <div id="requestsList"></div>
-        </div>
-      </div>
+    .tab.active {
+      background: linear-gradient(135deg, #0d5c52, #1a7a6e);
+      color: #f5efe6;
+      box-shadow: 0 2px 10px rgba(13, 92, 82, 0.3)
+    }
 
-      <div id="adminTabReports" class="hidden">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px" id="statsGrid"></div>
-        <div class="card">
-          <div class="section-title">🏆 Top Clientes</div>
-          <div id="topClients"></div>
-        </div>
-      </div>
+    .progress-bar {
+      height: 7px;
+      background: rgba(13, 92, 82, 0.11);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 10px
+    }
 
-      <div id="adminTabSettings" class="hidden">
-        <div class="card" style="margin-bottom:14px">
-          <div class="section-title">🔐 Cambiar PIN</div>
-          <label class="label">PIN Actual</label>
-          <input class="inp" type="password" id="pinCurrent" placeholder="····" maxlength="4" style="margin-bottom:10px">
-          <label class="label">Nuevo PIN</label>
-          <input class="inp" type="password" id="pinNew" placeholder="····" maxlength="4" style="margin-bottom:10px">
-          <label class="label">Confirmar PIN</label>
-          <input class="inp" type="password" id="pinConfirm" placeholder="····" style="margin-bottom:10px">
-          <div id="pinChangeMsg"></div>
-          <button class="btn btn-terra" style="margin-top:8px" onclick="changePin()">Cambiar PIN</button>
-        </div>
-        <div class="card" style="margin-bottom:14px">
-          <div class="section-title">✨ Gestionar Experiencias</div>
-          <div id="expList"></div>
-          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-            <input class="inp" id="newExpName" placeholder="Nombre" style="flex:2;min-width:100px">
-            <input class="inp" id="newExpPts" placeholder="Pts" style="width:60px" type="number">
-            <input class="inp" id="newExpIcon" placeholder="🌟" style="width:50px">
-            <button class="btn btn-primary" style="padding:8px 14px;font-size:12px" onclick="addExp()">Agregar</button>
-          </div>
-        </div>
-        <div class="card" style="margin-bottom:14px">
-          <div class="section-title">🎁 Gestionar Recompensas</div>
-          <div id="rewardList"></div>
-          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-            <input class="inp" id="newRwdName" placeholder="Nombre" style="flex:2;min-width:100px">
-            <input class="inp" id="newRwdCost" placeholder="Pts" style="width:70px" type="number">
-            <button class="btn btn-primary" style="padding:8px 14px;font-size:12px" onclick="addReward()">Agregar</button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="section-title">👥 Gestionar Personal</div>
-          <div id="staffList"></div>
-          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-            <input class="inp" id="newStaffName" placeholder="Nombre" style="flex:2;min-width:100px">
-            <input class="inp" id="newStaffPin" placeholder="PIN" type="password" maxlength="4" style="width:70px">
-            <button class="btn btn-primary" style="padding:8px 14px;font-size:12px" onclick="addStaff()">Agregar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.7s ease
+    }
 
-<script>
-// ── DATA ──────────────────────────────────────────────────────────────────
-var clients = [
-  {id:"MT-2026-01",name:"Sofía Ramírez",phone:"555-0101",points:70,lastVisit:"2026-05-27",redeemRequest:null,
-   notifications:[{msg:"¡Bienvenida al programa Mandala Thai! Tienes 70 puntos.",read:false}],
-   history:[{date:"15/03/2026",type:"Experiencia Romántica",delta:30},{date:"02/04/2026",type:"Noche Romántica",delta:20},{date:"18/05/2026",type:"Hospedaje Sencillo",delta:10},{date:"20/05/2026",type:"Canje: Masaje Gratuito",delta:-50},{date:"27/05/2026",type:"Experiencia Romántica",delta:30},{date:"27/05/2026",type:"Noche Romántica",delta:20}]},
-  {id:"MT-2026-02",name:"Carlos Mendoza",phone:"555-0202",points:40,lastVisit:"2026-05-27",redeemRequest:null,
-   notifications:[{msg:"¡Bienvenido al programa Mandala Thai! Tienes 40 puntos.",read:false}],
-   history:[{date:"10/04/2026",type:"Noche Romántica",delta:20},{date:"25/04/2026",type:"Hospedaje Sencillo",delta:10},{date:"12/05/2026",type:"Noche Romántica",delta:20},{date:"20/05/2026",type:"Canje: Masaje Gratuito",delta:-50},{date:"27/05/2026",type:"Hospedaje Sencillo",delta:10},{date:"27/05/2026",type:"Hospedaje Sencillo",delta:10},{date:"27/05/2026",type:"Hospedaje Sencillo",delta:10}]}
-];
-var exps = [
-  {id:1,label:"Hospedaje Sencillo",pts:10,icon:"🌿"},
-  {id:2,label:"Noche Romántica",pts:20,icon:"🌙"},
-  {id:3,label:"Experiencia Romántica",pts:30,icon:"✨"}
-];
-var rewards = [
-  {id:1,label:"Masaje Gratuito",cost:50,icon:"💆"},
-  {id:2,label:"Noche de Cortesía",cost:100,icon:"🏡"}
-];
-var staffList = [
-  {id:1,name:"Admin Principal",pin:"1234",role:"admin"},
-  {id:2,name:"Recepción",pin:"5678",role:"staff"}
-];
-var clientCounter=3, expCounter=4, rewardCounter=3, staffCounter=3;
-var currentClientId=null, currentRole="client", currentStaff=null;
-var pinInput="", selectedClientId=null, selectedExpId=null, adminTab="scan", clientTab="card";
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 7px
+    }
 
+    .notif {
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 8px
+    }
 
-function fmtDate(){var d=new Date();return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear();}
-function todayISO(){return new Date().toISOString().split("T")[0];}
-function daysDiff(iso){return Math.floor((new Date()-new Date(iso))/(1000*60*60*24));}
-function pointsExpired(lv){return daysDiff(lv)>=180;}
-function daysLeft(lv){return Math.max(0,180-daysDiff(lv));}
-function getClient(id){return clients.find(function(c){return c.id===id;});}
-function getPts(c){return pointsExpired(c.lastVisit)?0:c.points;}
+    .flash {
+      background: linear-gradient(135deg, #0d5c52, #1a7a6e);
+      color: #f5efe6;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 14px;
+      display: none
+    }
 
-// ── QR SVG ────────────────────────────────────────────────────────────────
-function makeQR(value,size){
-  var seed=value.split("").reduce(function(a,c,i){return a+c.charCodeAt(0)*(i+7)*31;},0);
-  var sz=21,matrix=[];
-  for(var r=0;r<sz;r++){matrix[r]=[];for(var c=0;c<sz;c++)matrix[r][c]=0;}
-  function addFinder(r,c){for(var i=0;i<7;i++)for(var j=0;j<7;j++)if(i===0||i===6||j===0||j===6||(i>=2&&i<=4&&j>=2&&j<=4))matrix[r+i][c+j]=1;}
-  addFinder(0,0);addFinder(0,14);addFinder(14,0);
-  for(var r=0;r<sz;r++)for(var c=0;c<sz;c++){
-    if(!matrix[r][c]){var res=(r<9&&c<9)||(r<9&&c>12)||(r>12&&c<9);if(!res)matrix[r][c]=((seed*(r*sz+c+13)*7+r*3+c*5)%17)<8?1:0;}
-  }
-  var cell=size/sz,rects="";
-  for(var r=0;r<sz;r++)for(var c=0;c<sz;c++)if(matrix[r][c])rects+='<rect x="'+(c*cell)+'" y="'+(r*cell)+'" width="'+cell+'" height="'+cell+'" fill="#0d5c52"/>';
-  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg"><rect width="'+size+'" height="'+size+'" fill="white"/>'+rects+'</svg>';
-}
+    .pin-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: rgba(13, 92, 82, 0.2);
+      transition: all 0.2s;
+      display: inline-block;
+      margin: 0 7px
+    }
 
-// ── RENDER LOYALTY CARD ───────────────────────────────────────────────────
-function renderLoyaltyCard(el,c){
-  var pts=getPts(c);
-  var expired=pointsExpired(c.lastVisit);
-  var days=daysLeft(c.lastVisit);
-  var warn="";
-  if(expired)warn='<div style="font-size:10px;color:#f56242;margin-top:2px">⚠️ Puntos vencidos</div>';
-  else if(days<=30)warn='<div style="font-size:10px;color:#f5c842;margin-top:2px">⚠️ Puntos vencen en '+days+' días</div>';
-  var dots="";
-  for(var i=0;i<5;i++){var on=(!expired&&i<Math.min(5,Math.floor(pts/20)));dots+='<div style="width:9px;height:9px;border-radius:50%;background:'+(on?"#d4571e":"rgba(212,87,30,0.2)")+';box-shadow:'+(on?"0 0 8px rgba(212,87,30,0.55)":"none")+';display:inline-block;margin:0 2px"></div>';}
-  el.innerHTML='<div style="position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(212,87,30,0.16) 0%,transparent 65%)"></div>'+
-  '<div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative">'+
-  '<div style="flex:1;min-width:0">'+
-  '<div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span style="font-size:20px">🪷</span><span style="font-size:9px;letter-spacing:3px;color:#d4571e;text-transform:uppercase;font-family:\'Cormorant Garamond\',serif;font-weight:600">Mandala Thai</span></div>'+
-  '<div style="font-size:20px;font-weight:700;color:#f5efe6;font-family:\'Cormorant Garamond\',serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+c.name+'</div>'+
-  '<div style="font-size:11px;color:rgba(212,87,30,0.85);margin-top:3px;letter-spacing:2px;font-family:monospace">'+c.id+'</div>'+
-  '<div style="font-size:9px;color:rgba(212,87,30,0.55);margin-top:2px">📱 Muestra este QR al llegar</div>'+
-  '</div>'+
-  '<div style="background:rgba(255,255,255,0.97);border-radius:10px;padding:6px;flex-shrink:0;margin-left:12px">'+makeQR("MT:"+c.id,76)+'</div>'+
-  '</div>'+
-  '<div style="margin-top:18px;display:flex;justify-content:space-between;align-items:flex-end;position:relative">'+
-  '<div><div style="font-size:9px;color:rgba(212,87,30,0.7);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:2px">Puntos Acumulados</div>'+
-  '<div style="font-size:40px;font-weight:700;color:'+(expired?"#aaa":"#d4571e")+';font-family:\'Cormorant Garamond\',serif;line-height:1">'+pts+'<span style="font-size:13px;font-weight:400;margin-left:3px;color:rgba(212,87,30,0.6)">pts</span></div>'+
-  warn+'</div>'+
-  '<div style="padding-bottom:4px">'+dots+'</div></div>';
-}
+    .pin-dot.filled {
+      background: #0d5c52;
+      box-shadow: 0 0 8px rgba(13, 92, 82, 0.5)
+    }
 
-// ── RENDER PROGRESS BARS ──────────────────────────────────────────────────
-function renderProgressBars(){
-  var c=getClient(currentClientId);
-  if(!c)return;
-  var pts=getPts(c);
-  var html="";
-  rewards.forEach(function(r){
-    var pct=Math.min(100,(pts/r.cost)*100);
-    var ok=pts>=r.cost;
-    var already=c.redeemRequest===r.id;
-    var barColor=ok?"linear-gradient(90deg,#2a9d8f,#1a7a6e)":"linear-gradient(90deg,#d4571e,#b8430e)";
-    var btn="";
-    if(ok){
-      if(already){
-        btn='<div style="background:rgba(13,92,82,0.1);border-radius:10px;padding:10px 14px;text-align:center;font-size:12px;font-weight:700;color:#1a7a6e;margin-top:12px">✓ ¡Solicitud enviada! El personal la procesará en tu próxima visita.</div>';
-      }else{
-        btn='<button class="btn btn-terra btn-full" style="margin-top:12px" onclick="requestRedeem('+r.id+')">🎁 Solicitar: '+r.label+'</button>';
+    .pin-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      width: 210px;
+      margin: 0 auto
+    }
+
+    .pin-btn {
+      height: 54px;
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid rgba(13, 92, 82, 0.17);
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a2416;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', serif;
+      transition: all 0.15s
+    }
+
+    .pin-btn:active {
+      transform: scale(0.95)
+    }
+
+    .exp-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 13px;
+      border-radius: 12px;
+      cursor: pointer;
+      background: rgba(13, 92, 82, 0.06);
+      border: 1px solid rgba(13, 92, 82, 0.17);
+      color: #1a2416;
+      transition: all 0.2s;
+      width: 100%;
+      margin-bottom: 7px;
+      font-family: 'Nunito Sans', sans-serif
+    }
+
+    .exp-btn.selected {
+      background: linear-gradient(135deg, #0d5c52, #1a7a6e);
+      border-color: transparent;
+      color: #f5efe6
+    }
+
+    .client-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 13px;
+      border-radius: 12px;
+      cursor: pointer;
+      background: rgba(13, 92, 82, 0.05);
+      border: 1px solid rgba(13, 92, 82, 0.12);
+      margin-bottom: 7px;
+      transition: all 0.2s
+    }
+
+    .client-row.selected {
+      background: linear-gradient(135deg, rgba(13, 92, 82, 0.14), rgba(13, 92, 82, 0.07));
+      border-color: rgba(13, 92, 82, 0.34)
+    }
+
+    .reward-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 13px;
+      border-radius: 12px;
+      margin-bottom: 8px
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.74);
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid rgba(13, 92, 82, 0.14);
+      text-align: center
+    }
+
+    .role-switch {
+      display: flex;
+      background: rgba(255, 255, 255, 0.65);
+      border-radius: 14px;
+      padding: 4px;
+      border: 1px solid rgba(13, 92, 82, 0.17);
+      margin-bottom: 18px
+    }
+
+    .role-btn {
+      flex: 1;
+      padding: 10px 8px;
+      border-radius: 11px;
+      border: none;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 13px;
+      font-family: 'Nunito Sans', sans-serif;
+      background: transparent;
+      color: #7a6a55;
+      transition: all 0.25s
+    }
+
+    .role-btn.active {
+      background: linear-gradient(135deg, #0d5c52, #1a7a6e);
+      color: #f5efe6;
+      box-shadow: 0 2px 12px rgba(13, 92, 82, 0.3)
+    }
+
+    .err {
+      font-size: 12px;
+      color: #c0391b;
+      background: rgba(192, 57, 27, 0.09);
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-top: 8px
+    }
+
+    .ok {
+      font-size: 12px;
+      color: #1a7a6e;
+      background: rgba(13, 92, 82, 0.1);
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-top: 8px;
+      font-weight: 600
+    }
+
+    .hidden {
+      display: none
+    }
+
+    .header {
+      text-align: center;
+      padding: 24px 0 14px;
+      position: relative
+    }
+
+    .scan-box {
+      width: 200px;
+      height: 200px;
+      border-radius: 16px;
+      background: #1a2416;
+      margin: 0 auto 14px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3)
+    }
+
+    .corner {
+      position: absolute;
+      width: 28px;
+      height: 28px
+    }
+
+    .corner.tl {
+      top: 16px;
+      left: 16px;
+      border-top: 3px solid #d4571e;
+      border-left: 3px solid #d4571e;
+      border-radius: 3px 0 0 0
+    }
+
+    .corner.tr {
+      top: 16px;
+      right: 16px;
+      border-top: 3px solid #d4571e;
+      border-right: 3px solid #d4571e;
+      border-radius: 0 3px 0 0
+    }
+
+    .corner.bl {
+      bottom: 16px;
+      left: 16px;
+      border-bottom: 3px solid #d4571e;
+      border-left: 3px solid #d4571e;
+      border-radius: 0 0 0 3px
+    }
+
+    .corner.br {
+      bottom: 16px;
+      right: 16px;
+      border-bottom: 3px solid #d4571e;
+      border-right: 3px solid #d4571e;
+      border-radius: 0 0 3px 0
+    }
+
+    .scan-line {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #d4571e, transparent);
+      animation: scan 2s ease-in-out infinite
+    }
+
+    @keyframes scan {
+      0% {
+        top: 20%
+      }
+
+      50% {
+        top: 80%
+      }
+
+      100% {
+        top: 20%
       }
     }
-    html+='<div style="background:'+(ok?"rgba(255,255,255,0.88)":"rgba(255,255,255,0.72)")+';border-radius:14px;padding:14px 16px;border:1px solid '+(ok?"rgba(42,157,143,0.45)":"rgba(13,92,82,0.14)")+';margin-bottom:12px">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'+
-    '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:22px">'+r.icon+'</span><div>'+
-    '<div style="font-size:13px;font-weight:700;color:#1a2416;font-family:\'Cormorant Garamond\',serif">'+r.label+'</div>'+
-    '<div style="font-size:10px;color:#9a8a70">'+r.cost+' pts</div></div></div>'+
-    (!ok?'<span style="font-size:11px;font-weight:700;color:#9a8a70">'+pts+'/'+r.cost+'</span>':'')+
-    '</div>'+
-    '<div class="progress-bar"><div style="height:100%;width:'+pct+'%;background:'+barColor+';border-radius:99px;transition:width 0.7s ease"></div></div>'+
-    btn+'</div>';
-  });
-  document.getElementById("progressBars").innerHTML=html;
-}
+  </style>
+</head>
 
-function requestRedeem(rId){
-  var c=getClient(currentClientId);
-  c.redeemRequest=rId;
-  renderProgressBars();
-}
+<body>
+  <div class="app" id="app">
+    <div id="manual-notification"></div>
+    <div class="header">
 
-// ── HISTORY ───────────────────────────────────────────────────────────────
-function renderHistory(){
-  var c=getClient(currentClientId);
-  if(!c){return;}
-  var hist=[].concat(c.history).reverse();
-  if(!hist.length){document.getElementById("historyList").innerHTML='<div style="text-align:center;color:#9a8a70;padding:20px;font-size:13px">Sin registros aún.</div>';return;}
-  var html="";
-  hist.forEach(function(h){
-    var pos=h.delta>0;
-    html+='<div class="history-item" style="background:'+(pos?"rgba(13,92,82,0.07)":"rgba(180,50,20,0.06)")+';border:1px solid '+(pos?"rgba(13,92,82,0.14)":"rgba(180,50,20,0.14)")+';margin-bottom:7px">'+
-    '<div><div style="font-size:12px;font-weight:600;color:#1a2416">'+h.type+'</div><div style="font-size:10px;color:#9a8a70;margin-top:1px">'+h.date+'</div></div>'+
-    '<div style="font-size:14px;font-weight:800;color:'+(pos?"#1a7a6e":"#c0391b")+'">'+(pos?"+":"")+h.delta+' pts</div></div>';
-  });
-  document.getElementById("historyList").innerHTML=html;
-}
+      <div style="font-size:48px;margin-bottom:8px">🪷</div>
+      <div
+        style="font-size:24px;font-family:'Cormorant Garamond',serif;font-weight:700;color:#0d5c52;letter-spacing:1px">
+        Mandala Thai</div>
+      <div style="font-size:10px;letter-spacing:4px;color:#9a8a70;text-transform:uppercase" id="appSub">Hotel Boutique
+      </div>
+    </div>
 
-// ── NOTIFS ────────────────────────────────────────────────────────────────
-function renderNotifs(){
-  var c=getClient(currentClientId);
-  if(!c)return;
-  c.notifications.forEach(function(n){n.read=true;});
-  document.getElementById("notifBadge").classList.add("hidden");
-  if(!c.notifications.length){document.getElementById("notifList").innerHTML='<div style="text-align:center;color:#9a8a70;padding:16px;font-size:13px">Sin notificaciones nuevas.</div>';return;}
-  var html="";
-  [].concat(c.notifications).reverse().forEach(function(n){
-    html+='<div class="notif" style="background:rgba(13,92,82,0.06);border:1px solid rgba(13,92,82,0.12);font-size:13px;color:#1a2416">'+n.msg+'</div>';
-  });
-  document.getElementById("notifList").innerHTML=html;
-}
+    <div class="role-switch">
+      <button class="role-btn active" id="btnGuest" onclick="setRole('client')">🛎 Huésped</button>
+      <button class="role-btn" id="btnStaff" onclick="setRole('admin')">🔑 Personal</button>
+    </div>
 
-// ── RENDER CLIENT CARD ────────────────────────────────────────────────────
-function renderClientCard(){
-  var c=getClient(currentClientId);
-  if(!c)return;
-  document.getElementById("clientWelcomeName").textContent=c.name.split(" ")[0]+" ✨";
-  renderLoyaltyCard(document.getElementById("loyaltyCardClient"),c);
-  var unread=c.notifications.filter(function(n){return !n.read;}).length;
-  var badge=document.getElementById("notifBadge");
-  if(unread>0){badge.textContent="🔔 "+unread;badge.classList.remove("hidden");}
-  else{badge.classList.add("hidden");}
-  if(clientTab==="card")renderProgressBars();
-  else if(clientTab==="history")renderHistory();
-  else if(clientTab==="notif")renderNotifs();
-}
+    <div id="flash" class="flash"></div>
 
-// ── NAVIGATION ────────────────────────────────────────────────────────────
-function showScreen(id){
-  ["clientHome","clientSearch","clientRegister","clientRegistered","clientCard"].forEach(function(s){
-    var el=document.getElementById(s);
-    if(el)el.classList.toggle("hidden",s!==id);
-  });
-}
+    <!-- VISTA CLIENTE -->
+    <div id="viewClient">
+      <div id="clientHome">
+        <div style="text-align:center;padding:20px 0 10px">
+          <div style="font-size:11px;letter-spacing:3px;color:#7a6a55;text-transform:uppercase">Programa de</div>
+          <div style="font-size:32px;font-family:'Cormorant Garamond',serif;font-weight:700;color:#0d5c52">Fidelidad
+          </div>
+          <div style="font-size:12px;color:#9a8a70;margin-top:4px">Hotel Boutique · Mandala Thai</div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="showScreen('clientSearch')">🔍 <span id="t_accessCard">Acceder
+            a mi tarjeta</span></button>
+        <button class="btn btn-ghost btn-full" onclick="showScreen('clientRegister')">✦ <span id="t_firstVisit">Primera
+            visita — Registrarme</span></button>
+      </div>
 
-function setClientTab(tab){
-  clientTab=tab;
-  ["card","history","notif"].forEach(function(t){
-    var btn=document.getElementById("tab"+t.charAt(0).toUpperCase()+t.slice(1));
-    if(btn)btn.classList.toggle("active",t===tab);
-    var panel=document.getElementById("clientTab"+t.charAt(0).toUpperCase()+t.slice(1));
-    if(panel)panel.classList.toggle("hidden",t!==tab);
-  });
-  if(tab==="card")renderProgressBars();
-  else if(tab==="history")renderHistory();
-  else if(tab==="notif")renderNotifs();
-}
+      <div id="clientSearch" class="hidden">
+        <div class="card">
+          <div class="section-title" id="t_searchTitle">Consultar Tarjeta</div>
+          <label class="label" id="t_searchLabel">ID, Nombre o Teléfono</label>
+          <input class="inp" id="searchInput" placeholder="Ej: Ana García o 555-0000" oninput="searchHint()">
+          <div style="font-size:10px;color:#9a8a70;margin-top:4px" id="t_searchHint">Puedes usar tu ID, nombre o
+            teléfono</div>
+          <div id="searchErr" class="err hidden"></div>
+          <div style="display:flex;gap:9px;margin-top:12px">
+            <button class="btn btn-ghost" onclick="showScreen('clientHome')" id="t_back">← Volver</button>
+            <button class="btn btn-primary" onclick="doSearch()" id="t_searchBtn">Acceder</button>
+          </div>
+        </div>
+      </div>
 
-// ── SEARCH ────────────────────────────────────────────────────────────────
-function doSearch(){
-  var q=document.getElementById("searchInput").value.trim().toLowerCase();
-  var found=clients.find(function(c){
-    return c.id.toLowerCase()===q||c.name.toLowerCase().includes(q)||c.phone.replace(/\D/g,"")===q.replace(/\D/g,"");
-  });
-  if(!found){document.getElementById("searchErr").textContent="No encontramos ese dato. Verifica o regístrate.";document.getElementById("searchErr").classList.remove("hidden");return;}
-  currentClientId=found.id;
-  document.getElementById("searchErr").classList.add("hidden");
-  document.getElementById("searchInput").value="";
-  clientTab="card";
-  showScreen("clientCard");
-  renderClientCard();
-}
+      <div id="clientRegister" class="hidden">
+        <div class="card">
+          <div class="section-title" id="t_register">Nuevo Registro</div>
+          <label class="label" id="t_nameLabel">Nombre Completo</label>
+          <input class="inp" id="regName" placeholder="Ej: Ana García" style="margin-bottom:12px">
+          <label class="label" id="t_phoneLabel">Teléfono / WhatsApp</label>
+          <input class="inp" id="regPhone" placeholder="555-0000">
+          <div id="regErr" class="err hidden"></div>
+          <div style="display:flex;gap:9px;margin-top:12px">
+            <button class="btn btn-ghost" onclick="showScreen('clientHome')">← Volver</button>
+            <button class="btn btn-primary" onclick="doRegister()" id="t_registerBtn">Registrarme</button>
+          </div>
+        </div>
+      </div>
 
-function searchHint(){
-  document.getElementById("searchErr").classList.add("hidden");
-}
+      <div id="clientRegistered" class="hidden">
+        <div class="card" style="border-color:rgba(212,87,30,0.22)">
+          <div class="section-title" id="t_registerOk">¡Registro Exitoso!</div>
+          <div style="text-align:center;padding:8px 0">
+            <div style="font-size:13px;color:#7a6a55;margin-bottom:12px" id="t_yourId">Tu ID de cliente es:</div>
+            <div id="newClientId"
+              style="font-size:34px;font-weight:800;color:#0d5c52;font-family:'Cormorant Garamond',serif;letter-spacing:3px;background:rgba(13,92,82,0.08);padding:14px 20px;border-radius:14px;margin-bottom:10px">
+            </div>
+            <div style="font-size:12px;color:#9a8a70;margin-bottom:20px;line-height:1.7" id="t_saveId">Guarda este ID —
+              también puedes entrar con tu nombre o teléfono.</div>
+            <button class="btn btn-primary btn-full" onclick="goToCard()" id="t_viewCard">Ver mi Tarjeta →</button>
+          </div>
+        </div>
+      </div>
 
-// ── REGISTER ──────────────────────────────────────────────────────────────
-function doRegister(){
-  var name=document.getElementById("regName").value.trim();
-  var phone=document.getElementById("regPhone").value.trim();
-  if(!name||!phone){document.getElementById("regErr").textContent="Completa todos los campos.";document.getElementById("regErr").classList.remove("hidden");return;}
-  var id="MT-2026-"+String(clientCounter).padStart(2,"0");clientCounter++;
-  var welcome="🌿 ¡Bienvenid@ al programa Mandala Thai, "+name.split(" ")[0]+"! Tu ID es "+id+".";
-  clients.push({id:id,name:name,phone:phone,points:0,lastVisit:todayISO(),redeemRequest:null,notifications:[{msg:welcome,read:false}],history:[]});
-  document.getElementById("newClientId").textContent=id;
-  document.getElementById("regName").value="";
-  document.getElementById("regPhone").value="";
-  document.getElementById("regErr").classList.add("hidden");
-  currentClientId=id;
-  showScreen("clientRegistered");
-}
+      <div id="clientCard" class="hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div>
+            <div style="font-size:10px;letter-spacing:2px;color:#7a6a55;text-transform:uppercase" id="t_welcome">
+              Bienvenid@</div>
+            <div id="clientWelcomeName"
+              style="font-size:22px;font-family:'Cormorant Garamond',serif;font-weight:700;color:#0d5c52"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div id="notifBadge" class="hidden"
+              style="background:#d4571e;color:#fff;border-radius:99px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer"
+              onclick="setClientTab('notif')"></div>
+            <button class="btn btn-ghost" style="font-size:11px;padding:6px 14px" onclick="logout()"
+              id="t_logout">Salir</button>
+          </div>
+        </div>
 
-function goToCard(){
-  clientTab="card";
-  showScreen("clientCard");
-  renderClientCard();
-}
+        <div id="loyaltyCardClient" class="loyalty-card"></div>
 
-function logout(){
-  currentClientId=null;
-  showScreen("clientHome");
-  document.getElementById("searchInput").value="";
-}
+        <div class="tabs">
+          <button class="tab active" id="tabCard" onclick="setClientTab('card')" id="t_progress">Progreso</button>
+          <button class="tab" id="tabHistory" onclick="setClientTab('history')" id="t_history">Historial</button>
+          <button class="tab" id="tabNotif" onclick="setClientTab('notif')">🔔</button>
+        </div>
 
-// ── ROLE SWITCH ───────────────────────────────────────────────────────────
-function setRole(role){
-  currentRole=role;
-  document.getElementById("btnGuest").classList.toggle("active",role==="client");
-  document.getElementById("btnStaff").classList.toggle("active",role==="admin");
-  document.getElementById("viewClient").classList.toggle("hidden",role!=="client");
-  document.getElementById("viewAdmin").classList.toggle("hidden",role!=="admin");
-}
+        <div id="clientTabCard">
+          <div id="progressBars"></div>
+        </div>
+        <div id="clientTabHistory" class="hidden">
+          <div class="card">
+            <div class="section-title">Historial de Visitas</div>
+            <div id="historyList"></div>
+          </div>
+        </div>
+        <div id="clientTabNotif" class="hidden">
+          <div class="card">
+            <div class="section-title">🔔 Notificaciones</div>
+            <div id="notifList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-// ── PIN ───────────────────────────────────────────────────────────────────
-function pinDigit(d){
-  if(d==="⌫"){pinInput=pinInput.slice(0,-1);}
-  else if(pinInput.length<4){pinInput+=d;}
-  updatePinDots();
-  if(pinInput.length===4){
-    var found=staffList.find(function(s){return s.pin===pinInput;});
-    if(found){
-      currentStaff=found;
-      pinInput="";
-      updatePinDots();
-      document.getElementById("pinErr").classList.add("hidden");
-      document.getElementById("adminPin").classList.add("hidden");
-      document.getElementById("adminPanel").classList.remove("hidden");
-      document.getElementById("adminStaffName").textContent=found.name;
-      document.getElementById("adminPanelTitle").textContent=found.role==="admin"?"Panel Admin":"Panel de Personal";
-      renderAdminTabs();
-      setAdminTab("scan");
-    }else{
-      document.getElementById("pinErr").textContent="PIN incorrecto.";
-      document.getElementById("pinErr").classList.remove("hidden");
-      setTimeout(function(){pinInput="";updatePinDots();document.getElementById("pinErr").classList.add("hidden");},600);
+    <!-- VISTA ADMIN -->
+    <div id="viewAdmin" class="hidden">
+      <div id="adminPin">
+        <div style="text-align:center;margin-bottom:22px">
+          <div style="font-size:48px;margin-bottom:10px">🔐</div>
+          <div style="font-size:22px;font-family:'Cormorant Garamond',serif;font-weight:700;color:#0d5c52"
+            id="t_staffAccess">Acceso de Personal</div>
+          <div style="font-size:12px;color:#9a8a70;margin-top:3px" id="t_pinHint">Ingresa tu PIN de 4 dígitos</div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:14px;margin-bottom:16px" id="pinDots">
+          <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span><span
+            class="pin-dot"></span>
+        </div>
+        <div id="pinErr" class="err hidden" style="text-align:center;margin-bottom:12px"></div>
+        <div class="pin-grid">
+          <button class="pin-btn" onclick="pinDigit('1')">1</button>
+          <button class="pin-btn" onclick="pinDigit('2')">2</button>
+          <button class="pin-btn" onclick="pinDigit('3')">3</button>
+          <button class="pin-btn" onclick="pinDigit('4')">4</button>
+          <button class="pin-btn" onclick="pinDigit('5')">5</button>
+          <button class="pin-btn" onclick="pinDigit('6')">6</button>
+          <button class="pin-btn" onclick="pinDigit('7')">7</button>
+          <button class="pin-btn" onclick="pinDigit('8')">8</button>
+          <button class="pin-btn" onclick="pinDigit('9')">9</button>
+          <button class="pin-btn" style="visibility:hidden"></button>
+          <button class="pin-btn" onclick="pinDigit('0')">0</button>
+          <button class="pin-btn" style="background:rgba(192,57,27,0.12)" onclick="pinDigit('⌫')">⌫</button>
+        </div>
+      </div>
+
+      <div id="adminPanel" class="hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-size:32px">🌿</div>
+            <div>
+              <div style="font-size:10px;letter-spacing:2px;color:#7a6a55;text-transform:uppercase"
+                id="adminPanelTitle">Panel Admin</div>
+              <div id="adminStaffName"
+                style="font-size:17px;font-family:'Cormorant Garamond',serif;font-weight:700;color:#0d5c52"></div>
+            </div>
+          </div>
+          <button class="btn btn-danger" style="font-size:11px;padding:6px 13px" onclick="lockAdmin()">🔒 <span
+              id="t_lock">Bloquear</span></button>
+        </div>
+
+        <div class="tabs" id="adminTabs"></div>
+
+        <div id="adminTabScan">
+          <div class="card">
+            <div class="section-title">📷 Escanear QR</div>
+            <div class="scan-box">
+              <div class="corner tl"></div>
+              <div class="corner tr"></div>
+              <div class="corner bl"></div>
+              <div class="corner br"></div>
+              <div class="scan-line"></div>
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+                <div style="font-size:32px;opacity:0.4">📱</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px">APUNTA AL QR</div>
+              </div>
+            </div>
+            <div style="font-size:12px;color:#7a6a55;text-align:center;margin-bottom:14px">En la app real la cámara se
+              abre aquí.</div>
+            <div
+              style="background:rgba(13,92,82,0.06);border-radius:12px;padding:14px;border:1px solid rgba(13,92,82,0.15)">
+              <div class="label" style="margin-bottom:8px">O busca manualmente</div>
+              <input class="inp" id="adminSearchScan" placeholder="Nombre, ID o teléfono..."
+                oninput="renderScanSearch()">
+              <div id="scanSearchResults" style="margin-top:10px;max-height:180px;overflow-y:auto"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="adminTabClients" class="hidden">
+          <div class="card" style="margin-bottom:14px">
+            <div class="section-title">🔍 Buscar Cliente</div>
+            <input class="inp" id="adminSearch" placeholder="Nombre, ID o teléfono..." oninput="renderClientList()">
+            <div id="clientList" style="margin-top:10px"></div>
+          </div>
+          <div id="selectedClientPanel" class="hidden"></div>
+        </div>
+
+        <div id="adminTabRequests" class="hidden">
+          <div class="card">
+            <div class="section-title">📋 Solicitudes de Canje</div>
+            <div id="requestsList"></div>
+          </div>
+        </div>
+
+        <div id="adminTabReports" class="hidden">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px" id="statsGrid"></div>
+          <div class="card">
+            <div class="section-title">🏆 Top Clientes</div>
+            <div id="topClients"></div>
+          </div>
+        </div>
+
+        <div id="adminTabSettings" class="hidden">
+          <div class="card" style="margin-bottom:14px">
+            <div class="section-title">🔐 Cambiar PIN</div>
+            <label class="label">PIN Actual</label>
+            <input class="inp" type="password" id="pinCurrent" placeholder="····" maxlength="4"
+              style="margin-bottom:10px">
+            <label class="label">Nuevo PIN</label>
+            <input class="inp" type="password" id="pinNew" placeholder="····" maxlength="4" style="margin-bottom:10px">
+            <label class="label">Confirmar PIN</label>
+            <input class="inp" type="password" id="pinConfirm" placeholder="····" style="margin-bottom:10px">
+            <div id="pinChangeMsg"></div>
+            <button class="btn btn-terra" style="margin-top:8px" onclick="changePin()">Cambiar PIN</button>
+          </div>
+          <div class="card" style="margin-bottom:14px">
+            <div class="section-title">✨ Gestionar Experiencias</div>
+            <div id="expList"></div>
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+              <input class="inp" id="newExpName" placeholder="Nombre" style="flex:2;min-width:100px">
+              <input class="inp" id="newExpPts" placeholder="Pts" style="width:60px" type="number">
+              <input class="inp" id="newExpIcon" placeholder="🌟" style="width:50px">
+              <button class="btn btn-primary" style="padding:8px 14px;font-size:12px"
+                onclick="addExp()">Agregar</button>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:14px">
+            <div class="section-title">🎁 Gestionar Recompensas</div>
+            <div id="rewardList"></div>
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+              <input class="inp" id="newRwdName" placeholder="Nombre" style="flex:2;min-width:100px">
+              <input class="inp" id="newRwdCost" placeholder="Pts" style="width:70px" type="number">
+              <button class="btn btn-primary" style="padding:8px 14px;font-size:12px"
+                onclick="addReward()">Agregar</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title">👥 Gestionar Personal</div>
+            <div id="staffList"></div>
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+              <input class="inp" id="newStaffName" placeholder="Nombre" style="flex:2;min-width:100px">
+              <input class="inp" id="newStaffPin" placeholder="PIN" type="password" maxlength="4" style="width:70px">
+              <button class="btn btn-primary" style="padding:8px 14px;font-size:12px"
+                onclick="addStaff()">Agregar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    // ── DATA ──────────────────────────────────────────────────────────────────
+    let clients = [];
+    var exps = [];
+    let rewards = [];
+    let staffList = [];
+
+    let clientCounter = 3;
+    let expCounter = 4;
+    let rewardCounter = 3;
+    let staffCounter = 3;
+
+    var currentClientId = null, currentRole = "client", currentStaff = null;
+    var pinInput = "", selectedClientId = null, selectedExpId = null, adminTab = "scan", clientTab = "card";
+
+
+    function fmtDate() { var d = new Date(); return String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0") + "/" + d.getFullYear(); }
+    function todayISO() { return new Date().toISOString().split("T")[0]; }
+    function daysDiff(iso) { return Math.floor((new Date() - new Date(iso)) / (1000 * 60 * 60 * 24)); }
+    function pointsExpired(lv) { return daysDiff(lv) >= 180; }
+    function daysLeft(lv) { return Math.max(0, 180 - daysDiff(lv)); }
+    function getClient(id) { return clients.find(function (c) { return c.id === id; }); }
+    function getPts(c) { return pointsExpired(c.last_visit) ? 0 : c.points; }
+
+    // ── QR SVG ────────────────────────────────────────────────────────────────
+    function makeQR(value, size) {
+      var seed = value.split("").reduce(function (a, c, i) { return a + c.charCodeAt(0) * (i + 7) * 31; }, 0);
+      var sz = 21, matrix = [];
+      for (var r = 0; r < sz; r++) { matrix[r] = []; for (var c = 0; c < sz; c++)matrix[r][c] = 0; }
+      function addFinder(r, c) { for (var i = 0; i < 7; i++)for (var j = 0; j < 7; j++)if (i === 0 || i === 6 || j === 0 || j === 6 || (i >= 2 && i <= 4 && j >= 2 && j <= 4)) matrix[r + i][c + j] = 1; }
+      addFinder(0, 0); addFinder(0, 14); addFinder(14, 0);
+      for (var r = 0; r < sz; r++)for (var c = 0; c < sz; c++) {
+        if (!matrix[r][c]) { var res = (r < 9 && c < 9) || (r < 9 && c > 12) || (r > 12 && c < 9); if (!res) matrix[r][c] = ((seed * (r * sz + c + 13) * 7 + r * 3 + c * 5) % 17) < 8 ? 1 : 0; }
+      }
+      var cell = size / sz, rects = "";
+      for (var r = 0; r < sz; r++)for (var c = 0; c < sz; c++)if (matrix[r][c]) rects += '<rect x="' + (c * cell) + '" y="' + (r * cell) + '" width="' + cell + '" height="' + cell + '" fill="#0d5c52"/>';
+      return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg"><rect width="' + size + '" height="' + size + '" fill="white"/>' + rects + '</svg>';
     }
-  }
+
+    // ── RENDER LOYALTY CARD ───────────────────────────────────────────────────
+    function renderLoyaltyCard(el, c) {
+      var pts = getPts(c);
+      var expired = pointsExpired(c.last_visit);
+      var days = daysLeft(c.last_visit);
+      var warn = "";
+      if (expired) warn = '<div style="font-size:10px;color:#f56242;margin-top:2px">⚠️ Puntos vencidos</div>';
+      else if (days <= 30) warn = '<div style="font-size:10px;color:#f5c842;margin-top:2px">⚠️ Puntos vencen en ' + days + ' días</div>';
+      var dots = "";
+      for (var i = 0; i < 5; i++) { var on = (!expired && i < Math.min(5, Math.floor(pts / 20))); dots += '<div style="width:9px;height:9px;border-radius:50%;background:' + (on ? "#d4571e" : "rgba(212,87,30,0.2)") + ';box-shadow:' + (on ? "0 0 8px rgba(212,87,30,0.55)" : "none") + ';display:inline-block;margin:0 2px"></div>'; }
+      el.innerHTML = '<div style="position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(212,87,30,0.16) 0%,transparent 65%)"></div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative">' +
+        '<div style="flex:1;min-width:0">' +
+        '<div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span style="font-size:20px">🪷</span><span style="font-size:9px;letter-spacing:3px;color:#d4571e;text-transform:uppercase;font-family:\'Cormorant Garamond\',serif;font-weight:600">Mandala Thai</span></div>' +
+        '<div style="font-size:20px;font-weight:700;color:#f5efe6;font-family:\'Cormorant Garamond\',serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + c.name + '</div>' +
+        '<div style="font-size:11px;color:rgba(212,87,30,0.85);margin-top:3px;letter-spacing:2px;font-family:monospace">' + c.id + '</div>' +
+        '<div style="font-size:9px;color:rgba(212,87,30,0.55);margin-top:2px">📱 Muestra este QR al llegar</div>' +
+        '</div>' +
+        '<div style="background:rgba(255,255,255,0.97);border-radius:10px;padding:6px;flex-shrink:0;margin-left:12px">' + makeQR("MT:" + c.id, 76) + '</div>' +
+        '</div>' +
+        '<div style="margin-top:18px;display:flex;justify-content:space-between;align-items:flex-end;position:relative">' +
+        '<div><div style="font-size:9px;color:rgba(212,87,30,0.7);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:2px">Puntos Acumulados</div>' +
+        '<div style="font-size:40px;font-weight:700;color:' + (expired ? "#aaa" : "#d4571e") + ';font-family:\'Cormorant Garamond\',serif;line-height:1">' + pts + '<span style="font-size:13px;font-weight:400;margin-left:3px;color:rgba(212,87,30,0.6)">pts</span></div>' +
+        warn + '</div>' +
+        '<div style="padding-bottom:4px">' + dots + '</div></div>';
+    }
+
+    // ── RENDER PROGRESS BARS ──────────────────────────────────────────────────
+    function renderProgressBars() {
+      var c = getClient(currentClientId);
+      if (!c) return;
+      var pts = getPts(c);
+      var html = "";
+      rewards.forEach(function (r) {
+        var pct = Math.min(100, (pts / r.cost) * 100);
+        var ok = pts >= r.cost;
+        var already = c.redeem_request === r.id;
+        var barColor = ok ? "linear-gradient(90deg,#2a9d8f,#1a7a6e)" : "linear-gradient(90deg,#d4571e,#b8430e)";
+        var btn = "";
+        if (ok) {
+          if (already) {
+            btn = '<div style="background:rgba(13,92,82,0.1);border-radius:10px;padding:10px 14px;text-align:center;font-size:12px;font-weight:700;color:#1a7a6e;margin-top:12px">✓ ¡Solicitud enviada! El personal la procesará en tu próxima visita.</div>';
+          } else {
+            btn = '<button class="btn btn-terra btn-full" style="margin-top:12px" onclick="requestRedeem(' + r.id + ')">🎁 Solicitar: ' + r.label + '</button>';
+          }
+        }
+        html += '<div style="background:' + (ok ? "rgba(255,255,255,0.88)" : "rgba(255,255,255,0.72)") + ';border-radius:14px;padding:14px 16px;border:1px solid ' + (ok ? "rgba(42,157,143,0.45)" : "rgba(13,92,82,0.14)") + ';margin-bottom:12px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
+          '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:22px">' + r.icon + '</span><div>' +
+          '<div style="font-size:13px;font-weight:700;color:#1a2416;font-family:\'Cormorant Garamond\',serif">' + r.label + '</div>' +
+          '<div style="font-size:10px;color:#9a8a70">' + r.cost + ' pts</div></div></div>' +
+          (!ok ? '<span style="font-size:11px;font-weight:700;color:#9a8a70">' + pts + '/' + r.cost + '</span>' : '') +
+          '</div>' +
+          '<div class="progress-bar"><div style="height:100%;width:' + pct + '%;background:' + barColor + ';border-radius:99px;transition:width 0.7s ease"></div></div>' +
+          btn + '</div>';
+      });
+      document.getElementById("progressBars").innerHTML = html;
+    }
+
+    function requestRedeem(rId) {
+      var c = getClient(currentClientId);
+      c.redeem_request = rId;
+      renderProgressBars();
+    }
+
+    // ── HISTORY ───────────────────────────────────────────────────────────────
+    function renderHistory() {
+      var c = getClient(currentClientId);
+      if (!c) { return; }
+      var hist = [].concat(c.history).reverse();
+      if (!hist.length) { document.getElementById("historyList").innerHTML = '<div style="text-align:center;color:#9a8a70;padding:20px;font-size:13px">Sin registros aún.</div>'; return; }
+      var html = "";
+      hist.forEach(function (h) {
+        var pos = h.delta > 0;
+        html += '<div class="history-item" style="background:' + (pos ? "rgba(13,92,82,0.07)" : "rgba(180,50,20,0.06)") + ';border:1px solid ' + (pos ? "rgba(13,92,82,0.14)" : "rgba(180,50,20,0.14)") + ';margin-bottom:7px">' +
+          '<div><div style="font-size:12px;font-weight:600;color:#1a2416">' + h.type + '</div><div style="font-size:10px;color:#9a8a70;margin-top:1px">' + h.date + '</div></div>' +
+          '<div style="font-size:14px;font-weight:800;color:' + (pos ? "#1a7a6e" : "#c0391b") + '">' + (pos ? "+" : "") + h.delta + ' pts</div></div>';
+      });
+      document.getElementById("historyList").innerHTML = html;
+    }
+
+    // ── NOTIFS ────────────────────────────────────────────────────────────────
+    function renderNotifs() {
+      var c = getClient(currentClientId);
+      if (!c) return;
+      c.notifications.forEach(function (n) { n.read = true; });
+      document.getElementById("notifBadge").classList.add("hidden");
+      if (!c.notifications.length) { document.getElementById("notifList").innerHTML = '<div style="text-align:center;color:#9a8a70;padding:16px;font-size:13px">Sin notificaciones nuevas.</div>'; return; }
+      var html = "";
+      [].concat(c.notifications).reverse().forEach(function (n) {
+        html += '<div class="notif" style="background:rgba(13,92,82,0.06);border:1px solid rgba(13,92,82,0.12);font-size:13px;color:#1a2416">' + n.msg + '</div>';
+      });
+      document.getElementById("notifList").innerHTML = html;
+    }
+
+    // ── RENDER CLIENT CARD ────────────────────────────────────────────────────
+    function renderClientCard() {
+      var c = getClient(currentClientId);
+      if (!c) return;
+      document.getElementById("clientWelcomeName").textContent = c.name.split(" ")[0] + " ✨";
+      renderLoyaltyCard(document.getElementById("loyaltyCardClient"), c);
+      var unread = c.notifications.filter(function (n) { return !n.read; }).length;
+      var badge = document.getElementById("notifBadge");
+      if (unread > 0) { badge.textContent = "🔔 " + unread; badge.classList.remove("hidden"); }
+      else { badge.classList.add("hidden"); }
+      if (clientTab === "card") renderProgressBars();
+      else if (clientTab === "history") renderHistory();
+      else if (clientTab === "notif") renderNotifs();
+    }
+
+    // ── NAVIGATION ────────────────────────────────────────────────────────────
+    function showScreen(id) {
+      ["clientHome", "clientSearch", "clientRegister", "clientRegistered", "clientCard"].forEach(function (s) {
+        var el = document.getElementById(s);
+        if (el) el.classList.toggle("hidden", s !== id);
+      });
+    }
+
+    function setClientTab(tab) {
+      clientTab = tab;
+      ["card", "history", "notif"].forEach(function (t) {
+        var btn = document.getElementById("tab" + t.charAt(0).toUpperCase() + t.slice(1));
+        if (btn) btn.classList.toggle("active", t === tab);
+        var panel = document.getElementById("clientTab" + t.charAt(0).toUpperCase() + t.slice(1));
+        if (panel) panel.classList.toggle("hidden", t !== tab);
+      });
+      if (tab === "card") renderProgressBars();
+      else if (tab === "history") renderHistory();
+      else if (tab === "notif") renderNotifs();
+    }
+
+    // ── SEARCH ────────────────────────────────────────────────────────────────
+    function doSearch() {
+      var q = document.getElementById("searchInput").value.trim().toLowerCase();
+      var found = clients.find(function (c) {
+        return c.id.toLowerCase() === q || c.name.toLowerCase().includes(q) || c.phone.replace(/\D/g, "") === q.replace(/\D/g, "");
+      });
+      if (!found) { document.getElementById("searchErr").textContent = "No encontramos ese dato. Verifica o regístrate."; document.getElementById("searchErr").classList.remove("hidden"); return; }
+      currentClientId = found.id;
+      document.getElementById("searchErr").classList.add("hidden");
+      document.getElementById("searchInput").value = "";
+      clientTab = "card";
+      showScreen("clientCard");
+      renderClientCard();
+    }
+
+    function searchHint() {
+      document.getElementById("searchErr").classList.add("hidden");
+    }
+
+    function getRandomId() {
+      const nDate = new Date();
+      const year = nDate.getFullYear();
+      const max = 10000;
+      const min = 1;
+      const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+      return `MT-${year}-${String(randomNum).padStart(2, "0")}`;
+    }
+
+    function getRandomUUID() {
+      length = 6
+      const nDate = new Date();
+      const year = nDate.getFullYear();
+      const rr = Math.random().toString(36).substring(2, length+2);
+      return rr + "_" + nDate.getMilliseconds() + "_" + year;
+    }
+
+    // ── REGISTER ──────────────────────────────────────────────────────────────
+    async function doRegister() {
+      var name = document.getElementById("regName").value.trim();
+      var phone = document.getElementById("regPhone").value.trim();
+      if (!name || !phone) { document.getElementById("regErr").textContent = "Completa todos los campos."; document.getElementById("regErr").classList.remove("hidden"); return; }
+      var id = getRandomId();
+      var welcome = "🌿 ¡Bienvenid@ al programa Mandala Thai, " + name.split(" ")[0] + "! Tu ID es " + id + ".";
+
+      try {
+        const nClient = await agregarCliente(
+          {
+            id: id,
+            name: name,
+            email: "",
+            phone: phone,
+            points: 0,
+            last_visit: todayISO(),
+            redeem_request: null
+          },
+          [{ msg: welcome, read: false }],
+          []
+        );
+        clients.push(nClient);
+
+        if (!nClient || nClient == null) {
+          throw new Error("No se pudo agregar el cliente. Respuesta nula.");
+        }
+
+        document.getElementById("newClientId").textContent = id;
+        document.getElementById("regName").value = "";
+        document.getElementById("regPhone").value = "";
+        document.getElementById("regErr").classList.add("hidden");
+        currentClientId = id;
+        showScreen("clientRegistered");
+      }
+      catch (error) {
+        console.error("Error al agregar cliente:", error);
+        document.getElementById("regErr").textContent = "Ocurrió un error al registrar. Intenta nuevamente.";
+        document.getElementById("regErr").classList.remove("hidden");
+      }
 }
 
-function updatePinDots(){
-  var dots=document.querySelectorAll(".pin-dot");
-  dots.forEach(function(d,i){d.classList.toggle("filled",i<pinInput.length);});
-}
+    function goToCard() {
+      clientTab = "card";
+      showScreen("clientCard");
+      renderClientCard();
+    }
 
-function lockAdmin(){
-  currentStaff=null;pinInput="";selectedClientId=null;selectedExpId=null;
-  document.getElementById("adminPin").classList.remove("hidden");
-  document.getElementById("adminPanel").classList.add("hidden");
-  updatePinDots();
-}
+    function logout() {
+      currentClientId = null;
+      showScreen("clientHome");
+      document.getElementById("searchInput").value = "";
+    }
 
-// ── ADMIN TABS ────────────────────────────────────────────────────────────
-function renderAdminTabs(){
-  var isAdmin=currentStaff&&currentStaff.role==="admin";
-  var pending=clients.filter(function(c){return c.redeemRequest;}).length;
-  var tabs=[{k:"scan",l:"📷 Scan"},{k:"clients",l:"👥 Clientes"},{k:"requests",l:"📋"+(pending>0?" ("+pending+")":"")}];
-  if(isAdmin){tabs.push({k:"reports",l:"📊 Reportes"});tabs.push({k:"settings",l:"⚙️ Ajustes"});}
-  var html="";
-  tabs.forEach(function(t){
-    html+='<button class="tab'+(adminTab===t.k?" active":"")+'" onclick="setAdminTab(\''+t.k+'\')">'+t.l+'</button>';
-  });
-  document.getElementById("adminTabs").innerHTML=html;
-}
+    // ── ROLE SWITCH ───────────────────────────────────────────────────────────
+    function setRole(role) {
+      currentRole = role;
+      document.getElementById("btnGuest").classList.toggle("active", role === "client");
+      document.getElementById("btnStaff").classList.toggle("active", role === "admin");
+      document.getElementById("viewClient").classList.toggle("hidden", role !== "client");
+      document.getElementById("viewAdmin").classList.toggle("hidden", role !== "admin");
+    }
 
-function setAdminTab(tab){
-  adminTab=tab;
-  ["scan","clients","requests","reports","settings"].forEach(function(t){
-    var el=document.getElementById("adminTab"+t.charAt(0).toUpperCase()+t.slice(1));
-    if(el)el.classList.toggle("hidden",t!==tab);
-  });
-  renderAdminTabs();
-  if(tab==="clients")renderClientList();
-  else if(tab==="requests")renderRequests();
-  else if(tab==="reports")renderReports();
-  else if(tab==="settings"){renderExpList();renderRewardList();renderStaffList();}
-}
+    // ── PIN ───────────────────────────────────────────────────────────────────
+    function pinDigit(d) {
+      if (d === "⌫") { pinInput = pinInput.slice(0, -1); }
+      else if (pinInput.length < 4) { pinInput += d; }
+      updatePinDots();
+      if (pinInput.length === 4) {
+        var found = staffList.find(function (s) { return s.pin === pinInput; });
+        if (found) {
+          currentStaff = found;
+          pinInput = "";
+          updatePinDots();
+          document.getElementById("pinErr").classList.add("hidden");
+          document.getElementById("adminPin").classList.add("hidden");
+          document.getElementById("adminPanel").classList.remove("hidden");
+          document.getElementById("adminStaffName").textContent = found.name;
+          document.getElementById("adminPanelTitle").textContent = found.role === "admin" ? "Panel Admin" : "Panel de Personal";
+          renderAdminTabs();
+          setAdminTab("scan");
+        } else {
+          document.getElementById("pinErr").textContent = "PIN incorrecto.";
+          document.getElementById("pinErr").classList.remove("hidden");
+          setTimeout(function () { pinInput = ""; updatePinDots(); document.getElementById("pinErr").classList.add("hidden"); }, 600);
+        }
+      }
+    }
 
-// ── CLIENT LIST ───────────────────────────────────────────────────────────
-function renderClientList(){
-  var q=(document.getElementById("adminSearch")||{value:""}).value.toLowerCase();
-  var filtered=clients.filter(function(c){return c.name.toLowerCase().includes(q)||c.id.toLowerCase().includes(q)||c.phone.includes(q);});
-  var html="";
-  filtered.forEach(function(c){
-    var expired=pointsExpired(c.lastVisit);
-    var sel=c.id===selectedClientId;
-    html+='<div class="client-row'+(sel?" selected":"")+'" onclick="selectClient(\''+c.id+'\')">'+
-    '<div><div style="font-weight:700;color:#0d5c52;font-size:14px;font-family:\'Cormorant Garamond\',serif">'+c.name+'</div>'+
-    '<div style="font-size:10px;color:#9a8a70">'+c.id+' · '+c.phone+'</div></div>'+
-    '<div style="text-align:right;margin-left:8px">'+
-    '<div style="font-size:15px;font-weight:800;color:'+(expired?"#aaa":"#d4571e")+'">'+(expired?0:c.points)+'</div>'+
-    '<div style="font-size:9px;color:'+(expired?"#f56242":"#9a8a70")+';letter-spacing:1px">'+(expired?"VENC":"PTS")+'</div></div></div>';
-  });
-  if(!filtered.length)html='<div style="font-size:13px;color:#9a8a70;text-align:center;padding:10px">Sin resultados.</div>';
-  document.getElementById("clientList").innerHTML=html;
-  renderSelectedClient();
-}
+    function updatePinDots() {
 
-function selectClient(id){
-  selectedClientId=id===selectedClientId?null:id;
-  selectedExpId=null;
-  renderClientList();
-}
+      //TODO
+      var dots = document.querySelectorAll(".pin-dot");
+      dots.forEach(function (d, i) { d.classList.toggle("filled", i < pinInput.length); });
+    }
 
-function renderSelectedClient(){
-  var panel=document.getElementById("selectedClientPanel");
-  if(!selectedClientId){panel.classList.add("hidden");return;}
-  var c=getClient(selectedClientId);
-  if(!c){panel.classList.add("hidden");return;}
-  panel.classList.remove("hidden");
-  var pts=getPts(c);
-  var cardDiv='<div id="adminCardEl" class="loyalty-card" style="margin-bottom:14px"></div>';
-  var expBtns="";
-  exps.forEach(function(e){
-    var sel=selectedExpId===e.id;
-    expBtns+='<button class="exp-btn'+(sel?" selected":"")+'" onclick="selectExp('+e.id+')">'+
-    '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">'+e.icon+'</span><div style="font-weight:700;font-size:13px">'+e.label+'</div></div>'+
-    '<span style="font-size:14px;font-weight:800;color:'+(sel?"#d4571e":"#2a9d8f")+';flex-shrink:0;margin-left:8px">+'+e.pts+' pts</span></button>';
-  });
-  var rwdRows="";
-  rewards.forEach(function(r){
-    var can=pts>=r.cost;
-    rwdRows+='<div class="reward-row" style="background:'+(can?"rgba(13,92,82,0.07)":"rgba(0,0,0,0.03)")+';border:1px solid '+(can?"rgba(13,92,82,0.21)":"rgba(0,0,0,0.07)")+'">'+
-    '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">'+r.icon+'</span>'+
-    '<div><div style="font-weight:700;font-size:13px;color:'+(can?"#0d5c52":"#9a8a70")+';font-family:\'Cormorant Garamond\',serif">'+r.label+'</div>'+
-    '<div style="font-size:10px;color:#9a8a70">'+r.cost+' pts</div></div></div>'+
-    '<button class="btn btn-danger" style="font-size:11px;padding:7px 14px" '+(can?"":"disabled")+'onclick="adminRedeem(\''+c.id+'\','+r.id+')">Canjear</button></div>';
-  });
-  var hist=[].concat(c.history).reverse().slice(0,5);
-  var histHtml="";
-  hist.forEach(function(h){
-    var pos=h.delta>0;
-    histHtml+='<div class="history-item" style="background:'+(pos?"rgba(13,92,82,0.07)":"rgba(180,50,20,0.06)")+';border:1px solid '+(pos?"rgba(13,92,82,0.14)":"rgba(180,50,20,0.14)")+';margin-bottom:7px">'+
-    '<div><div style="font-size:12px;font-weight:600;color:#1a2416">'+h.type+'</div><div style="font-size:10px;color:#9a8a70">'+h.date+'</div></div>'+
-    '<div style="font-size:14px;font-weight:800;color:'+(pos?"#1a7a6e":"#c0391b")+'">'+(pos?"+":"")+h.delta+' pts</div></div>';
-  });
-  panel.innerHTML=cardDiv+
-  '<div class="card" style="margin-bottom:14px"><div class="section-title">➕ Asignar Experiencia</div>'+expBtns+
-  '<button class="btn btn-terra" '+(selectedExpId?"":"disabled")+' onclick="addPoints(\''+c.id+'\')">✓ Validar y Sumar Puntos</button></div>'+
-  '<div class="card"><div class="section-title">🎁 Canjear Recompensa</div>'+rwdRows+
-  '<div style="margin-top:14px;border-top:1px solid rgba(13,92,82,0.11);padding-top:13px"><div class="section-title">Historial Reciente</div>'+histHtml+'</div></div>';
-  renderLoyaltyCard(document.getElementById("adminCardEl"),c);
-}
+    function lockAdmin() {
+      currentStaff = null; pinInput = ""; selectedClientId = null; selectedExpId = null;
+      document.getElementById("adminPin").classList.remove("hidden");
+      document.getElementById("adminPanel").classList.add("hidden");
+      updatePinDots();
+    }
 
-function selectExp(id){
-  selectedExpId=id===selectedExpId?null:id;
-  renderSelectedClient();
-}
+    // ── ADMIN TABS ────────────────────────────────────────────────────────────
+    function renderAdminTabs() {
+      var isAdmin = currentStaff && currentStaff.role === "admin";
+      var pending = clients.filter(function (c) { return c.redeem_request; }).length;
+      var tabs = [{ k: "scan", l: "📷 Scan" }, { k: "clients", l: "👥 Clientes" }, { k: "requests", l: "📋" + (pending > 0 ? " (" + pending + ")" : "") }];
+      if (isAdmin) { tabs.push({ k: "reports", l: "📊 Reportes" }); tabs.push({ k: "settings", l: "⚙️ Ajustes" }); }
+      var html = "";
+      tabs.forEach(function (t) {
+        html += '<button class="tab' + (adminTab === t.k ? " active" : "") + '" onclick="setAdminTab(\'' + t.k + '\')">' + t.l + '</button>';
+      });
+      document.getElementById("adminTabs").innerHTML = html;
+    }
 
-function addPoints(cid){
-  if(!selectedExpId)return;
-  var exp=exps.find(function(e){return e.id===selectedExpId;});
-  var c=getClient(cid);
-  c.points+=exp.pts;c.lastVisit=todayISO();
-  c.notifications.push({msg:"✨ +"+exp.pts+" pts por \""+exp.label+"\". Total: "+c.points+" pts",read:false});
-  c.history.push({date:fmtDate(),type:exp.label,delta:exp.pts});
-  selectedExpId=null;
-  showFlash("✓ +"+exp.pts+" pts añadidos a "+c.name.split(" ")[0]);
-  renderClientList();
-  renderAdminTabs();
-}
+    function setAdminTab(tab) {
+      adminTab = tab;
+      ["scan", "clients", "requests", "reports", "settings"].forEach(function (t) {
+        var el = document.getElementById("adminTab" + t.charAt(0).toUpperCase() + t.slice(1));
+        if (el) el.classList.toggle("hidden", t !== tab);
+      });
+      renderAdminTabs();
+      if (tab === "clients") renderClientList();
+      else if (tab === "requests") renderRequests();
+      else if (tab === "reports") renderReports();
+      else if (tab === "settings") { renderExpList(); renderRewardList(); renderStaffList(); }
+    }
 
-function adminRedeem(cid,rId){
-  var c=getClient(cid);
-  var r=rewards.find(function(x){return x.id===rId;});
-  if(!r||getPts(c)<r.cost)return;
-  c.points-=r.cost;c.redeemRequest=null;
-  c.notifications.push({msg:"🎁 Tu canje \""+r.label+"\" fue aprobado. Puntos restantes: "+c.points,read:false});
-  c.history.push({date:fmtDate(),type:"Canje: "+r.label,delta:-r.cost});
-  showFlash("🎁 Canjeado: "+r.label+" — "+c.name.split(" ")[0]);
-  renderClientList();
-  renderAdminTabs();
-}
+    // ── CLIENT LIST ───────────────────────────────────────────────────────────
+    function renderClientList() {
+      var q = (document.getElementById("adminSearch") || { value: "" }).value.toLowerCase();
+      var filtered = clients.filter(function (c) { return c.name.toLowerCase().includes(q) || c.id.toLowerCase().includes(q) || c.phone.includes(q); });
+      var html = "";
+      filtered.forEach(function (c) {
+        var expired = pointsExpired(c.last_visit);
+        var sel = c.id === selectedClientId;
+        html += '<div class="client-row' + (sel ? " selected" : "") + '" onclick="selectClient(\'' + c.id + '\')">' +
+          '<div><div style="font-weight:700;color:#0d5c52;font-size:14px;font-family:\'Cormorant Garamond\',serif">' + c.name + '</div>' +
+          '<div style="font-size:10px;color:#9a8a70">' + c.id + ' · ' + c.phone + '</div></div>' +
+          '<div style="text-align:right;margin-left:8px">' +
+          '<div style="font-size:15px;font-weight:800;color:' + (expired ? "#aaa" : "#d4571e") + '">' + (expired ? 0 : c.points) + '</div>' +
+          '<div style="font-size:9px;color:' + (expired ? "#f56242" : "#9a8a70") + ';letter-spacing:1px">' + (expired ? "VENC" : "PTS") + '</div></div></div>';
+      });
+      if (!filtered.length) html = '<div style="font-size:13px;color:#9a8a70;text-align:center;padding:10px">Sin resultados.</div>';
+      document.getElementById("clientList").innerHTML = html;
+      renderSelectedClient();
+    }
 
-// ── REQUESTS ──────────────────────────────────────────────────────────────
-function renderRequests(){
-  var pending=clients.filter(function(c){return c.redeemRequest;});
-  if(!pending.length){document.getElementById("requestsList").innerHTML='<div style="text-align:center;color:#9a8a70;padding:20px;font-size:13px">Sin solicitudes pendientes.</div>';return;}
-  var html="";
-  pending.forEach(function(c){
-    var r=rewards.find(function(x){return x.id===c.redeemRequest;});
-    html+='<div style="background:rgba(13,92,82,0.07);border:1px solid rgba(13,92,82,0.2);border-radius:14px;padding:14px;margin-bottom:10px">'+
-    '<div style="display:flex;justify-content:space-between;margin-bottom:10px">'+
-    '<div><div style="font-weight:700;color:#0d5c52;font-family:\'Cormorant Garamond\',serif;font-size:15px">'+c.name+'</div>'+
-    '<div style="font-size:11px;color:#9a8a70">'+c.id+' · '+c.points+' pts</div></div>'+
-    '<div style="text-align:right"><div style="font-size:20px">'+(r?r.icon:"")+'</div><div style="font-size:11px;font-weight:700;color:#0d5c52">'+(r?r.label:"")+'</div></div></div>'+
-    '<div style="display:flex;gap:8px">'+
-    '<button class="btn btn-green" style="font-size:11px;padding:7px 14px" onclick="approveReq(\''+c.id+'\')">Aprobar ✓</button>'+
-    '<button class="btn btn-danger" style="font-size:11px;padding:7px 14px" onclick="rejectReq(\''+c.id+'\')">Rechazar</button></div></div>';
-  });
-  document.getElementById("requestsList").innerHTML=html;
-}
+    function selectClient(id) {
+      selectedClientId = id === selectedClientId ? null : id;
+      selectedExpId = null;
+      renderClientList();
+    }
 
-function approveReq(cid){
-  var c=getClient(cid);
-  var r=rewards.find(function(x){return x.id===c.redeemRequest;});
-  if(r)adminRedeem(cid,r.id);
-  renderRequests();
-}
+    function renderSelectedClient() {
+      var panel = document.getElementById("selectedClientPanel");
+      if (!selectedClientId) { panel.classList.add("hidden"); return; }
+      var c = getClient(selectedClientId);
+      if (!c) { panel.classList.add("hidden"); return; }
+      panel.classList.remove("hidden");
+      var pts = getPts(c);
+      var cardDiv = '<div id="adminCardEl" class="loyalty-card" style="margin-bottom:14px"></div>';
+      var expBtns = "";
+      exps.forEach(function (e) {
+        var sel = selectedExpId === e.id;
+        expBtns += '<button class="exp-btn' + (sel ? " selected" : "") + '" onclick="selectExp(' + e.id + ')">' +
+          '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">' + e.icon + '</span><div style="font-weight:700;font-size:13px">' + e.label + '</div></div>' +
+          '<span style="font-size:14px;font-weight:800;color:' + (sel ? "#d4571e" : "#2a9d8f") + ';flex-shrink:0;margin-left:8px">+' + e.pts + ' pts</span></button>';
+      });
+      var rwdRows = "";
+      rewards.forEach(function (r) {
+        var can = pts >= r.cost;
+        rwdRows += '<div class="reward-row" style="background:' + (can ? "rgba(13,92,82,0.07)" : "rgba(0,0,0,0.03)") + ';border:1px solid ' + (can ? "rgba(13,92,82,0.21)" : "rgba(0,0,0,0.07)") + '">' +
+          '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">' + r.icon + '</span>' +
+          '<div><div style="font-weight:700;font-size:13px;color:' + (can ? "#0d5c52" : "#9a8a70") + ';font-family:\'Cormorant Garamond\',serif">' + r.label + '</div>' +
+          '<div style="font-size:10px;color:#9a8a70">' + r.cost + ' pts</div></div></div>' +
+          '<button class="btn btn-danger" style="font-size:11px;padding:7px 14px" ' + (can ? "" : "disabled") + 'onclick="adminRedeem(\'' + c.id + '\',' + r.id + ')">Canjear</button></div>';
+      });
+      var hist = [].concat(c.history).reverse().slice(0, 5);
+      var histHtml = "";
+      hist.forEach(function (h) {
+        var pos = h.delta > 0;
+        histHtml += '<div class="history-item" style="background:' + (pos ? "rgba(13,92,82,0.07)" : "rgba(180,50,20,0.06)") + ';border:1px solid ' + (pos ? "rgba(13,92,82,0.14)" : "rgba(180,50,20,0.14)") + ';margin-bottom:7px">' +
+          '<div><div style="font-size:12px;font-weight:600;color:#1a2416">' + h.type + '</div><div style="font-size:10px;color:#9a8a70">' + h.date + '</div></div>' +
+          '<div style="font-size:14px;font-weight:800;color:' + (pos ? "#1a7a6e" : "#c0391b") + '">' + (pos ? "+" : "") + h.delta + ' pts</div></div>';
+      });
+      panel.innerHTML = cardDiv +
+        '<div class="card" style="margin-bottom:14px"><div class="section-title">➕ Asignar Experiencia</div>' + expBtns +
+        '<button class="btn btn-terra" ' + (selectedExpId ? "" : "disabled") + ' onclick="addPoints(\'' + c.id + '\')">✓ Validar y Sumar Puntos</button></div>' +
+        '<div class="card"><div class="section-title">🎁 Canjear Recompensa</div>' + rwdRows +
+        '<div style="margin-top:14px;border-top:1px solid rgba(13,92,82,0.11);padding-top:13px"><div class="section-title">Historial Reciente</div>' + histHtml + '</div></div>';
+      renderLoyaltyCard(document.getElementById("adminCardEl"), c);
+    }
 
-function rejectReq(cid){
-  var c=getClient(cid);
-  c.redeemRequest=null;
-  c.notifications.push({msg:"Tu solicitud de canje fue rechazada. Contacta al personal.",read:false});
-  renderRequests();
-  renderAdminTabs();
-}
+    function selectExp(id) {
+      selectedExpId = id === selectedExpId ? null : id;
+      renderSelectedClient();
+    }
 
-// ── REPORTS ───────────────────────────────────────────────────────────────
-function renderReports(){
-  if(!currentStaff||currentStaff.role!=="admin"){document.getElementById("statsGrid").innerHTML='<div style="color:#9a8a70;font-size:13px;grid-column:1/-1;text-align:center;padding:20px">Solo el admin puede acceder.</div>';return;}
-  var totalPts=clients.filter(function(c){return !pointsExpired(c.lastVisit);}).reduce(function(a,c){return a+c.points;},0);
-  var totalRedeems=clients.reduce(function(a,c){return a+c.history.filter(function(h){return h.delta<0;}).length;},0);
-  var totalVisits=clients.reduce(function(a,c){return a+c.history.filter(function(h){return h.delta>0;}).length;},0);
-  var stats=[{l:"Clientes",v:clients.length,i:"👥"},{l:"Puntos activos",v:totalPts,i:"⭐"},{l:"Canjes",v:totalRedeems,i:"🎁"},{l:"Visitas",v:totalVisits,i:"🏨"}];
-  var html="";
-  stats.forEach(function(s){
-    html+='<div class="stat-box"><div style="font-size:24px;margin-bottom:4px">'+s.i+'</div><div style="font-size:28px;font-weight:800;color:#0d5c52;font-family:\'Cormorant Garamond\',serif">'+s.v+'</div><div style="font-size:10px;color:#9a8a70;margin-top:2px;line-height:1.3">'+s.l+'</div></div>';
-  });
-  document.getElementById("statsGrid").innerHTML=html;
-  var top=[].concat(clients).sort(function(a,b){return b.points-a.points;}).slice(0,5);
-  var topHtml="";
-  top.forEach(function(c,i){
-    var medals=["#d4af37","#b0b0b0","#cd7f32"];
-    var bg=i<3?medals[i]:"rgba(13,92,82,0.1)";
-    topHtml+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:'+(i<4?"1px solid rgba(13,92,82,0.08)":"none")+'">'+
-    '<div style="display:flex;align-items:center;gap:10px">'+
-    '<div style="width:24px;height:24px;border-radius:50%;background:'+bg+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:'+(i<3?"#fff":"#0d5c52")+'">'+(i+1)+'</div>'+
-    '<div><div style="font-weight:700;color:#1a2416;font-size:13px">'+c.name+'</div><div style="font-size:10px;color:#9a8a70">'+c.id+'</div></div></div>'+
-    '<div style="font-size:16px;font-weight:800;color:#d4571e">'+c.points+' pts</div></div>';
-  });
-  document.getElementById("topClients").innerHTML=topHtml;
-}
+    async function addPoints(cid) {
+      if (!selectedExpId) return;
+      var exp = exps.find(function (e) { return e.id === selectedExpId; });
+      var c = getClient(cid);
 
-// ── SETTINGS ──────────────────────────────────────────────────────────────
-function changePin(){
-  var cur=document.getElementById("pinCurrent").value;
-  var nw=document.getElementById("pinNew").value;
-  var conf=document.getElementById("pinConfirm").value;
-  var msgEl=document.getElementById("pinChangeMsg");
-  if(cur!==currentStaff.pin){msgEl.innerHTML='<div class="err">El PIN actual es incorrecto.</div>';return;}
-  if(nw.length!==4||!/^\d{4}$/.test(nw)){msgEl.innerHTML='<div class="err">El nuevo PIN debe ser 4 dígitos.</div>';return;}
-  if(nw!==conf){msgEl.innerHTML='<div class="err">Los PINs no coinciden.</div>';return;}
-  staffList=staffList.map(function(s){return s.id===currentStaff.id?Object.assign({},s,{pin:nw}):s;});
-  currentStaff=Object.assign({},currentStaff,{pin:nw});
-  document.getElementById("pinCurrent").value="";document.getElementById("pinNew").value="";document.getElementById("pinConfirm").value="";
-  msgEl.innerHTML='<div class="ok">✓ PIN cambiado exitosamente.</div>';
-}
+      //TODO
+      const clientUpdated = await actualizarClientePts(c, c.points + exp.pts);
+      clientUpdated.notifications = c.notifications;
+      clientUpdated.history = c.history;
+      //c.points += exp.pts; 
+      const nNotification = { msg: "✨ +" + exp.pts + " pts por \"" + exp.label + "\". Total: " + c.points + " pts", read: false };
+      const notificationAdded = await agregarNotificacion(clientUpdated.id, nNotification.msg);
+      clientUpdated.notifications.push(notificationAdded);
 
-function renderExpList(){
-  var html="";
-  exps.forEach(function(e){
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;background:rgba(13,92,82,0.06);border:1px solid rgba(13,92,82,0.14);margin-bottom:8px">'+
-    '<span style="font-size:16px;margin-right:8px">'+e.icon+'</span>'+
-    '<span style="flex:1;font-size:13px;font-weight:600;color:#1a2416">'+e.label+'</span>'+
-    '<span style="font-size:13px;font-weight:800;color:#2a9d8f;margin-right:12px">+'+e.pts+'</span>'+
-    '<button onclick="deleteExp('+e.id+')" style="background:rgba(192,57,27,0.12);border:none;border-radius:99px;padding:4px 10px;cursor:pointer;font-size:11px;color:#c0391b;font-weight:700">Eliminar</button></div>';
-  });
-  document.getElementById("expList").innerHTML=html;
-}
+      const nHistory = { date: fmtDate(), type: exp.label, delta: exp.pts };
+      const historyAdded = await agregarHistorial(clientUpdated.id, nHistory);
+      clientUpdated.history.push(historyAdded);
 
-function addExp(){
-  var name=document.getElementById("newExpName").value.trim();
-  var pts=parseInt(document.getElementById("newExpPts").value);
-  var icon=document.getElementById("newExpIcon").value||"⭐";
-  if(!name||!pts)return;
-  exps.push({id:expCounter++,label:name,pts:pts,icon:icon});
-  document.getElementById("newExpName").value="";document.getElementById("newExpPts").value="";document.getElementById("newExpIcon").value="";
-  renderExpList();
-}
+      selectedExpId = null;
 
-function deleteExp(id){exps=exps.filter(function(e){return e.id!==id;});renderExpList();}
+      clients = clients.map(function (cl) { return cl.id === c.id ? clientUpdated : cl; });
+      
+      showFlash("✓ +" + exp.pts + " pts añadidos a " + c.name.split(" ")[0]);
+      renderClientList();
+      renderAdminTabs();
+    }
 
-function renderRewardList(){
-  var html="";
-  rewards.forEach(function(r){
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;background:rgba(13,92,82,0.06);border:1px solid rgba(13,92,82,0.14);margin-bottom:8px">'+
-    '<span style="font-size:16px;margin-right:8px">'+r.icon+'</span>'+
-    '<span style="flex:1;font-size:13px;font-weight:600;color:#1a2416">'+r.label+'</span>'+
-    '<span style="font-size:13px;font-weight:800;color:#d4571e;margin-right:12px">'+r.cost+' pts</span>'+
-    '<button onclick="deleteReward('+r.id+')" style="background:rgba(192,57,27,0.12);border:none;border-radius:99px;padding:4px 10px;cursor:pointer;font-size:11px;color:#c0391b;font-weight:700">Eliminar</button></div>';
-  });
-  document.getElementById("rewardList").innerHTML=html;
-}
+    async function adminRedeem(cid, rId) {
+      var c = getClient(cid);
+      var r = rewards.find(function (x) { return x.id === rId; });
+      if (!r || getPts(c) < r.cost) return;
 
-function addReward(){
-  var name=document.getElementById("newRwdName").value.trim();
-  var cost=parseInt(document.getElementById("newRwdCost").value);
-  if(!name||!cost)return;
-  rewards.push({id:rewardCounter++,label:name,cost:cost,icon:"🏅"});
-  document.getElementById("newRwdName").value="";document.getElementById("newRwdCost").value="";
-  renderRewardList();
-}
+      const clientUpdated = await actualizarClientePts(c, c.points - r.cost);
+      clientUpdated.notifications = c.notifications;
+      clientUpdated.history = c.history;
 
-function deleteReward(id){rewards=rewards.filter(function(r){return r.id!==id;});renderRewardList();}
+      const nNotification = { msg: "🎁 Tu canje \"" + r.label + "\" fue aprobado. Puntos restantes: " + c.points, read: false };
+      const notificationAdded = await agregarNotificacion(clientUpdated.id, nNotification.msg);
+      clientUpdated.notifications.push(notificationAdded);
+      //TODO
+      //c.points -= r.cost; c.redeem_request = null;
+      const nHistory = { date: fmtDate(), type: "Canje: " + r.label, delta: -r.cost };
+      const historyAdded = await agregarHistorial(clientUpdated.id, nHistory);
+      clientUpdated.history.push(historyAdded);
 
-function renderStaffList(){
-  var html="";
-  staffList.forEach(function(s){
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;background:rgba(13,92,82,0.06);border:1px solid rgba(13,92,82,0.14);margin-bottom:8px">'+
-    '<div><div style="font-size:13px;font-weight:700;color:#1a2416">'+s.name+'</div>'+
-    '<div style="font-size:10px;color:#9a8a70">PIN: '+s.pin+' · '+s.role+'</div></div>'+
-    (s.role!=="admin"?'<button onclick="deleteStaff('+s.id+')" style="background:rgba(192,57,27,0.12);border:none;border-radius:99px;padding:4px 10px;cursor:pointer;font-size:11px;color:#c0391b;font-weight:700">Eliminar</button>':"")+'</div>';
-  });
-  document.getElementById("staffList").innerHTML=html;
-}
+      clients = clients.map(function (cl) { return cl.id === c.id ? clientUpdated : cl; });
 
-function addStaff(){
-  var name=document.getElementById("newStaffName").value.trim();
-  var pin=document.getElementById("newStaffPin").value;
-  if(!name||pin.length!==4||!/^\d{4}$/.test(pin))return;
-  staffList.push({id:staffCounter++,name:name,pin:pin,role:"staff"});
-  document.getElementById("newStaffName").value="";document.getElementById("newStaffPin").value="";
-  renderStaffList();
-}
+      showFlash("🎁 Canjeado: " + r.label + " — " + c.name.split(" ")[0]);
+      
+      renderClientList();
+      renderAdminTabs();
+    }
 
-function deleteStaff(id){staffList=staffList.filter(function(s){return s.id!==id;});renderStaffList();}
+    // ── REQUESTS ──────────────────────────────────────────────────────────────
+    function renderRequests() {
+      var pending = clients.filter(function (c) { return c.redeem_request; });
+      if (!pending.length) { document.getElementById("requestsList").innerHTML = '<div style="text-align:center;color:#9a8a70;padding:20px;font-size:13px">Sin solicitudes pendientes.</div>'; return; }
+      var html = "";
+      pending.forEach(function (c) {
+        var r = rewards.find(function (x) { return x.id === c.redeem_request; });
+        html += '<div style="background:rgba(13,92,82,0.07);border:1px solid rgba(13,92,82,0.2);border-radius:14px;padding:14px;margin-bottom:10px">' +
+          '<div style="display:flex;justify-content:space-between;margin-bottom:10px">' +
+          '<div><div style="font-weight:700;color:#0d5c52;font-family:\'Cormorant Garamond\',serif;font-size:15px">' + c.name + '</div>' +
+          '<div style="font-size:11px;color:#9a8a70">' + c.id + ' · ' + c.points + ' pts</div></div>' +
+          '<div style="text-align:right"><div style="font-size:20px">' + (r ? r.icon : "") + '</div><div style="font-size:11px;font-weight:700;color:#0d5c52">' + (r ? r.label : "") + '</div></div></div>' +
+          '<div style="display:flex;gap:8px">' +
+          '<button class="btn btn-green" style="font-size:11px;padding:7px 14px" onclick="approveReq(\'' + c.id + '\')">Aprobar ✓</button>' +
+          '<button class="btn btn-danger" style="font-size:11px;padding:7px 14px" onclick="rejectReq(\'' + c.id + '\')">Rechazar</button></div></div>';
+      });
+      document.getElementById("requestsList").innerHTML = html;
+    }
 
-// ── SCAN SEARCH ───────────────────────────────────────────────────────────
-function renderScanSearch(){
-  var q=(document.getElementById("adminSearchScan")||{value:""}).value.toLowerCase();
-  if(!q){document.getElementById("scanSearchResults").innerHTML="";return;}
-  var filtered=clients.filter(function(c){return c.name.toLowerCase().includes(q)||c.id.toLowerCase().includes(q)||c.phone.includes(q);});
-  var html="";
-  filtered.forEach(function(c){
-    html+='<div style="background:rgba(13,92,82,0.08);border:1px solid rgba(13,92,82,0.2);border-radius:10px;padding:10px 13px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;margin-bottom:7px" onclick="goToClientFromScan(\''+c.id+'\')">'+
-    '<div><div style="font-weight:700;color:#0d5c52;font-size:13px">'+c.name+'</div><div style="font-size:10px;color:#9a8a70">'+c.id+' · '+c.phone+'</div></div>'+
-    '<div style="font-size:14px;font-weight:800;color:#d4571e">'+c.points+' pts</div></div>';
-  });
-  if(!filtered.length)html='<div style="font-size:12px;color:#9a8a70;text-align:center;padding:8px">Sin resultados</div>';
-  document.getElementById("scanSearchResults").innerHTML=html;
-}
+    function approveReq(cid) {
+      var c = getClient(cid);
+      var r = rewards.find(function (x) { return x.id === c.redeem_request; });
+      if (r) adminRedeem(cid, r.id);
+      renderRequests();
+    }
 
-function goToClientFromScan(id){
-  selectedClientId=id;
-  setAdminTab("clients");
-  document.getElementById("adminSearch").value="";
-  renderClientList();
-}
+    function rejectReq(cid) {
+      var c = getClient(cid);
 
-// ── FLASH ─────────────────────────────────────────────────────────────────
-function showFlash(msg){
-  var el=document.getElementById("flash");
-  el.textContent=msg;el.style.display="block";
-  setTimeout(function(){el.style.display="none";},2800);
-}
+      //TODO
+      c.redeem_request = null;
+      c.notifications.push({ msg: "Tu solicitud de canje fue rechazada. Contacta al personal.", read: false });
 
 
+      renderRequests();
+      renderAdminTabs();
+    }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
-setRole("client");
-</script>
+    // ── REPORTS ───────────────────────────────────────────────────────────────
+    function renderReports() {
+      if (!currentStaff || currentStaff.role !== "admin") { document.getElementById("statsGrid").innerHTML = '<div style="color:#9a8a70;font-size:13px;grid-column:1/-1;text-align:center;padding:20px">Solo el admin puede acceder.</div>'; return; }
+      var totalPts = clients.filter(function (c) { return !pointsExpired(c.last_visit); }).reduce(function (a, c) { return a + c.points; }, 0);
+      var totalRedeems = clients.reduce(function (a, c) { return a + c.history.filter(function (h) { return h.delta < 0; }).length; }, 0);
+      var totalVisits = clients.reduce(function (a, c) { return a + c.history.filter(function (h) { return h.delta > 0; }).length; }, 0);
+      var stats = [{ l: "Clientes", v: clients.length, i: "👥" }, { l: "Puntos activos", v: totalPts, i: "⭐" }, { l: "Canjes", v: totalRedeems, i: "🎁" }, { l: "Visitas", v: totalVisits, i: "🏨" }];
+      var html = "";
+      stats.forEach(function (s) {
+        html += '<div class="stat-box"><div style="font-size:24px;margin-bottom:4px">' + s.i + '</div><div style="font-size:28px;font-weight:800;color:#0d5c52;font-family:\'Cormorant Garamond\',serif">' + s.v + '</div><div style="font-size:10px;color:#9a8a70;margin-top:2px;line-height:1.3">' + s.l + '</div></div>';
+      });
+      document.getElementById("statsGrid").innerHTML = html;
+      var top = [].concat(clients).sort(function (a, b) { return b.points - a.points; }).slice(0, 5);
+      var topHtml = "";
+      top.forEach(function (c, i) {
+        var medals = ["#d4af37", "#b0b0b0", "#cd7f32"];
+        var bg = i < 3 ? medals[i] : "rgba(13,92,82,0.1)";
+        topHtml += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:' + (i < 4 ? "1px solid rgba(13,92,82,0.08)" : "none") + '">' +
+          '<div style="display:flex;align-items:center;gap:10px">' +
+          '<div style="width:24px;height:24px;border-radius:50%;background:' + bg + ';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:' + (i < 3 ? "#fff" : "#0d5c52") + '">' + (i + 1) + '</div>' +
+          '<div><div style="font-weight:700;color:#1a2416;font-size:13px">' + c.name + '</div><div style="font-size:10px;color:#9a8a70">' + c.id + '</div></div></div>' +
+          '<div style="font-size:16px;font-weight:800;color:#d4571e">' + c.points + ' pts</div></div>';
+      });
+      document.getElementById("topClients").innerHTML = topHtml;
+    }
+
+    // ── SETTINGS ──────────────────────────────────────────────────────────────
+    async function changePin() {
+      var cur = document.getElementById("pinCurrent").value;
+      var nw = document.getElementById("pinNew").value;
+      var conf = document.getElementById("pinConfirm").value;
+      var msgEl = document.getElementById("pinChangeMsg");
+      if (cur !== currentStaff.pin) { msgEl.innerHTML = '<div class="err">El PIN actual es incorrecto.</div>'; return; }
+      if (nw.length !== 4 || !/^\d{4}$/.test(nw)) { msgEl.innerHTML = '<div class="err">El nuevo PIN debe ser 4 dígitos.</div>'; return; }
+      if (nw !== conf) { msgEl.innerHTML = '<div class="err">Los PINs no coinciden.</div>'; return; }
+
+      const staffUpdated = await actualizarStaffPin(currentStaff, nw);
+      currentStaff = Object.assign({}, staffUpdated);
+
+      staffList = staffList.map(function (s) { return s.id === staffUpdated.id ? staffUpdated : s; });
+
+      document.getElementById("pinCurrent").value = ""; document.getElementById("pinNew").value = ""; document.getElementById("pinConfirm").value = "";
+      msgEl.innerHTML = '<div class="ok">✓ PIN cambiado exitosamente.</div>';
+    }
+
+    function renderExpList() {
+      var html = "";
+      exps.forEach(function (e) {
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;background:rgba(13,92,82,0.06);border:1px solid rgba(13,92,82,0.14);margin-bottom:8px">' +
+          '<span style="font-size:16px;margin-right:8px">' + e.icon + '</span>' +
+          '<span style="flex:1;font-size:13px;font-weight:600;color:#1a2416">' + e.label + '</span>' +
+          '<span style="font-size:13px;font-weight:800;color:#2a9d8f;margin-right:12px">+' + e.pts + '</span>' +
+          '<button onclick="deleteExp(' + e.id + ')" style="background:rgba(192,57,27,0.12);border:none;border-radius:99px;padding:4px 10px;cursor:pointer;font-size:11px;color:#c0391b;font-weight:700">Eliminar</button></div>';
+      });
+      document.getElementById("expList").innerHTML = html;
+    }
+
+    async function addExp() {
+      var name = document.getElementById("newExpName").value.trim();
+      var pts = parseInt(document.getElementById("newExpPts").value);
+      var icon = document.getElementById("newExpIcon").value || "⭐";
+      if (!name || !pts) return;
+
+      const nExperience = { label: name, pts: pts, icon: icon };
+      const experienceAdded = await agregarExperiencia(nExperience);
+
+      exps.push(experienceAdded);
+
+      document.getElementById("newExpName").value = ""; 
+      document.getElementById("newExpPts").value = ""; 
+      document.getElementById("newExpIcon").value = "";
+
+      renderExpList();
+    }
+
+    async function deleteExp(id) { 
+      const experienceDeletedId = await eliminarExperiencia(id);
+      exps = exps.filter(function (e) { return e.id !== experienceDeletedId; }); 
+
+      renderExpList(); 
+    }
+
+    function renderRewardList() {
+      var html = "";
+      rewards.forEach(function (r) {
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;background:rgba(13,92,82,0.06);border:1px solid rgba(13,92,82,0.14);margin-bottom:8px">' +
+          '<span style="font-size:16px;margin-right:8px">' + r.icon + '</span>' +
+          '<span style="flex:1;font-size:13px;font-weight:600;color:#1a2416">' + r.label + '</span>' +
+          '<span style="font-size:13px;font-weight:800;color:#d4571e;margin-right:12px">' + r.cost + ' pts</span>' +
+          '<button onclick="deleteReward(' + r.id + ')" style="background:rgba(192,57,27,0.12);border:none;border-radius:99px;padding:4px 10px;cursor:pointer;font-size:11px;color:#c0391b;font-weight:700">Eliminar</button></div>';
+      });
+      document.getElementById("rewardList").innerHTML = html;
+    }
+
+    async function addReward() {
+      var name = document.getElementById("newRwdName").value.trim();
+      var cost = parseInt(document.getElementById("newRwdCost").value);
+      if (!name || !cost) return;
+
+      //TODO
+      const rewardToAdd = { label: name, cost: cost, icon: "🏅" };
+      const rewardAdded = await agregarRecompensa(rewardToAdd);
+      rewards.push(rewardAdded);
+
+      document.getElementById("newRwdName").value = ""; document.getElementById("newRwdCost").value = "";
+      renderRewardList();
+    }
+
+    async function deleteReward(id) { 
+      const rewardDeletedId = await eliminarRecompensa(id);
+      rewards = rewards.filter(function (r) { return r.id !== rewardDeletedId; }); 
+      renderRewardList(); 
+    }
+
+    function renderStaffList() {
+      var html = "";
+      staffList.forEach(function (s) {
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;background:rgba(13,92,82,0.06);border:1px solid rgba(13,92,82,0.14);margin-bottom:8px">' +
+          '<div><div style="font-size:13px;font-weight:700;color:#1a2416">' + s.name + '</div>' +
+          '<div style="font-size:10px;color:#9a8a70">PIN: ' + s.pin + ' · ' + s.role + '</div></div>' +
+          (s.role !== "admin" ? '<button onclick="deleteStaff(' + s.id + ')" style="background:rgba(192,57,27,0.12);border:none;border-radius:99px;padding:4px 10px;cursor:pointer;font-size:11px;color:#c0391b;font-weight:700">Eliminar</button>' : "") + '</div>';
+      });
+      document.getElementById("staffList").innerHTML = html;
+    }
+
+    async function addStaff() {
+      var name = document.getElementById("newStaffName").value.trim();
+      var pin = document.getElementById("newStaffPin").value;
+      if (!name || pin.length !== 4 || !/^\d{4}$/.test(pin)) return;
+
+      //TODO
+      const nStaff = { name: name, pin: pin, role: "staff" };
+      const staffAdded = await agregarStaff(nStaff);
+
+      staffList.push(staffAdded);
+
+      document.getElementById("newStaffName").value = ""; document.getElementById("newStaffPin").value = "";
+      renderStaffList();
+    }
+
+    async function deleteStaff(id) { 
+      //TODO
+      const staffDeletedId = await eliminarStaff(id);
+      staffList = staffList.filter(function (s) { return s.id !== staffDeletedId; }); 
+
+      renderStaffList(); 
+    }
+
+    // ── SCAN SEARCH ───────────────────────────────────────────────────────────
+    function renderScanSearch() {
+      var q = (document.getElementById("adminSearchScan") || { value: "" }).value.toLowerCase();
+      if (!q) { document.getElementById("scanSearchResults").innerHTML = ""; return; }
+      var filtered = clients.filter(function (c) { return c.name.toLowerCase().includes(q) || c.id.toLowerCase().includes(q) || c.phone.includes(q); });
+      var html = "";
+      filtered.forEach(function (c) {
+        html += '<div style="background:rgba(13,92,82,0.08);border:1px solid rgba(13,92,82,0.2);border-radius:10px;padding:10px 13px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;margin-bottom:7px" onclick="goToClientFromScan(\'' + c.id + '\')">' +
+          '<div><div style="font-weight:700;color:#0d5c52;font-size:13px">' + c.name + '</div><div style="font-size:10px;color:#9a8a70">' + c.id + ' · ' + c.phone + '</div></div>' +
+          '<div style="font-size:14px;font-weight:800;color:#d4571e">' + c.points + ' pts</div></div>';
+      });
+      if (!filtered.length) html = '<div style="font-size:12px;color:#9a8a70;text-align:center;padding:8px">Sin resultados</div>';
+      document.getElementById("scanSearchResults").innerHTML = html;
+    }
+
+    function goToClientFromScan(id) {
+      selectedClientId = id;
+      setAdminTab("clients");
+      document.getElementById("adminSearch").value = "";
+      renderClientList();
+    }
+
+    // ── FLASH ─────────────────────────────────────────────────────────────────
+    function showFlash(msg) {
+      var el = document.getElementById("flash");
+      el.textContent = msg; el.style.display = "block";
+      setTimeout(function () { el.style.display = "none"; }, 2800);
+    }
+
+
+
+    // ── INIT ──────────────────────────────────────────────────────────────────
+    setRole("client");
+  </script>
 </body>
+
 </html>

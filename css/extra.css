@@ -1,0 +1,25 @@
+#manual-notification {
+    display: flex;
+    justify-content: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    bottom: 0;
+    left: 0;
+}
+
+.error {
+    color: #c0391b;
+    background: rgba(192, 57, 27, 0.09);
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.success {
+    color: #1a7a6e;
+    background: rgba(26, 122, 110, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+}
