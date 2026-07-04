@@ -10,6 +10,7 @@
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap"
     rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script type="module" src="./js/supabase-connection.js"></script>
   <style>
     * {
@@ -776,6 +777,7 @@
       if (!c) return;
       var pts = getPts(c);
       var html = "";
+      console.log("Rendering progress bars for client:", c);
       rewards.forEach(function (r) {
         var pct = Math.min(100, (pts / r.cost) * 100);
         var ok = pts >= r.cost;
@@ -802,10 +804,20 @@
       document.getElementById("progressBars").innerHTML = html;
     }
 
-    function requestRedeem(rId) {
+    async function requestRedeem(rId) {
       var c = getClient(currentClientId);
-      c.redeem_request = rId;
+
+      const clientUpdated = await actualizarClienteRedeemRequest(c, rId);
+      clientUpdated.history = c.history;
+      clientUpdated.notifications = c.notifications;
+
+      actualizarClientesConClienteActualizado(clientUpdated);
+
       renderProgressBars();
+    }
+
+    function actualizarClientesConClienteActualizado(clienteActualizado) {
+      clients = clients.map(function (cl) { return cl.id === clienteActualizado.id ? clienteActualizado : cl; });
     }
 
     // ── HISTORY ───────────────────────────────────────────────────────────────
@@ -1000,8 +1012,6 @@
     }
 
     function updatePinDots() {
-
-      //TODO
       var dots = document.querySelectorAll(".pin-dot");
       dots.forEach(function (d, i) { d.classList.toggle("filled", i < pinInput.length); });
     }
@@ -1115,12 +1125,11 @@
       var exp = exps.find(function (e) { return e.id === selectedExpId; });
       var c = getClient(cid);
 
-      //TODO
       const clientUpdated = await actualizarClientePts(c, c.points + exp.pts);
       clientUpdated.notifications = c.notifications;
       clientUpdated.history = c.history;
-      //c.points += exp.pts; 
-      const nNotification = { msg: "✨ +" + exp.pts + " pts por \"" + exp.label + "\". Total: " + c.points + " pts", read: false };
+
+      const nNotification = { msg: "✨ +" + exp.pts + " pts por \"" + exp.label + "\". Total: " + clientUpdated.points + " pts", read: false };
       const notificationAdded = await agregarNotificacion(clientUpdated.id, nNotification.msg);
       clientUpdated.notifications.push(notificationAdded);
 
@@ -1130,7 +1139,7 @@
 
       selectedExpId = null;
 
-      clients = clients.map(function (cl) { return cl.id === c.id ? clientUpdated : cl; });
+      actualizarClientesConClienteActualizado(clientUpdated);
       
       showFlash("✓ +" + exp.pts + " pts añadidos a " + c.name.split(" ")[0]);
       renderClientList();
@@ -1142,24 +1151,24 @@
       var r = rewards.find(function (x) { return x.id === rId; });
       if (!r || getPts(c) < r.cost) return;
 
-      const clientUpdated = await actualizarClientePts(c, c.points - r.cost);
+      const clientUpdated = await actualizarClientePointsAndRedeemRequest(c, c.points - r.cost);
       clientUpdated.notifications = c.notifications;
       clientUpdated.history = c.history;
 
-      const nNotification = { msg: "🎁 Tu canje \"" + r.label + "\" fue aprobado. Puntos restantes: " + c.points, read: false };
+      const nNotification = { msg: "🎁 Tu canje \"" + r.label + "\" fue aprobado. Puntos restantes: " + clientUpdated.points, read: false };
       const notificationAdded = await agregarNotificacion(clientUpdated.id, nNotification.msg);
       clientUpdated.notifications.push(notificationAdded);
-      //TODO
-      //c.points -= r.cost; c.redeem_request = null;
+
       const nHistory = { date: fmtDate(), type: "Canje: " + r.label, delta: -r.cost };
       const historyAdded = await agregarHistorial(clientUpdated.id, nHistory);
       clientUpdated.history.push(historyAdded);
 
-      clients = clients.map(function (cl) { return cl.id === c.id ? clientUpdated : cl; });
+      actualizarClientesConClienteActualizado(clientUpdated);
 
       showFlash("🎁 Canjeado: " + r.label + " — " + c.name.split(" ")[0]);
       
       renderClientList();
+      renderRequests();
       renderAdminTabs();
     }
 
@@ -1189,13 +1198,19 @@
       renderRequests();
     }
 
-    function rejectReq(cid) {
+    async function rejectReq(cid) {
       var c = getClient(cid);
 
-      //TODO
-      c.redeem_request = null;
-      c.notifications.push({ msg: "Tu solicitud de canje fue rechazada. Contacta al personal.", read: false });
+      const clientUpdated = await actualizarClienteRedeemRequest(c, null);
+      clientUpdated.history = c.history;
+      clientUpdated.notifications = c.notifications;
+      clients = clients.map(function (cl) { return cl.id === clientUpdated.id ? clientUpdated : cl; });
 
+      const nNotification = { msg: "Tu solicitud de canje fue rechazada. Contacta al personal.", read: false };
+      const notificationAdded = await agregarNotificacion(clientUpdated.id, nNotification.msg);
+      clientUpdated.notifications.push(notificationAdded);
+
+      actualizarClientesConClienteActualizado(clientUpdated);
 
       renderRequests();
       renderAdminTabs();
@@ -1300,7 +1315,6 @@
       var cost = parseInt(document.getElementById("newRwdCost").value);
       if (!name || !cost) return;
 
-      //TODO
       const rewardToAdd = { label: name, cost: cost, icon: "🏅" };
       const rewardAdded = await agregarRecompensa(rewardToAdd);
       rewards.push(rewardAdded);
@@ -1331,7 +1345,6 @@
       var pin = document.getElementById("newStaffPin").value;
       if (!name || pin.length !== 4 || !/^\d{4}$/.test(pin)) return;
 
-      //TODO
       const nStaff = { name: name, pin: pin, role: "staff" };
       const staffAdded = await agregarStaff(nStaff);
 
@@ -1342,7 +1355,6 @@
     }
 
     async function deleteStaff(id) { 
-      //TODO
       const staffDeletedId = await eliminarStaff(id);
       staffList = staffList.filter(function (s) { return s.id !== staffDeletedId; }); 
 

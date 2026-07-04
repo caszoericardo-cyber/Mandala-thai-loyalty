@@ -3,16 +3,16 @@
 // Reemplaza con los valores de tu panel de Supabase
 
 // Local URL de Supabase
-//const SUPABASE_URL = 'http://127.0.0.1:54331';
+const SUPABASE_URL = 'http://127.0.0.1:54331';
 
 // Remote URL de Supabase
-const SUPABASE_URL = 'https://suvqzrnayuynsdyatsdo.supabase.co';
+//const SUPABASE_URL = 'https://suvqzrnayuynsdyatsdo.supabase.co';
 
 // Local ANON KEY
-//const SUPABASE_ANON_KEY = 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+const SUPABASE_ANON_KEY = 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
 
 // Remote ANON KEY
-const SUPABASE_ANON_KEY = 'sb_publishable_8PVJvBsIZ_GZZwFdoRkHRA_7pABUj6V';
+//const SUPABASE_ANON_KEY = 'sb_publishable_8PVJvBsIZ_GZZwFdoRkHRA_7pABUj6V';
 
 let supabase = null;
 
@@ -93,6 +93,7 @@ async function getClients() {
             phone, 
             points, 
             last_visit,
+            redeem_request,
             notifications(
                 id,
                 msg,
@@ -187,10 +188,12 @@ async function agregarCliente(cliente, notifications = [], history = []) {
     
     const notification = await agregarNotificacion(cliente.id, notifications[0].msg);
 
-    cliente.history = [notification]; // Agrega la notificación al historial del cliente
+    cliente.history = [];
+    cliente.notifications = [notification]; // Agrega la notificación a las notificaciones del cliente
 
     return cliente; // Retorna el primer cliente agregado
 }
+window.agregarCliente = agregarCliente;
 
 async function actualizarClientePts(cliente, pts) {
 
@@ -213,6 +216,51 @@ async function actualizarClientePts(cliente, pts) {
     return data[0]; // Retorna el cliente actualizado
 }
 window.actualizarClientePts = actualizarClientePts;
+
+async function actualizarClienteRedeemRequest(cliente, requestId) {
+
+    const { data, error } = await supabase
+        .from('clients')
+        .update({
+            redeem_request: requestId
+        })
+        .eq('id', cliente.id)
+        .select();
+
+    if (error) {
+        console.error('Error:', error);
+        alert('❌ Error actualizando el request de redención del cliente: ' + error.message);
+        return null;
+    }
+
+    console.log("cliente redeem actualizado", data);
+
+    return data[0]; // Retorna el cliente actualizado
+}
+window.actualizarClienteRedeemRequest = actualizarClienteRedeemRequest;
+
+async function actualizarClientePointsAndRedeemRequest(cliente, pts) {
+
+    const { data, error } = await supabase
+        .from('clients')
+        .update({
+            points: pts,
+            redeem_request: null
+        })
+        .eq('id', cliente.id)
+        .select();
+
+    if (error) {
+        console.error('Error:', error);
+        alert('❌ Error actualizando el request actualizar el cliente: ' + error.message);
+        return null;
+    }
+
+    console.log("cliente redeem pts actualizado", data);
+
+    return data[0]; // Retorna el cliente actualizado
+}
+window.actualizarClientePointsAndRedeemRequest = actualizarClientePointsAndRedeemRequest;
 
 async function agregarStaff(staff) {
 
@@ -438,3 +486,28 @@ async function redeemRecompensa(clientId, historial) {
 }
 
 window.redeemRecompensa = redeemRecompensa; // Hacer la función global para poder llamarla desde el HTML
+
+async function pedirRecompensa(clientId, historial) {
+    const history = {
+        client_id: clientId,
+        date: historial.date,
+        type: historial.type,
+        delta: historial.delta
+    };
+
+    const { data, error } = await supabase
+        .from('history')
+        .insert(history)
+        .select();
+
+    if (error) {
+        console.error('Error:', error);
+        alert('❌ Error agregando historial: ' + error.message);
+        return null;
+    }
+
+    console.log("Historial agregado: ", data);
+    return data[0]; // Retorna el historial agregado
+}
+
+window.pedirRecompensa = pedirRecompensa; // Hacer la función global para poder llamarla desde el HTML
