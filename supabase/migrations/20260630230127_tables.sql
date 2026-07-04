@@ -57,7 +57,7 @@ create table if not exists rewards (
 create table if not exists staff_members (
   id integer generated always as identity primary key,
   name text not null,
-  pin text not null,
+  pin text UNIQUE not null,
   role text not null default 'staff'    -- 'admin' | 'staff'
 );
 
