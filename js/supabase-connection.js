@@ -3,16 +3,16 @@
 // Reemplaza con los valores de tu panel de Supabase
 
 // Local URL de Supabase
-const SUPABASE_URL = 'http://127.0.0.1:54331';
+//const SUPABASE_URL = 'http://127.0.0.1:54331';
 
 // Remote URL de Supabase
-//const SUPABASE_URL = 'https://suvqzrnayuynsdyatsdo.supabase.co';
+const SUPABASE_URL = 'https://suvqzrnayuynsdyatsdo.supabase.co';
 
 // Local ANON KEY
-const SUPABASE_ANON_KEY = 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+//const SUPABASE_ANON_KEY = 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
 
 // Remote ANON KEY
-//const SUPABASE_ANON_KEY = 'sb_publishable_8PVJvBsIZ_GZZwFdoRkHRA_7pABUj6V';
+const SUPABASE_ANON_KEY = 'sb_publishable_8PVJvBsIZ_GZZwFdoRkHRA_7pABUj6V';
 
 let supabase = null;
 
@@ -23,7 +23,7 @@ let supabase = null;
 async function initSupabase() {
 
     if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-        alert('⚠️ No hay información de Supabase. Por favor, configurar');
+        showError('⚠️ No hay información de Supabase. Por favor, configurar');
         return;
     }
 
@@ -40,7 +40,6 @@ async function initSupabase() {
         exps = await getExps();
 
     } catch (error) {
-        //alert('❌ Error conectando a Supabase: ' + error.message);
         addNotification('❌ Error conectando a Supabase: ' + error.message, 'error');
     }
 }
@@ -74,7 +73,7 @@ async function getStaffMembers() {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error obteniendo miembros del personal: ' + error.message);
+        showError('❌ Error obteniendo miembros del personal: ' + error.message);
         return [];
     }
 
@@ -112,7 +111,7 @@ async function getClients() {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error obteniendo clientes: ' + error.message);
+        showError('❌ Error obteniendo clientes: ' + error.message);
         return [];
     }
 
@@ -133,7 +132,7 @@ async function getRewards() {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error obteniendo recompensas: ' + error.message);
+        showError('❌ Error obteniendo recompensas: ' + error.message);
         return [];
     }
 
@@ -155,7 +154,7 @@ async function getExps() {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error obteniendo experiencias: ' + error.message);
+        showError('❌ Error obteniendo experiencias: ' + error.message);
         return [];
     }
 
@@ -182,7 +181,11 @@ async function agregarCliente(cliente, notifications = [], history = []) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error agregando cliente: ' + error.message);
+        if (error.code == "23505") {
+            showError('❌ Error agregando cliente: Ya existe un cliente con ese número de teléfono');
+        } else {
+            showError('❌ Error agregando cliente: ' + error.message);
+        }
         return null;
     }
     
@@ -207,7 +210,7 @@ async function actualizarClientePts(cliente, pts) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error actualizando cliente: ' + error.message);
+        showError('❌ Error actualizando cliente: ' + error.message);
         return null;
     }
 
@@ -229,7 +232,7 @@ async function actualizarClienteRedeemRequest(cliente, requestId) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error actualizando el request de redención del cliente: ' + error.message);
+        showError('❌ Error actualizando el request de redención del cliente: ' + error.message);
         return null;
     }
 
@@ -252,7 +255,7 @@ async function actualizarClientePointsAndRedeemRequest(cliente, pts) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error actualizando el request actualizar el cliente: ' + error.message);
+        showError('❌ Error actualizando el request actualizar el cliente: ' + error.message);
         return null;
     }
 
@@ -275,7 +278,12 @@ async function agregarStaff(staff) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error agregando staff: ' + error.message);
+
+        if (error.code == "23505") {
+            showError('❌ Error agregando staff: Ya existe un staff con ese Pin');
+        } else {
+            showError('❌ Error agregando staff: ' + error.message);
+        }
         return null;
     }
 
@@ -294,7 +302,7 @@ async function eliminarStaff(staffId) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error eliminando staff: ' + error.message);
+        showError('❌ Error eliminando staff: ' + error.message);
         return null;
     }
 
@@ -316,7 +324,7 @@ async function actualizarStaffPin(staff, newPin) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error actualizando staff: ' + error.message);
+        showError('❌ Error actualizando staff: ' + error.message);
         return null;
     }
 
@@ -340,7 +348,7 @@ async function agregarNotificacion(clienteId, msg) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error agregando notificación: ' + error.message);
+        showError('❌ Error agregando notificación: ' + error.message);
         return null;
     }
 
@@ -349,6 +357,26 @@ async function agregarNotificacion(clienteId, msg) {
 }
 
 window.agregarNotificacion = agregarNotificacion;
+
+async function actualizarNotificaciones(clienteId, notifications) {
+    const { data, error } = await supabase
+        .from('notifications')
+        .update({
+            read: true
+        })
+        .eq('client_id', clienteId)
+        .eq('read', false)
+
+    if (error) {
+        console.error('Error:', error);
+        showError('❌ Error al actualizar las notificaciones como leídas: ' + error.message);
+        return null;
+    }
+
+    return notifications;
+}
+
+window.actualizarNotificaciones = actualizarNotificaciones;
 
 async function agregarRecompensa(recompensa) {
     const reward = {
@@ -365,7 +393,7 @@ async function agregarRecompensa(recompensa) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error agregando recompensa: ' + error.message);
+        showError('❌ Error agregando recompensa: ' + error.message);
         return null;
     }
 
@@ -383,7 +411,7 @@ async function eliminarRecompensa(id) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error eliminando experiencia: ' + error.message);
+        showError('❌ Error eliminando experiencia: ' + error.message);
         return null;
     }
 
@@ -408,7 +436,7 @@ async function agregarExperiencia(experienciaData) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error agregando experiencia: ' + error.message);
+        showError('❌ Error agregando experiencia: ' + error.message);
         return null;
     }
 
@@ -426,7 +454,7 @@ async function eliminarExperiencia(id) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error eliminando experiencia: ' + error.message);
+        showError('❌ Error eliminando experiencia: ' + error.message);
         return null;
     }
 
@@ -451,7 +479,7 @@ async function agregarHistorial(clientId, historial) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error agregando historial: ' + error.message);
+        showError('❌ Error agregando historial: ' + error.message);
         return null;
     }
 
@@ -477,7 +505,7 @@ async function redeemRecompensa(clientId, historial) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error agregando historial: ' + error.message);
+        showError('❌ Error agregando historial: ' + error.message);
         return null;
     }
 
@@ -502,7 +530,7 @@ async function pedirRecompensa(clientId, historial) {
 
     if (error) {
         console.error('Error:', error);
-        alert('❌ Error agregando historial: ' + error.message);
+        showError('❌ Error agregando historial: ' + error.message);
         return null;
     }
 

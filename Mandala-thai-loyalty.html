@@ -12,6 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script type="module" src="./js/supabase-connection.js"></script>
+  <script src="./js/scanner.js"></script>
   <style>
     * {
       margin: 0;
@@ -195,13 +196,25 @@
     }
 
     .flash {
-      background: linear-gradient(135deg, #0d5c52, #1a7a6e);
+      background: rgb(104, 166, 65);
       color: #f5efe6;
       padding: 12px 16px;
       border-radius: 12px;
       font-size: 13px;
       font-weight: 700;
       text-align: center;
+      margin-bottom: 14px;
+      display: none
+    }
+
+    .flashError {
+      background: #c0391b;
+      color: #f5efe6;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: left;
       margin-bottom: 14px;
       display: none
     }
@@ -454,6 +467,7 @@
     </div>
 
     <div id="flash" class="flash"></div>
+    <div id="flashError" class="flashError"></div>
 
     <!-- VISTA CLIENTE -->
     <div id="viewClient">
@@ -608,6 +622,7 @@
         <div id="adminTabScan">
           <div class="card">
             <div class="section-title">📷 Escanear QR</div>
+            <!--
             <div class="scan-box">
               <div class="corner tl"></div>
               <div class="corner tr"></div>
@@ -619,8 +634,27 @@
                 <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px">APUNTA AL QR</div>
               </div>
             </div>
-            <div style="font-size:12px;color:#7a6a55;text-align:center;margin-bottom:14px">En la app real la cámara se
-              abre aquí.</div>
+          -->
+            <div id="qr-loader">
+              Abriendo la cámara...
+            </div>
+            <div id="qr-reader" style="display:none;"></div>
+
+            <!-- Overlay para mejor experiencia visual -->
+            <div class="qr-container" id="qrContainer" style="display:none;">
+              <div id="qr-reader-custom"></div>
+            </div>
+
+            <div class="scanner-controls">
+              <button class="btn btn-primary" onclick="startScanner()">▶️ Iniciar Escáner</button>
+              <button class="btn btn-danger" onclick="stopScanner()">⏹️ Detener</button>
+            </div>
+
+            <div id="result" class="result-box">
+
+            </div>
+
+
             <div
               style="background:rgba(13,92,82,0.06);border-radius:12px;padding:14px;border:1px solid rgba(13,92,82,0.15)">
               <div class="label" style="margin-bottom:8px">O busca manualmente</div>
@@ -762,13 +796,15 @@
         '<div style="font-size:11px;color:rgba(212,87,30,0.85);margin-top:3px;letter-spacing:2px;font-family:monospace">' + c.id + '</div>' +
         '<div style="font-size:9px;color:rgba(212,87,30,0.55);margin-top:2px">📱 Muestra este QR al llegar</div>' +
         '</div>' +
-        '<div style="background:rgba(255,255,255,0.97);border-radius:10px;padding:6px;flex-shrink:0;margin-left:12px">' + makeQR("MT:" + c.id, 76) + '</div>' +
+        '<div id="qrCodeContainer" style="background:rgba(255,255,255,0.97);border-radius:10px;padding:6px;flex-shrink:0;margin-left:12px">' + '</div>' +
         '</div>' +
         '<div style="margin-top:18px;display:flex;justify-content:space-between;align-items:flex-end;position:relative">' +
         '<div><div style="font-size:9px;color:rgba(212,87,30,0.7);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:2px">Puntos Acumulados</div>' +
         '<div style="font-size:40px;font-weight:700;color:' + (expired ? "#aaa" : "#d4571e") + ';font-family:\'Cormorant Garamond\',serif;line-height:1">' + pts + '<span style="font-size:13px;font-weight:400;margin-left:3px;color:rgba(212,87,30,0.6)">pts</span></div>' +
         warn + '</div>' +
         '<div style="padding-bottom:4px">' + dots + '</div></div>';
+
+      generateQR(c.id);
     }
 
     // ── RENDER PROGRESS BARS ──────────────────────────────────────────────────
@@ -837,10 +873,20 @@
     }
 
     // ── NOTIFS ────────────────────────────────────────────────────────────────
-    function renderNotifs() {
+    async function renderNotifs() {
       var c = getClient(currentClientId);
       if (!c) return;
-      c.notifications.forEach(function (n) { n.read = true; });
+
+      let needToUpdateNotifications = false;
+      c.notifications.forEach(function (n) {
+        if (!n.read) needToUpdateNotifications = true;
+        n.read = true;
+      });
+
+      if (needToUpdateNotifications) {
+        await actualizarNotificaciones(c.id, c.notifications);
+      }
+
       document.getElementById("notifBadge").classList.add("hidden");
       if (!c.notifications.length) { document.getElementById("notifList").innerHTML = '<div style="text-align:center;color:#9a8a70;padding:16px;font-size:13px">Sin notificaciones nuevas.</div>'; return; }
       var html = "";
@@ -918,7 +964,7 @@
       length = 6
       const nDate = new Date();
       const year = nDate.getFullYear();
-      const rr = Math.random().toString(36).substring(2, length+2);
+      const rr = Math.random().toString(36).substring(2, length + 2);
       return rr + "_" + nDate.getMilliseconds() + "_" + year;
     }
 
@@ -962,7 +1008,7 @@
         document.getElementById("regErr").textContent = "Ocurrió un error al registrar. Intenta nuevamente.";
         document.getElementById("regErr").classList.remove("hidden");
       }
-}
+    }
 
     function goToCard() {
       clientTab = "card";
@@ -1140,7 +1186,7 @@
       selectedExpId = null;
 
       actualizarClientesConClienteActualizado(clientUpdated);
-      
+
       showFlash("✓ +" + exp.pts + " pts añadidos a " + c.name.split(" ")[0]);
       renderClientList();
       renderAdminTabs();
@@ -1166,7 +1212,7 @@
       actualizarClientesConClienteActualizado(clientUpdated);
 
       showFlash("🎁 Canjeado: " + r.label + " — " + c.name.split(" ")[0]);
-      
+
       renderClientList();
       renderRequests();
       renderAdminTabs();
@@ -1284,18 +1330,18 @@
 
       exps.push(experienceAdded);
 
-      document.getElementById("newExpName").value = ""; 
-      document.getElementById("newExpPts").value = ""; 
+      document.getElementById("newExpName").value = "";
+      document.getElementById("newExpPts").value = "";
       document.getElementById("newExpIcon").value = "";
 
       renderExpList();
     }
 
-    async function deleteExp(id) { 
+    async function deleteExp(id) {
       const experienceDeletedId = await eliminarExperiencia(id);
-      exps = exps.filter(function (e) { return e.id !== experienceDeletedId; }); 
+      exps = exps.filter(function (e) { return e.id !== experienceDeletedId; });
 
-      renderExpList(); 
+      renderExpList();
     }
 
     function renderRewardList() {
@@ -1323,10 +1369,10 @@
       renderRewardList();
     }
 
-    async function deleteReward(id) { 
+    async function deleteReward(id) {
       const rewardDeletedId = await eliminarRecompensa(id);
-      rewards = rewards.filter(function (r) { return r.id !== rewardDeletedId; }); 
-      renderRewardList(); 
+      rewards = rewards.filter(function (r) { return r.id !== rewardDeletedId; });
+      renderRewardList();
     }
 
     function renderStaffList() {
@@ -1354,11 +1400,11 @@
       renderStaffList();
     }
 
-    async function deleteStaff(id) { 
+    async function deleteStaff(id) {
       const staffDeletedId = await eliminarStaff(id);
-      staffList = staffList.filter(function (s) { return s.id !== staffDeletedId; }); 
+      staffList = staffList.filter(function (s) { return s.id !== staffDeletedId; });
 
-      renderStaffList(); 
+      renderStaffList();
     }
 
     // ── SCAN SEARCH ───────────────────────────────────────────────────────────
@@ -1386,6 +1432,12 @@
     // ── FLASH ─────────────────────────────────────────────────────────────────
     function showFlash(msg) {
       var el = document.getElementById("flash");
+      el.textContent = msg; el.style.display = "block";
+      setTimeout(function () { el.style.display = "none"; }, 2800);
+    }
+
+    function showError(msg) {
+      var el = document.getElementById("flashError");
       el.textContent = msg; el.style.display = "block";
       setTimeout(function () { el.style.display = "none"; }, 2800);
     }
